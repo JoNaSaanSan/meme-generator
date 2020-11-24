@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Meme Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+</head>
+
+<body>
+
+    <div id="container">
+        <div id="slideShowImages">
+            <div class="imageNumber"></div>
+            <!-- some default images -->
+            <p>Loading, please wait...</p>
+        </div>
+        <button id="backButton">❮</button>
+        <button id="nextButton">❯</button>
+
+
+        <!-- Input text to generate meme -->
+        <div id="inputText">
+            <div id="topText">
+            
+            </div>
+
+            <div id="bottomText">
+            
+            </div>
+            <button onclick="generateMeme()">Generate</button>
+        </div>
+
+        <div id="resultImage">
+            <div class="resultImageNumber"></div>
+            <!-- the generated image -->
+            <p>Nothing generated yet.</p>
+        </div>
+    </div>
+
+
+
+    <script language="javascript" type="text/javascript" src="memeGenerator.js"></script>
+</body>
