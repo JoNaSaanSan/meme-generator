@@ -14,6 +14,7 @@ var currentMeme;
 window.addEventListener('DOMContentLoaded', function () {
     const backButton = document.getElementById('backButton');
     const nextButton = document.getElementById('nextButton');
+    const searchButton = document.getElementById('searchButton');
 
     const URL = "https://api.imgflip.com/get_memes";
 
@@ -22,8 +23,7 @@ window.addEventListener('DOMContentLoaded', function () {
     fetch(URL)
         .then((resp) => resp.json()) // Transform the data into json
         .then(function (data) {
-            let memes = data.data.memes
-
+            memes = data.data.memes
 
             const numberOfImages = () => memes.length;
             // this is a counter that holds the id / number of the currently displayed image.
@@ -54,6 +54,28 @@ window.addEventListener('DOMContentLoaded', function () {
                 showImage(currentImageID);
             });
 
+
+            // Added Event Listner to search something
+            searchButton.addEventListener('click', function () {
+                searchImage()
+            });
+
+            searchButton.addEventListener("keyup", function(event) {
+                // Number 13 is the "Enter" key on the keyboard
+                if (event.key === 13) {
+                    searchImage()
+                }
+              });
+
+            function searchImage(){
+                for (i = 0; i < memes.length; i++) {
+                    if(memes[i].name.toLowerCase().includes(document.getElementById('searchText').value.toLowerCase())){
+                        console.log("found")
+                        showImage(i);
+                    }
+                }
+            }
+
             /**
             (re)loads the images for the current filter config
             */
@@ -83,6 +105,7 @@ function renderImage(url, width, height, name) {
 
     return figure
 }
+
 
 // Generating Meme using imgflip api with post request
 function generateMeme() {
