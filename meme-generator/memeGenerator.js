@@ -67,7 +67,7 @@ window.addEventListener('DOMContentLoaded', function () {
         })
 });
 
-
+// Rendering Image 
 function renderImage(url, width, height, name) {
     const figure = document.createElement('figure');
     figure.className = "slidecurrent";
@@ -84,7 +84,7 @@ function renderImage(url, width, height, name) {
     return figure
 }
 
-
+// Generating Meme using imgflip api with post request
 function generateMeme() {
     const url = "https://api.imgflip.com/caption_image"
     let topText = document.querySelector("#topText").value;
