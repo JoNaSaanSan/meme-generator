@@ -22,6 +22,13 @@
     img{
       width: 50%;
     }
+    .buttonContainer{
+      width: 50%;
+    }
+    .centered{
+      display: flex;
+      justify-content: centered;
+    }
 
 
   </style>
@@ -29,14 +36,19 @@
 </head>
 
 <body>
-  <div>
+  <div class="centered">
     <div class="container">
       <img id="pic" src="drake.jpg"></img>
-      <div id="topText">1</div>
-      <div id="bottomText">2</div>
+      <div class="textContainer">
+        <div id="topText">1</div>
+        <div id="bottomText">2</div>
+      </div>
     </div>
-    <input type="text" id="topTextInput" oninput="topTextChange()"></input>
-    <input type="text" id="bottomTextInput" oninput="bottomTextChange()"></input>
+    <div class="buttonContainer">
+      <input type="text" id="topTextInput" oninput="topTextChange()"></input>
+      <input type="text" id="bottomTextInput" oninput="bottomTextChange()"></input>
+    </div>
+
   </div>
 
 <script>
