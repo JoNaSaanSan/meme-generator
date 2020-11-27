@@ -1,3 +1,5 @@
+var memeID;
+
 
 window.addEventListener('DOMContentLoaded', function () {
     const backButton = document.getElementById('backButton');
@@ -12,6 +14,7 @@ window.addEventListener('DOMContentLoaded', function () {
         .then(function (data) {
             let memes = data.data.memes
 
+
             const numberOfImages = () => memes.length;
             // this is a counter that holds the id / number of the currently displayed image.
             let currentImageID = 1;
@@ -24,32 +27,13 @@ window.addEventListener('DOMContentLoaded', function () {
              * @param number {Number} id of the image.
              */
 
-
             function showImage(number) {
                 let meme = memes[number]
                 document.getElementById('slideShowImages').innerHTML = ''
                 document.getElementById('slideShowImages').append(renderImage(meme.url, meme.width, meme.height, meme.name))
-
+                memeID = meme.id;
                 console.log(`showing image ${number}`)
             }
-
-            function renderImage(url, width, height, name) {
-                const figure = document.createElement('figure');
-                figure.className = "slidecurrent";
-                const newImage = document.createElement('img');
-                newImage.src = url;
-                newImage.width = width;
-                newImage.height = height;
-                const figCaption = document.createElement('figcaption');
-                figCaption.innerHTML = `${name}   ${url}`;
-
-                figure.appendChild(newImage);
-                figure.appendChild(figCaption);
-
-                return figure
-            }
-
-
 
             backButton.addEventListener('click', function () {
                 currentImageID = currentImageID == 0 ? numberOfImages() - 1 : currentImageID - 1;
@@ -73,20 +57,58 @@ window.addEventListener('DOMContentLoaded', function () {
         })
 });
 
+
+function renderImage(url, width, height, name) {
+    const figure = document.createElement('figure');
+    figure.className = "slidecurrent";
+    const newImage = document.createElement('img');
+    newImage.src = url;
+    newImage.width = width;
+    newImage.height = height;
+    const figCaption = document.createElement('figcaption');
+    figCaption.innerHTML = `${name}   ${url}`;
+
+    figure.appendChild(newImage);
+    figure.appendChild(figCaption);
+
+    return figure
+}
+
+
+
+
+
 function generateMeme() {
-    const url = "https://api.imgflip.com/caption_image";
-    fetch(url, {
-        method: "POST",
-        body: new FormData(document.getElementById("inputform")),
-        // -- or --
-        // body : JSON.stringify({
-        // user : document.getElementById('user').value,
-        // ...
-        // })
-    }).then(
-        response => response.text() // .json(), etc.
-        // same as function(response) {return response.text();}
-    ).then(
-        html => console.log(html)
-    );
+    const url = "https://api.imgflip.com/caption_image"
+    let topText = document.querySelector("#topText").value;
+    let bottomText = document.querySelector("#bottomText").value;
+
+    /*var text = JSON.stringify({
+        template_id: memeID,
+        username: "SandraOMM",
+        password: "onlinemultimedia2020",
+        text0: document.querySelector("#topText").value,
+        text1: document.querySelector("#bottomText").value
+    })*/
+
+    //var text = "template_id=memeID&username=SandraOMM&password=onlinemultimedia2020&text0=test&text1=test"
+
+    const username = "SandraOMM"
+    const password = "onlinemultimedia2020"
+
+    var urlReq = url + "?template_id=" + memeID + "&username=" + username + "&password=" + password + "&text0=" + topText + "&text1=" + bottomText
+
+    try {
+        fetch(urlReq, {
+            method: "POST"
+        }).then((resp) => resp.json())
+            .then(function (data) {
+                console.log(data.data.url)
+                document.getElementById('resultImage').innerHTML = ''
+                document.getElementById('resultImage').append(renderImage(data.data.url, 400, 400, "result"))
+            })
+    }
+    catch (err) {
+        console.log(err.message);
+    }
 }
