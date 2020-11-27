@@ -1,5 +1,15 @@
-var memeID;
 
+
+class Meme {
+    constructor(memeID, width, height, name) {
+        this.memeID = memeID;
+        this.width = width;
+        this.height = height;
+        this.name = name;
+    }
+}
+
+var currentMeme;
 
 window.addEventListener('DOMContentLoaded', function () {
     const backButton = document.getElementById('backButton');
@@ -31,7 +41,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 let meme = memes[number]
                 document.getElementById('slideShowImages').innerHTML = ''
                 document.getElementById('slideShowImages').append(renderImage(meme.url, meme.width, meme.height, meme.name))
-                memeID = meme.id;
+                currentMeme = new Meme(meme.id, meme.width, meme.height, meme.name)
                 console.log(`showing image ${number}`)
             }
 
@@ -75,40 +85,29 @@ function renderImage(url, width, height, name) {
 }
 
 
-
-
-
 function generateMeme() {
     const url = "https://api.imgflip.com/caption_image"
     let topText = document.querySelector("#topText").value;
     let bottomText = document.querySelector("#bottomText").value;
 
-    /*var text = JSON.stringify({
-        template_id: memeID,
-        username: "SandraOMM",
-        password: "onlinemultimedia2020",
-        text0: document.querySelector("#topText").value,
-        text1: document.querySelector("#bottomText").value
-    })*/
-
-    //var text = "template_id=memeID&username=SandraOMM&password=onlinemultimedia2020&text0=test&text1=test"
-
     const username = "SandraOMM"
     const password = "onlinemultimedia2020"
 
-    var urlReq = url + "?template_id=" + memeID + "&username=" + username + "&password=" + password + "&text0=" + topText + "&text1=" + bottomText
+    if (currentMeme != null) {
+        var urlReq = url + "?template_id=" + currentMeme.memeID + "&username=" + username + "&password=" + password + "&text0=" + topText + "&text1=" + bottomText
 
-    try {
-        fetch(urlReq, {
-            method: "POST"
-        }).then((resp) => resp.json())
-            .then(function (data) {
-                console.log(data.data.url)
-                document.getElementById('resultImage').innerHTML = ''
-                document.getElementById('resultImage').append(renderImage(data.data.url, 400, 400, "result"))
-            })
-    }
-    catch (err) {
-        console.log(err.message);
+        try {
+            fetch(urlReq, {
+                method: "POST"
+            }).then((resp) => resp.json())
+                .then(function (data) {
+                    console.log(currentMeme)
+                    document.getElementById('resultImage').innerHTML = ''
+                    document.getElementById('resultImage').append(renderImage(data.data.url, currentMeme.width, currentMeme.height, currentMeme.name))
+                })
+        }
+        catch (err) {
+            console.log(err.message);
+        }
     }
 }
