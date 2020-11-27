@@ -5,28 +5,32 @@
     <meta charset="UTF-8">
     <title>Meme Generator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css" type="text/css" />
 </head>
 
 <body>
 
-    <div id="container">
-        <div id="slideShowImages">
-            <div class="imageNumber"></div>
-            <!-- some default images -->
-            <p>Loading, please wait...</p>
-        </div>
-        <button id="backButton">❮</button>
-        <button id="nextButton">❯</button>
+    <div class="grid-container">
+        <div id="left">
+            <div id="slideShowImages">
+                <div class="imageNumber"></div>
+                <!-- some default images -->
+                <p>Loading, please wait...</p>
 
+            </div>
 
-        <!-- Input text to generate meme -->
-        <div id="inputText">
+            <button id="backButton">❮</button>
+            <button id="nextButton">❯</button>
 
-            <input type="text" id="topText"></input>
-            <input type="text" id="bottomText"></input>
+            <!-- Input text to generate meme -->
+            <div id="inputText">
 
-            <button onclick="generateMeme()">Generate</button>
+                <input type="text" id="topText"></input>
+                <input type="text" id="bottomText"></input>
+
+                <button onclick="generateMeme()">Generate</button>
+            </div>
+
         </div>
 
         <div id="resultImage">
