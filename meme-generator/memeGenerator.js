@@ -36,12 +36,10 @@ window.addEventListener('DOMContentLoaded', function() {
     let meme = memes[number]
     document.getElementById('slideShowImages').innerHTML = ''
     document.getElementById('slideShowImages').append(renderImage(meme.url, meme.width, meme.height, meme.name))
-    console.log(meme)
     currentImageID = number
     currentMeme = new Meme(meme.url, meme.id, meme.width, meme.height, meme.name, meme.box_count)
     createInputBoxes(currentMeme.boxcount)
-    console.log(currentMeme)
-    console.log(memes)
+
     console.log(`showing image ${number}`)
     loadPreviewItems()
 
@@ -58,7 +56,9 @@ window.addEventListener('DOMContentLoaded', function() {
 
   for (i = 0; i < previewButtons.length; i++) {
     previewButtons[i].addEventListener('click', function() {
-      newImageID = currentImageID + Number(this.id.slice(-1)) - 1
+      newImageID = currentImageID + Number(this.id.slice(-1)) - 3
+      newImageID = newImageID < 0 ? numberOfImages() - 1 : newImageID
+      newImageID = newImageID > numberOfImages() - 1 ? 0 : newImageID
       console.log("clicked on image ", newImageID)
       showImage(newImageID)
     })
@@ -105,11 +105,12 @@ window.addEventListener('DOMContentLoaded', function() {
 
   function loadPreviewItems() {
     var n = 0
-    for (i = currentImageID; i < currentImageID + 5; i++) {
+    for (i = currentImageID - 2; i < currentImageID + 3; i++) {
       n += 1
-      const meme = memes[i]
-      //console.log(meme)
+      j = i < 0 ? numberOfImages() + i : i
+      j = j > numberOfImages() - 1 ? j - numberOfImages() : j
 
+      const meme = memes[j]
 
       previewMeme = document.getElementById("preview" + n)
       previewMeme.src = meme.url
