@@ -15,21 +15,7 @@ window.addEventListener('DOMContentLoaded', function() {
   const searchButton = document.getElementById('searchButton');
 
 
-  let memes = [{
-    url: 'https://www.naturalworldsafaris.com/media/3925/kamchatka-sophy-roberts.jpg',
-    width: 1920,
-    height: 1080,
-    name: 'Kamchatka'
-  }, {
-    url: 'https://www.explora.com/wp-content/uploads/2015/02/foto-1.jpg',
-    width: 1440,
-    height: 720,
-    name: 'Patagonia'
-  }, {
-    url: 'http://wallsdesk.com/wp-content/uploads/2016/05/Zhangjiajie-National-Forest-Park-China-Wallpaper-.jpg',
-    width: 1920,
-    height: 1200
-  }]
+  let memes = []
 
   const numberOfImages = () => memes.length;
   // this is a counter that holds the id / number of the currently displayed image.
@@ -95,9 +81,8 @@ window.addEventListener('DOMContentLoaded', function() {
       .then((resp) => resp.json()) // Transform the data into json
       .then(function(data) {
         memes = data.data.memes
-        //currentMeme = new Meme(memes[0].id, memes[0].width, memes[0].height, memes[0].name)
+        showImage(0)
       });
-    showImage(0)
   }
   loadImageUrls();
 
