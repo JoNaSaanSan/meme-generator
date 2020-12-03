@@ -15,6 +15,7 @@ window.addEventListener('DOMContentLoaded', function() {
   const nextButton = document.getElementById('nextButton');
   const searchButton = document.getElementById('searchButton');
 
+  var previewButtons = document.getElementsByClassName("previewButton")
 
   let memes = []
 
@@ -35,9 +36,10 @@ window.addEventListener('DOMContentLoaded', function() {
     document.getElementById('slideShowImages').innerHTML = ''
     document.getElementById('slideShowImages').append(renderImage(meme.url, meme.width, meme.height, meme.name))
     currentMeme = new Meme(meme.url, meme.id, meme.width, meme.height, meme.name)
-    console.log(currentMeme)
-    console.log(memes)
+    currentImageID = number
     console.log(`showing image ${number}`)
+    loadPreviewItems()
+
   }
 
   backButton.addEventListener('click', function() {
@@ -48,6 +50,15 @@ window.addEventListener('DOMContentLoaded', function() {
     currentImageID = currentImageID == numberOfImages() - 1 ? 0 : currentImageID + 1;
     showImage(currentImageID);
   });
+
+  for (i = 0; i < previewButtons.length; i++) {
+    previewButtons[i].addEventListener('click', function() {
+      newImageID = currentImageID + Number(this.id.slice(-1)) - 1
+      console.log("clicked on image ", newImageID)
+      showImage(newImageID)
+    })
+  }
+
 
 
   // Added Event Listner to search something
@@ -86,6 +97,29 @@ window.addEventListener('DOMContentLoaded', function() {
       });
   }
   loadImageUrls();
+
+  function loadPreviewItems() {
+    var n = 0
+    for (i = currentImageID; i < currentImageID + 5; i++) {
+      n += 1
+      const meme = memes[i]
+      //console.log(meme)
+
+
+      previewMeme = document.getElementById("preview" + n)
+      previewMeme.src = meme.url
+      previewMeme.height = 80
+      previewMeme.width = 80
+
+
+      if (currentMeme.id == meme.id) {
+        previewMeme.classList.add('previewSelected');
+      } else {
+        previewMeme.classList.remove('previewSelected');
+      }
+    }
+
+  }
 
 });
 
