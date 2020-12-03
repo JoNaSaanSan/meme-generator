@@ -1,10 +1,11 @@
 class Meme {
-  constructor(url, id, width, height, name) {
+  constructor(url, id, width, height, name, boxcount) {
     this.url = url;
     this.id = id;
     this.width = width;
     this.height = height;
     this.name = name;
+    this.boxcount = boxcount;
   }
 }
 
@@ -35,8 +36,12 @@ window.addEventListener('DOMContentLoaded', function() {
     let meme = memes[number]
     document.getElementById('slideShowImages').innerHTML = ''
     document.getElementById('slideShowImages').append(renderImage(meme.url, meme.width, meme.height, meme.name))
-    currentMeme = new Meme(meme.url, meme.id, meme.width, meme.height, meme.name)
+    console.log(meme)
     currentImageID = number
+    currentMeme = new Meme(meme.url, meme.id, meme.width, meme.height, meme.name, meme.box_count)
+    createInputBoxes(currentMeme.boxcount)
+    console.log(currentMeme)
+    console.log(memes)
     console.log(`showing image ${number}`)
     loadPreviewItems()
 
@@ -123,6 +128,33 @@ window.addEventListener('DOMContentLoaded', function() {
 
 });
 
+function createInputBoxes(amount) {
+  console.log("create Boxes" + amount)
+
+  while (document.getElementById('inputText').firstChild) {
+    document.getElementById('inputText').removeChild(document.getElementById('inputText').lastChild);
+  }
+
+  while (document.getElementById('inputColor').firstChild) {
+    document.getElementById('inputColor').removeChild(document.getElementById('inputColor').lastChild);
+  }
+
+  for (var i = 0; i < amount; i++) {
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = "inputClass"; // set the CSS class
+    input.id = "textBox_" + i;
+    document.getElementById('inputText').appendChild(input); // put it into the DOM
+
+
+    var inputColor = document.createElement("input");
+    inputColor.type = "color";
+    inputColor.className = "inputColorClass"; // set the CSS class
+    inputColor.id = "color_" + i;
+    document.getElementById('inputColor').appendChild(inputColor); // put it into the DOM
+  }
+}
+
 // Rendering Image
 function renderImage(url, width, height, name) {
   const figure = document.createElement('figure');
@@ -144,18 +176,40 @@ function renderImage(url, width, height, name) {
 // Generating Meme using imgflip api with post request
 function generateMeme() {
   const url = "https://api.imgflip.com/caption_image"
-  let topText = document.querySelector("#topText").value;
-  let bottomText = document.querySelector("#bottomText").value;
+
+
+  var boxArray = [];
+  var childColor = document.getElementById('inputColor').firstElementChild
+
+  for (var child = document.getElementById('inputText').firstChild; child !== null; child = child.nextSibling) {
+
+    var textObject = new Object();
+    textObject.text = child.value;
+    textObject.color = "%23" + childColor.value.substring(1);
+    boxArray.push(textObject);
+    childColor = childColor.nextElementSibling;
+  }
+
+
 
   const username = "SandraOMM"
   const password = "onlinemultimedia2020"
 
   if (currentMeme != null) {
-    var urlReq = url + "?template_id=" + currentMeme.id + "&username=" + username + "&password=" + password + "&text0=" + topText + "&text1=" + bottomText
+    var urlReq = url + "?template_id=" + currentMeme.id + "&username=" + username + "&password=" + password + "&text0=" + "1" + "&text1=" + "2"
+
+
+    for (var i = 0; i < boxArray.length; i++) {
+      for (var y = 0; y < Object.keys(boxArray[i]).length; y++) {
+        urlReq = urlReq + "&boxes[" + i + "][" + Object.keys(boxArray[i])[y] + "]=" + boxArray[i][Object.keys(boxArray[i])[y]]
+      }
+    }
+
+    console.log(urlReq)
 
     try {
       fetch(urlReq, {
-          method: "POST"
+          method: "POST",
         }).then((resp) => resp.json())
         .then(function(data) {
           console.log(data)
