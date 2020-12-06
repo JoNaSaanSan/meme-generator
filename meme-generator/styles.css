@@ -39,3 +39,7 @@ img{
 .previewSelected {
   border: 5px solid #006400;
 }
+
+#preview{
+  border: 2px solid black;
+}
