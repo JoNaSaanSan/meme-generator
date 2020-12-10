@@ -252,5 +252,16 @@ function getSampleMeme() {
 
 function saveMeme() {
 
-  
+  const URL = "http://localhost:3000/savememe/";
+
+  try {
+    fetch(URL, {
+      method: "POST",
+      data: currentMeme.url
+    }).then((resp) => console.log(resp))
+  } catch (err) {
+    console.log(err.message);
+  }
+
+
 }
