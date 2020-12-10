@@ -92,18 +92,16 @@ window.addEventListener('DOMContentLoaded', function () {
   */
   function loadImageUrls() {
     // TODO load meme template images from the Imgflip API
-    const URL = "http://localhost:3000/samplememes";
+    const URL = "https://api.imgflip.com/get_memes";
 
     fetch(URL)
       .then((resp) => resp.json()) // Transform the data into json
       .then(function (data) {
         memes = data.data.memes
         showImage(0)
-      }).catch(requestError => {
-        console.error(requestError);
       });
-    }
-    
+
+  }
   loadImageUrls();
 
   function loadPreviewItems() {
@@ -225,4 +223,29 @@ function generateMeme() {
       console.log(err.message);
     }
   }
+}
+
+var p = 0;
+
+function getSampleMeme() {
+  // Load Sample Memes
+  const URL = "http://localhost:3000/samplememes/";
+
+  fetch(URL)
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function (data) {
+      let memeSamples = []
+      memeSamples = data.data.memes
+
+
+      let memeSample = memeSamples[p % memeSamples.length]
+      document.getElementById('slideShowExampleImages').innerHTML = ''
+      document.getElementById('slideShowExampleImages').append(renderImage(memeSample.url, memeSample.width, memeSample.height, memeSample.name))
+
+      console.log(`showing image ${number}`)
+
+    });
+
+  p++
+
 }
