@@ -249,3 +249,8 @@ function getSampleMeme() {
   p++
 
 }
+
+function saveMeme() {
+
+  
+}
