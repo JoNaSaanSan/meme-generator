@@ -5,9 +5,11 @@ savedmemes = []
 
 /* GET home page. */
 router.post('/', function(req, res, next) {
+
   var url = req.query.url;
   savedmemes.push(url);
-  res.send("Meme saved!")
+  console.log("meme received");
+  res.send("Meme saved!");
 
 });
 
