@@ -92,30 +92,17 @@ window.addEventListener('DOMContentLoaded', function () {
   */
   function loadImageUrls() {
     // TODO load meme template images from the Imgflip API
-    const URL = "https://api.imgflip.com/get_memes";
+    const URL = "http://localhost:3000/get_memes";
 
     fetch(URL)
       .then((resp) => resp.json()) // Transform the data into json
       .then(function (data) {
         memes = data.data.memes
         showImage(0)
+      }).catch(requestError => {
+        console.error(requestError);
       });
 
-
-
-
-    // --- the REQUEST which LOADS THE IMAGES ---
-    fetch(`http://localhost:3000/images/${imageCategory ? imageCategory : ''}${queryParams}`).then(jsonResponse => {
-      jsonResponse.json().then(responseObject => {
-        document.getElementById('slideShowImages').innerHTML = '<div class="imageNumber"></div>';
-  
-      }).catch(jsonParseError => {
-        console.error(jsonParseError);
-      })
-    }).catch(requestError => {
-      console.error(requestError);
-    })
-  }
   loadImageUrls();
 
   function loadPreviewItems() {
