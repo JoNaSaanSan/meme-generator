@@ -92,7 +92,7 @@ window.addEventListener('DOMContentLoaded', function () {
   */
   function loadImageUrls() {
     // TODO load meme template images from the Imgflip API
-    const URL = "http://localhost:3000/get_memes";
+    const URL = "http://localhost:3000/samplememes";
 
     fetch(URL)
       .then((resp) => resp.json()) // Transform the data into json
@@ -102,7 +102,8 @@ window.addEventListener('DOMContentLoaded', function () {
       }).catch(requestError => {
         console.error(requestError);
       });
-
+    }
+    
   loadImageUrls();
 
   function loadPreviewItems() {
