@@ -11,7 +11,7 @@ class Meme {
 
 var currentMeme;
 
-window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', function () {
   const backButton = document.getElementById('backButton');
   const nextButton = document.getElementById('nextButton');
   const searchButton = document.getElementById('searchButton');
@@ -45,17 +45,17 @@ window.addEventListener('DOMContentLoaded', function() {
 
   }
 
-  backButton.addEventListener('click', function() {
+  backButton.addEventListener('click', function () {
     currentImageID = currentImageID == 0 ? numberOfImages() - 1 : currentImageID - 1;
     showImage(currentImageID);
   });
-  nextButton.addEventListener('click', function() {
+  nextButton.addEventListener('click', function () {
     currentImageID = currentImageID == numberOfImages() - 1 ? 0 : currentImageID + 1;
     showImage(currentImageID);
   });
 
   for (i = 0; i < previewButtons.length; i++) {
-    previewButtons[i].addEventListener('click', function() {
+    previewButtons[i].addEventListener('click', function () {
       newImageID = currentImageID + Number(this.id.slice(-1)) - 3
       newImageID = newImageID < 0 ? numberOfImages() - 1 : newImageID
       newImageID = newImageID > numberOfImages() - 1 ? 0 : newImageID
@@ -67,11 +67,11 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
   // Added Event Listner to search something
-  searchButton.addEventListener('click', function() {
+  searchButton.addEventListener('click', function () {
     searchImage()
   });
 
-  searchButton.addEventListener("keyup", function(event) {
+  searchButton.addEventListener("keyup", function (event) {
     // Number 13 is the "Enter" key on the keyboard
     if (event.key === 13) {
       searchImage()
@@ -96,10 +96,11 @@ window.addEventListener('DOMContentLoaded', function() {
 
     fetch(URL)
       .then((resp) => resp.json()) // Transform the data into json
-      .then(function(data) {
+      .then(function (data) {
         memes = data.data.memes
         showImage(0)
       });
+
   }
   loadImageUrls();
 
@@ -210,9 +211,9 @@ function generateMeme() {
 
     try {
       fetch(urlReq, {
-          method: "POST",
-        }).then((resp) => resp.json())
-        .then(function(data) {
+        method: "POST",
+      }).then((resp) => resp.json())
+        .then(function (data) {
           console.log(data)
           console.log(currentMeme)
           document.getElementById('resultImage').innerHTML = ''
@@ -222,4 +223,29 @@ function generateMeme() {
       console.log(err.message);
     }
   }
+}
+
+var p = 0;
+
+function getSampleMeme() {
+  // Load Sample Memes
+  const URL = "http://localhost:3000/samplememes/";
+
+  fetch(URL)
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function (data) {
+      let memeSamples = []
+      memeSamples = data.data.memes
+
+
+      let memeSample = memeSamples[p % memeSamples.length]
+      document.getElementById('slideShowExampleImages').innerHTML = ''
+      document.getElementById('slideShowExampleImages').append(renderImage(memeSample.url, memeSample.width, memeSample.height, memeSample.name))
+
+      console.log(`showing image ${number}`)
+
+    });
+
+  p++
+
 }
