@@ -9,19 +9,33 @@ require('./App.css');
 
 
 class App extends React.Component {
-    state = {
-      URL: 'http://localhost:3000'
+  constructor() {
+    super()
+    this.state = {
+      URL: 'http://localhost:3000',
+      
     }
-  
+
+
+  }
+
+  //Get All Sample Memes
+  fetchImages() {
+    fetch(this.state.URL + '/samplememes').then(response => response.json()).then((data) => {
+      console.log('this is your data', data)
+
+    });
+  }
 
   render() {
-    const { data } = this.state;
+    this.fetchImages();
     return (
       <div>
         <SearchComponent />
         <ImageViewComponent URL={this.state.URL} />
         <AdjustmentComponent />
         <PreviewComponent />
+
       </div>
     );
   }

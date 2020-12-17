@@ -7,14 +7,16 @@ class ImageViewComponent extends React.Component {
   constructor(props) {
     super(props);
 
+    //Button Binds
     this.prevButton = this.prevButton.bind(this);
     this.nextButton = this.nextButton.bind(this);
     this.generateMeme = this.generateMeme.bind(this);
     this.currentImage = this.currentImage.bind(this);
   }
 
+  //Buttons
   currentImage() {
-    fetch(this.props.URL + '/samplememes').then(response => response.json()).then((data) => console.log('this is your data', data));
+    //fetch(this.props.URL + '/samplememes').then(response => response.json()).then((data) => console.log('this is your data', data));
   }
 
   prevButton() {

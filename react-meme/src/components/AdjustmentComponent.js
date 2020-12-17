@@ -9,11 +9,11 @@ class AdjustmentComponent extends React.Component {
         <div id="inputText"></div>
         <div id="inputColor"></div>
 
-        <button onclick="generateMeme()">Generate</button>
+        <button onClick="generateMeme()">Generate</button>
 
-        <button onclick="getSampleMeme()">Get Samples</button>
+        <button onClick="getSampleMeme()">Get Samples</button>
 
-        <button onclick="saveMeme()">Save Meme</button></div>
+        <button onClick="saveMeme()">Save Meme</button></div>
     )
   }
 }
