@@ -1,4 +1,3 @@
-
 import ImageViewComponent from './components/ImageViewComponent';
 import PreviewComponent from './components/PreviewComponent';
 const React = require('react');
