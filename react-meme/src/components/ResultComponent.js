@@ -26,6 +26,7 @@ class ResultComponent extends React.Component {
       },
       body: JSON.stringify(this.props.state)
     };
+    console.log(requestOptions);
     fetch(this.props.URL + '/memes/generateMeme', requestOptions)
       .then(async response => {
         const data = await response.json();
