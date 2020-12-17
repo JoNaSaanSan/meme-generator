@@ -6,6 +6,8 @@ class ResultComponent extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this.boxes = [];
     // Init state
     this.state = {
       generatedID: '',
@@ -16,14 +18,36 @@ class ResultComponent extends React.Component {
     }
 
     this.generateMeme = this.generateMeme.bind(this);
+    this.retrieveBoxes = this.retrieveBoxes.bind(this);
   }
+
+  retrieveBoxes() {
+    var boxArray = [];
+    var childColor = document.getElementById('inputColor').firstElementChild
+
+    for (var child = document.getElementById('inputText').firstChild; child !== null; child = child.nextSibling) {
+
+      var textObject = {};
+      textObject.text = child.value;
+      textObject.color = "%23" + childColor.value.substring(1);
+      boxArray.push(textObject);
+      childColor = childColor.nextElementSibling;
+    }
+      this.boxes = boxArray;
+  }
+
+
   generateMeme() {
     // do something
     // POST request using fetch with error handling
+    
+    this.retrieveBoxes();
+
+    console.log(this.boxes)
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(this.props.ID, this.props.boxes)
+      body: JSON.stringify(this.props.ID, this.state.boxes)
     };
     fetch(this.props.URL + '/generateMeme', requestOptions)
       .then(async response => {

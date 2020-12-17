@@ -29,7 +29,7 @@ class ImageViewComponent extends React.Component {
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
     this.createInputBoxes = this.createInputBoxes.bind(this);
     this.searchImage = this.searchImage.bind(this);
-    this.retrieveBoxes = this.retrieveBoxes.bind(this);
+
   }
 
   // Initialize
@@ -53,23 +53,7 @@ class ImageViewComponent extends React.Component {
 
   }
 
-  retrieveBoxes() {
-    var boxArray = [];
-    var childColor = document.getElementById('inputColor').firstElementChild
 
-    for (var child = document.getElementById('inputText').firstChild; child !== null; child = child.nextSibling) {
-
-      var textObject = {};
-      textObject.text = child.value;
-      textObject.color = "%23" + childColor.value.substring(1);
-      boxArray.push(textObject);
-      childColor = childColor.nextElementSibling;
-    }
-
-    this.setState({ currentBoxes: boxArray })
-
-    console.log(this.state)
-  }
 
   // Previous Button
   prevButton() {
@@ -149,7 +133,7 @@ class ImageViewComponent extends React.Component {
 
         </div>
 
-        <button onClick={this.retrieveBoxes} id="nextButton" >❯</button>
+        <button onClick={this.retrieveBoxes} id="generateButton" >Generate</button>
         <ResultComponent URL={this.props.URL} {...this.state} />
       </div >
     )
