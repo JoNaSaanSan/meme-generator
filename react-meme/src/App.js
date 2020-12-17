@@ -9,12 +9,19 @@ require('./App.css');
 
 
 class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      URL: 'localhost:3000'
+    }
+  }
 
   render() {
+    const { data } = this.state;
     return (
       <div>
         <SearchComponent />
-        <ImageViewComponent />
+        <ImageViewComponent URL={ data } />
         <AdjustmentComponent />
         <PreviewComponent />
       </div>

@@ -9,7 +9,7 @@ class SearchComponent extends React.Component {
   render() {
     return (
       <div>
-              <input type="text" id="searchText"></input>
+        <input type="text" id="searchText"></input>
         <button id="searchButton">Search</button>
       </div>
     )
