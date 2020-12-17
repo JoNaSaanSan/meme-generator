@@ -1,6 +1,8 @@
 
 const React = require('react');
+const { default: ResultComponent } = require('./ResultComponent');
 require('./ImageViewComponent.css');
+
 
 class ImageViewComponent extends React.Component {
 
@@ -10,25 +12,32 @@ class ImageViewComponent extends React.Component {
     // Index of array
     this.index = 0;
 
-
+    // Init state
     this.state = {
-      currentID: this.props.samplesMemeArray[this.index].width,
-      currentName: this.props.samplesMemeArray[this.index].name,
-      currentBoxCount: this.props.samplesMemeArray[this.index].box_count,
-      currentWidth: this.props.samplesMemeArray[this.index].width,
-      currentHeight: this.props.samplesMemeArray[this.index].height,
-      currentImgURL: this.props.samplesMemeArray[this.index].url,
+      currentID: '',
+      currentName: '',
+      currentBoxCount: '',
+      currentWidth: '',
+      currentHeight: '',
+      currentImgURL: '',
     }
 
     // Binds
     this.prevButton = this.prevButton.bind(this);
     this.nextButton = this.nextButton.bind(this);
-    this.generateMeme = this.generateMeme.bind(this);
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
+    this.createInputBoxes = this.createInputBoxes.bind(this);
+    this.searchImage = this.searchImage.bind(this);
+  }
+
+  // Initialize
+  componentDidMount() {
+    this.setCurrentMemeState(0);
   }
 
   // Set Current Meme State
   setCurrentMemeState(index) {
+
     this.setState({
       currentID: this.props.samplesMemeArray[index].width,
       currentName: this.props.samplesMemeArray[index].name,
@@ -37,6 +46,8 @@ class ImageViewComponent extends React.Component {
       currentHeight: this.props.samplesMemeArray[index].height,
       currentImgURL: this.props.samplesMemeArray[index].url,
     })
+
+    this.createInputBoxes(this.props.samplesMemeArray[index].box_count)
   }
 
   // Previous Button
@@ -52,14 +63,53 @@ class ImageViewComponent extends React.Component {
     this.setCurrentMemeState(this.index)
   }
 
-  generateMeme() {
-    // do something
+  // Create Input Boxes
+  createInputBoxes(boxcount) {
+    // Remove all existing boxes
+    while (document.getElementById('inputText').firstChild) {
+      document.getElementById('inputText').removeChild(document.getElementById('inputText').lastChild);
+    }
+
+    while (document.getElementById('inputColor').firstChild) {
+      document.getElementById('inputColor').removeChild(document.getElementById('inputColor').lastChild);
+    }
+
+    // Add Text Input Boxes
+    for (var i = 0; i < boxcount; i++) {
+      var input = document.createElement("input");
+      input.type = "text";
+      input.className = "inputClass"; // set the CSS class
+      input.id = "textBox_" + i;
+      document.getElementById('inputText').appendChild(input); // put it into the DOM
+
+
+      // Add Color Input Boxes
+      var inputColor = document.createElement("input");
+      inputColor.type = "color";
+      inputColor.className = "inputColorClass"; // set the CSS class
+      inputColor.id = "color_" + i;
+      document.getElementById('inputColor').appendChild(inputColor); // put it into the DOM
+    }
+  }
+
+  searchImage() {
+    for (var i = 0; i < this.props.samplesMemeArray.length; i++) {
+      if (this.props.samplesMemeArray[i].name.toLowerCase().includes(document.getElementById('searchText').value.toLowerCase())) {
+        console.log("found")
+        this.setCurrentMemeState(i);
+      }
+    }
   }
 
 
   render() {
     return (
       <div>
+        <div>
+          <input type="text" id="searchText"></input>
+          <button id="searchButton" onClick={this.searchImage}>Search</button>
+        </div>
+
         <div class="Create">
           <div id="slideShowImages">
             <h2> {this.state.currentName}</h2>
@@ -72,15 +122,12 @@ class ImageViewComponent extends React.Component {
           <button onClick={this.prevButton} id="prevButton" >❮</button>
           <button onClick={this.nextButton} id="nextButton" >❯</button>
 
-          <button onClick={this.currentImgURL}>Generate</button>
+          <div id="inputText"></div>
+          <div id="inputColor"></div>
+
         </div>
 
-        <div class="Result">
-          <div id="resultImage">
-            <div class="resultImageNumber"></div>
-            <p>Nothing generated yet.</p>
-          </div>
-        </div>
+        <ResultComponent URL={this.props.URL} {...this.state} />
       </div >
     )
   }

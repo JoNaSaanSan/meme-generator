@@ -1,7 +1,5 @@
 
-import SearchComponent from './components/SearchComponent';
 import ImageViewComponent from './components/ImageViewComponent';
-import AdjustmentComponent from './components/AdjustmentComponent';
 import PreviewComponent from './components/PreviewComponent';
 const React = require('react');
 require('./App.css');
@@ -56,9 +54,7 @@ class App extends React.Component {
     if (this.state.samplesMemeArray.length === 0) return <div>There seems to be no connection to the server!</div>;
 
     return <div>
-      <SearchComponent />
       <ImageViewComponent URL={this.state.URL} samplesMemeArray={this.state.samplesMemeArray} />
-      <AdjustmentComponent />
       <PreviewComponent />
     </div>
 
