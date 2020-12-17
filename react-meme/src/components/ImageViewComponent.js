@@ -18,7 +18,8 @@ class ImageViewComponent extends React.Component {
   }
 
   currentImage() {
-    fetch( this.state.data + '/').then(response => response.json())
+    console.log("hi")
+    fetch('http://localhost:3000/samplememes').then(response => response.json()).then((data) => console.log('this is your data', data));
   }
 
   prevButton() {
@@ -40,7 +41,7 @@ class ImageViewComponent extends React.Component {
       <div>
         <div class="Create">
           <div id="slideShowImages">
-            <img src={this.currentImage}></img>
+     
             <div class="imageNumber"></div>
 
             <p>Loading, please wait...</p>
@@ -50,7 +51,7 @@ class ImageViewComponent extends React.Component {
           <button onClick={this.prevButton} id="prevButton" >❮</button>
           <button onClick={this.nextButton} id="nextButton" >❯</button>
 
-          <button onclick={this.generateMeme}>Generate</button>
+          <button onClick={this.currentImage}>Generate</button>
         </div>
 
         <div class="Result">

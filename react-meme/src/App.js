@@ -12,7 +12,7 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      URL: 'localhost:3000'
+      URL: 'http://localhost:3000'
     }
   }
 
