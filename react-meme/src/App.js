@@ -1,4 +1,3 @@
-
 import ImageViewComponent from './components/ImageViewComponent';
 import PreviewComponent from './components/PreviewComponent';
 const React = require('react');
@@ -20,13 +19,15 @@ class App extends React.Component {
   // Called when window is loaded
   componentDidMount() {
     // staring your fetching
-    this.setState({ isFetching: true });
+    this.setState({
+      isFetching: true
+    });
     window.addEventListener('load', this.fetchImages);
   }
 
   // fetch all images from /samplememes and store them into a state array
   fetchImages() {
-    fetch(this.state.URL + '/samplememes')
+    fetch(this.state.URL + '/memes/sampleMemes')
       .then(response => {
         return response.json();
       })
@@ -44,19 +45,29 @@ class App extends React.Component {
         console.log("Fetching Memes is done!")
       }).catch(error => {
         // finish fetchnig
-        this.setState({ isFetching: false })
+        this.setState({
+          isFetching: false
+        })
       });
   }
 
 
   render() {
-    if (this.state.isFetching) return <div>Loading...</div>;
-    if (this.state.samplesMemeArray.length === 0) return <div>There seems to be no connection to the server!</div>;
+    if (this.state.isFetching) return <div > Loading... < /div>;
+    if (this.state.samplesMemeArray.length === 0) return <div > There seems to be no connection to the server! < /div>;
 
-    return <div>
-      <ImageViewComponent URL={this.state.URL} samplesMemeArray={this.state.samplesMemeArray} />
-      <PreviewComponent />
-    </div>
+    return <div >
+      <
+      ImageViewComponent URL = {
+        this.state.URL
+      }
+    samplesMemeArray = {
+      this.state.samplesMemeArray
+    }
+    /> <
+    PreviewComponent / >
+      <
+      /div>
 
   }
 

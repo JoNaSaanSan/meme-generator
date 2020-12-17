@@ -1,4 +1,3 @@
-
 const React = require('react');
 require('./ResultComponent.css');
 
@@ -14,7 +13,7 @@ class ResultComponent extends React.Component {
       generatedHeight: '',
       generatedImgURL: '',
     }
-    
+
     this.generateMeme = this.generateMeme.bind(this);
   }
   generateMeme() {
@@ -22,10 +21,12 @@ class ResultComponent extends React.Component {
     // POST request using fetch with error handling
     const requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(this.props.state)
     };
-    fetch(this.props.URL + '/generateMeme', requestOptions)
+    fetch(this.props.URL + '/memes/generateMeme', requestOptions)
       .then(async response => {
         const data = await response.json();
 
@@ -45,24 +46,37 @@ class ResultComponent extends React.Component {
         })
       })
       .catch(error => {
-        this.setState({ errorMessage: error.toString() });
+        this.setState({
+          errorMessage: error.toString()
+        });
         console.error('There was an error!', error);
       });
   }
 
 
   render() {
-    return (
-      <div class="Result">
-      <div id="resultImage">
-        <div class="resultImageNumber"></div>
-        <h2> {this.state.generatedName}</h2>
-        <p>Nothing generated yet.</p>
-        <img src={this.state.generatedImgURL} alt="Target" />
-      </div>
+    return ( <
+      div class = "Result" >
+      <
+      div id = "resultImage" >
+      <
+      div class = "resultImageNumber" > < /div> <
+      h2 > {
+        this.state.generatedName
+      } < /h2> <
+      p > Nothing generated yet. < /p> <
+      img src = {
+        this.state.generatedImgURL
+      }
+      alt = "Target" / >
+      <
+      /div>
 
-      <button onClick={this.generateMeme}>Generate</button>
-    </div>
+      <
+      button onClick = {
+        this.generateMeme
+      } > Generate < /button> < /
+      div >
     )
   }
 }

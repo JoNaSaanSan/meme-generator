@@ -4,11 +4,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
+const db = require('monk')('mongodb+srv://memeAdmin:memeAdmin@memescluster.0vfqo.mongodb.net/memes?retryWrites=true&w=majority');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var samplememesRouter = require('./routes/samplememes');
-var savememeRouter = require('./routes/savememe');
+var memesRouter = require('./routes/memes');
 
 var app = express();
 
@@ -23,12 +23,15 @@ app.use(express.urlencoded({
 }));
 app.use(cookieParser());
 app.use(cors());
+app.use(function(req, res, next) {
+  req.db = db;
+  next();
+});
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/samplememes', samplememesRouter);
-app.use('/savememe', savememeRouter);
+app.use('/memes', memesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
