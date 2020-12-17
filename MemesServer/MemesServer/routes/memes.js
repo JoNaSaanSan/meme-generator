@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 const axios = require('axios');
+var qs = require('qs');
 
 const username = "SandraOMM";
 const password = "onlinemultimedia2020";
@@ -25,6 +26,9 @@ router.get('/sampleMemes', function(req, res, next) {
 router.post('/generateMeme', (req, res, next) => {
   const URL = "https://api.imgflip.com/caption_image";
   console.log(req.query);
+  var boxes = req.query.boxes;
+  console.log(boxes)
+  //console.log(typeof(boxes));
   var options = {
     template_id: req.query.memeID,
     username: username,
@@ -32,11 +36,14 @@ router.post('/generateMeme', (req, res, next) => {
     boxes: req.query.boxes,
   };
   console.log(options)
-  axios.post(URL)
+  axios.post(URL, qs.stringify(options))
     .then(response => {
       console.log(response);
       if (response.success != true) {
-
+        console.log("An error occured: ", response.data);
+        res.send(response.data)
+      } else {
+        res.send(response.data.data);
       }
     })
     .catch(error => {
