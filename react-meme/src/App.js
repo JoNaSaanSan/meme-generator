@@ -13,31 +13,55 @@ class App extends React.Component {
     super()
     this.state = {
       URL: 'http://localhost:3000',
-      
+      isFetching: false,
+      samplesMemeArray: [],
     }
-
-
+    this.fetchImages = this.fetchImages.bind(this);
   }
 
-  //Get All Sample Memes
+  // Called when window is loaded
+  componentDidMount() {
+    // staring your fetching
+    this.setState({ isFetching: true });
+    window.addEventListener('load', this.fetchImages);
+  }
+
+  // fetch all images from /samplememes and store them into a state array
   fetchImages() {
-    fetch(this.state.URL + '/samplememes').then(response => response.json()).then((data) => {
-      console.log('this is your data', data)
+    fetch(this.state.URL + '/samplememes')
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        console.log("Fetching Memes...")
+        let tmpArray = []
+        for (var i = 0; i < data.length; i++) {
+          tmpArray.push(data[i])
+        }
 
-    });
+        this.setState({
+          samplesMemeArray: tmpArray,
+          isFetching: false
+        })
+        console.log("Fetching Memes is done!")
+      }).catch(error => {
+        // finish fetchnig
+        this.setState({ isFetching: false })
+      });
   }
+
 
   render() {
-    this.fetchImages();
-    return (
-      <div>
-        <SearchComponent />
-        <ImageViewComponent URL={this.state.URL} />
-        <AdjustmentComponent />
-        <PreviewComponent />
+    if (this.state.isFetching) return <div>Loading...</div>;
+    if (this.state.samplesMemeArray.length === 0) return <div>There seems to be no connection to the server!</div>;
 
-      </div>
-    );
+    return <div>
+      <SearchComponent />
+      <ImageViewComponent URL={this.state.URL} samplesMemeArray={this.state.samplesMemeArray} />
+      <AdjustmentComponent />
+      <PreviewComponent />
+    </div>
+
   }
 
 }

@@ -7,25 +7,49 @@ class ImageViewComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    //Button Binds
+    // Index of array
+    this.index = 0;
+
+
+    this.state = {
+      currentID: this.props.samplesMemeArray[this.index].width,
+      currentName: this.props.samplesMemeArray[this.index].name,
+      currentBoxCount: this.props.samplesMemeArray[this.index].box_count,
+      currentWidth: this.props.samplesMemeArray[this.index].width,
+      currentHeight: this.props.samplesMemeArray[this.index].height,
+      currentImgURL: this.props.samplesMemeArray[this.index].url,
+    }
+
+    // Binds
     this.prevButton = this.prevButton.bind(this);
     this.nextButton = this.nextButton.bind(this);
     this.generateMeme = this.generateMeme.bind(this);
-    this.currentImage = this.currentImage.bind(this);
+    this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
   }
 
-  //Buttons
-  currentImage() {
-    //fetch(this.props.URL + '/samplememes').then(response => response.json()).then((data) => console.log('this is your data', data));
+  // Set Current Meme State
+  setCurrentMemeState(index) {
+    this.setState({
+      currentID: this.props.samplesMemeArray[index].width,
+      currentName: this.props.samplesMemeArray[index].name,
+      currentBoxCount: this.props.samplesMemeArray[index].box_count,
+      currentWidth: this.props.samplesMemeArray[index].width,
+      currentHeight: this.props.samplesMemeArray[index].height,
+      currentImgURL: this.props.samplesMemeArray[index].url,
+    })
   }
 
+  // Previous Button
   prevButton() {
-    // do something
-
+    console.log(this.props.samplesMemeArray[this.index])
+    this.index = (this.index + (this.props.samplesMemeArray.length) - 1) % (this.props.samplesMemeArray.length)
+    this.setCurrentMemeState(this.index)
   }
 
+  // Next Button
   nextButton() {
-    // do something
+    this.index = (this.index + (this.props.samplesMemeArray.length) + 1) % (this.props.samplesMemeArray.length)
+    this.setCurrentMemeState(this.index)
   }
 
   generateMeme() {
@@ -38,17 +62,17 @@ class ImageViewComponent extends React.Component {
       <div>
         <div class="Create">
           <div id="slideShowImages">
-     
-            <div class="imageNumber"></div>
+            <h2> {this.state.currentName}</h2>
 
-            <p>Loading, please wait...</p>
+            <div class="imageNumber"></div>
+            <img src={this.state.currentImgURL} alt="Target" />
 
           </div>
 
           <button onClick={this.prevButton} id="prevButton" >❮</button>
           <button onClick={this.nextButton} id="nextButton" >❯</button>
 
-          <button onClick={this.currentImage}>Generate</button>
+          <button onClick={this.currentImgURL}>Generate</button>
         </div>
 
         <div class="Result">
