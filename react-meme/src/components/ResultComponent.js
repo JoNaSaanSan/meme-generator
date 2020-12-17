@@ -14,7 +14,7 @@ class ResultComponent extends React.Component {
       generatedHeight: '',
       generatedImgURL: '',
     }
-    
+
     this.generateMeme = this.generateMeme.bind(this);
   }
   generateMeme() {
@@ -23,7 +23,7 @@ class ResultComponent extends React.Component {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(this.props.state)
+      body: JSON.stringify(this.props.ID, this.props.boxes)
     };
     fetch(this.props.URL + '/generateMeme', requestOptions)
       .then(async response => {
