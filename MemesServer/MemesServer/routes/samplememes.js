@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var path = require('path');
-
+const axios = require('axios');
 //const samplememe = require(path.join(__dirname, '..', 'public', 'images', "balloon.jpg"));
-data = {
+/*
   data: {
     memes: [{
         id: 1,
@@ -23,12 +23,21 @@ data = {
       }
     ]
   }
-};
+};*/
+var memes = [];
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   //res.send("moin")
-
-  res.send(data);
+  const URL = "https://api.imgflip.com/get_memes";
+  axios.get(URL)
+    .then(response => {
+      memes = response.data.data.memes;
+      res.send(memes);
+    })
+    .catch(error => {
+      console.log(error);
+    })
 });
 
 module.exports = router;
