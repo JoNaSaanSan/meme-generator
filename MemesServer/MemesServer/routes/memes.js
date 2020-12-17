@@ -13,6 +13,7 @@ var memes = [];
 router.get('/sampleMemes', function(req, res, next) {
   //res.send("moin")
   const URL = "https://api.imgflip.com/get_memes";
+  console.log("sample memes requested");
   axios.get(URL)
     .then(response => {
       memes = response.data.data.memes;

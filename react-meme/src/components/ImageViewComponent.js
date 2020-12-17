@@ -1,6 +1,7 @@
-
 const React = require('react');
-const { default: ResultComponent } = require('./ResultComponent');
+const {
+  default: ResultComponent
+} = require('./ResultComponent');
 require('./ImageViewComponent.css');
 
 
@@ -109,33 +110,67 @@ class ImageViewComponent extends React.Component {
 
 
   render() {
-    return (
-      <div>
-        <div>
-          <input type="text" id="searchText"></input>
-          <button id="searchButton" onClick={this.searchImage}>Search</button>
-        </div>
+    return ( <
+      div >
+      <
+      div >
+      <
+      input type = "text"
+      id = "searchText" / > <
+      button id = "searchButton"
+      onClick = {
+        this.searchImage
+      } > Search < /button> < /
+      div >
 
-        <div class="Create">
-          <div id="slideShowImages">
-            <h2> {this.state.currentName}</h2>
+      <
+      div className = "Create" >
+      <
+      div id = "slideShowImages" >
+      <
+      h2 > {
+        this.state.currentName
+      } < /h2>
 
-            <div class="imageNumber"></div>
-            <img src={this.state.currentImgURL} alt="Target" />
+      <
+      div className = "imageNumber" > < /div> <
+      img src = {
+        this.state.currentImgURL
+      }
+      alt = "Target" / >
 
-          </div>
+      <
+      /div>
 
-          <button onClick={this.prevButton} id="prevButton" >❮</button>
-          <button onClick={this.nextButton} id="nextButton" >❯</button>
+      <
+      button onClick = {
+        this.prevButton
+      }
+      id = "prevButton" > ❮ < /button> <
+      button onClick = {
+        this.nextButton
+      }
+      id = "nextButton" > ❯ < /button>
 
-          <div id="inputText"></div>
-          <div id="inputColor"></div>
+      <
+      div id = "inputText" > < /div> <
+      div id = "inputColor" > < /div>
 
-        </div>
+      <
+      /div>
 
-        <button onClick={this.retrieveBoxes} id="generateButton" >Generate</button>
-        <ResultComponent URL={this.props.URL} {...this.state} />
-      </div >
+      <
+      button onClick = {
+        this.retrieveBoxes
+      }
+      id = "generateButton" > Generate < /button> <
+      ResultComponent URL = {
+        this.props.URL
+      } {
+        ...this.state
+      }
+      /> < /
+      div >
     )
   }
 }

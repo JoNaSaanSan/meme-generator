@@ -1,4 +1,3 @@
-
 const React = require('react');
 require('./ResultComponent.css');
 
@@ -33,26 +32,28 @@ class ResultComponent extends React.Component {
       boxArray.push(textObject);
       childColor = childColor.nextElementSibling;
     }
-      this.boxes = boxArray;
+    this.boxes = boxArray;
   }
 
 
   generateMeme() {
     // do something
     // POST request using fetch with error handling
-    
+
     this.retrieveBoxes();
 
     console.log(this.boxes)
     const requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(this.props.ID, this.state.boxes)
     };
-    fetch(this.props.URL + '/generateMeme', requestOptions)
+    fetch(this.props.URL + '/memes/generateMeme', requestOptions)
       .then(async response => {
         const data = await response.json();
-
+        console.log(response);
         // check for error response
         if (!response.ok) {
           // get error message from body or default to response status
@@ -69,24 +70,37 @@ class ResultComponent extends React.Component {
         })
       })
       .catch(error => {
-        this.setState({ errorMessage: error.toString() });
+        this.setState({
+          errorMessage: error.toString()
+        });
         console.error('There was an error!', error);
       });
   }
 
 
   render() {
-    return (
-      <div class="Result">
-      <div id="resultImage">
-        <div class="resultImageNumber"></div>
-        <h2> {this.state.generatedName}</h2>
-        <p>Nothing generated yet.</p>
-        <img src={this.state.generatedImgURL} alt="Target" />
-      </div>
+    return ( <
+      div className = "Result" >
+      <
+      div id = "resultImage" >
+      <
+      div className = "resultImageNumber" > < /div> <
+      h2 > {
+        this.state.generatedName
+      } < /h2> <
+      p > Nothing generated yet. < /p> <
+      img src = {
+        this.state.generatedImgURL
+      }
+      alt = "Target" / >
+      <
+      /div>
 
-      <button onClick={this.generateMeme}>Generate</button>
-    </div>
+      <
+      button onClick = {
+        this.generateMeme
+      } > Generate < /button> < /
+      div >
     )
   }
 }
