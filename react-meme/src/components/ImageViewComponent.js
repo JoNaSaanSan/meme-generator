@@ -6,10 +6,6 @@ class ImageViewComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    
-    this.state = {
-      data: this.props.URL
-    }
 
     this.prevButton = this.prevButton.bind(this);
     this.nextButton = this.nextButton.bind(this);
@@ -18,8 +14,7 @@ class ImageViewComponent extends React.Component {
   }
 
   currentImage() {
-    console.log("hi")
-    fetch('http://localhost:3000/samplememes').then(response => response.json()).then((data) => console.log('this is your data', data));
+    fetch(this.props.URL + '/samplememes').then(response => response.json()).then((data) => console.log('this is your data', data));
   }
 
   prevButton() {
