@@ -41,7 +41,7 @@ class ImageViewComponent extends React.Component {
 
   // Set Current Meme State
   setCurrentMemeState(step) {
-    var newIndex = this.state.index + step
+    var newIndex = (this.state.index + step + (this.props.samplesMemeArray.length)) % (this.props.samplesMemeArray.length)
     var newInputBoxesArray = [];
 
     for (var i = 0; i < this.props.samplesMemeArray[newIndex].box_count; i++) {
@@ -50,7 +50,7 @@ class ImageViewComponent extends React.Component {
 
     this.setState({
       currentMeme: this.props.samplesMemeArray[newIndex],
-      index: (newIndex + (this.props.samplesMemeArray.length)) % (this.props.samplesMemeArray.length),
+      index: newIndex,
       inputBoxes: newInputBoxesArray,
     })
   }
@@ -69,7 +69,7 @@ class ImageViewComponent extends React.Component {
   searchImage() {
     for (var i = 0; i < this.props.samplesMemeArray.length; i++) {
       if (this.props.samplesMemeArray[i].name.toLowerCase().includes(document.getElementById('searchText').value.toLowerCase())) {
-        console.log("found")
+        console.log("found" + i)
         this.setCurrentMemeState(i);
       }
     }
@@ -79,8 +79,8 @@ class ImageViewComponent extends React.Component {
   createUI() {
     return this.state.inputBoxes.map((el, i) =>
       <div key={i}>
-        <input type="text" onChange={this.handleChange.bind(this, i)} />
-        <input type="color" onChange={this.handleChange.bind(this, i)} />
+        <input type="text" class="textBox" onChange={this.handleChange.bind(this, i)} />
+        <input type="color" class="colorBox" onChange={this.handleChange.bind(this, i)} />
       </div>)
   }
 
@@ -95,13 +95,13 @@ class ImageViewComponent extends React.Component {
 
   // Render
   render() {
-    return (<div>
-      <div>
-        <input type="text" id="searchText" />
-        <button id="searchButton" onClick={this.searchImage}> Search </button>
+    return (<div class="ImageView">
+      <div class="SearchView">
+        <input type="text"class="textBox" id="searchText" />
+        <button id="searchButton"  onClick={this.searchImage}> Search </button>
       </div>
 
-      <div className="Create" >
+      <div class="Create" >
         <div id="slideShowImages" >
           <h2 > {this.state.currentMeme.name} </h2>
 

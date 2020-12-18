@@ -10,7 +10,6 @@ class ResultComponent extends React.Component {
     // Init state
     this.state = {
       generatedMeme: '',
-
     }
     this.generateMeme = this.generateMeme.bind(this);
   }

@@ -1,0 +1,61 @@
+.ImageView {
+    background-color: rgb(41, 41, 41);
+    padding: 2em;
+    position: relative;
+    overflow: auto;
+    color: white;
+}
+
+.SearchView{
+    width: 100%;
+
+
+    
+}
+
+
+#prevButton, #nextButton {
+    width:150px;
+
+    height:50px;
+    position: relative;
+    cursor:pointer;
+}
+
+
+/* Position the "next button" to the right */
+
+#nextButton {
+    margin-left: 10px;
+}
+
+.Create{
+    margin: 1em
+}
+
+.textBox{
+    background-color: #363636;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 6px;
+}
+
+.colorBox{
+    background-color: rgb(41, 41, 41);
+    border: none;
+    color: white;
+}
+
+
+#searchButton{
+    background-color: #363636;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 6px;
+    cursor: pointer;
+}
+
