@@ -1,7 +1,4 @@
 const React = require('react');
-const {
-  default: ResultComponent
-} = require('./ResultComponent');
 require('./ImageViewComponent.css');
 
 
@@ -13,6 +10,7 @@ class ImageViewComponent extends React.Component {
     // Init state
     this.state = {
       currentMeme: '',
+      generatedMeme: '',
       // Index of array
       index: 0,
 
@@ -32,6 +30,8 @@ class ImageViewComponent extends React.Component {
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
     this.searchImage = this.searchImage.bind(this);
     this.createUI = this.createUI.bind(this);
+    this.generateMeme = this.generateMeme.bind(this);
+    this.saveMeme = this.saveMeme.bind(this);
   }
 
   // Initialize
@@ -103,36 +103,113 @@ class ImageViewComponent extends React.Component {
     }));
   }
 
+  //Generate Meme
+  generateMeme() {
+    // POST request using fetch with error handling
+    var memeObject = {};
+    memeObject.id = this.state.currentMeme.id;
+    memeObject.inputBoxes = this.state.inputBoxes
+
+    console.log(memeObject)
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(memeObject)
+    };
+    fetch(this.props.URL + '/memes/generateMeme', requestOptions)
+      .then(async response => {
+        const data = await response.json();
+        console.log(data);
+        // check for error response
+        if (!response.ok) {
+          // get error message from body or default to response status
+          const error = (data && data.message) || response.status;
+          return Promise.reject(error);
+        }
+
+        var tmp = {};
+        tmp.url = data.data.url;
+
+
+        this.setState({
+          generatedMeme: tmp,
+        })
+      })
+      .catch(error => {
+        this.setState({
+          errorMessage: error.toString()
+        });
+        console.error('There was an error!', error);
+      });
+  }
+
+  // Save Meme / Send to server
+  saveMeme() {
+    // POST request using fetch with error handling
+    console.log(this.state.generatedMeme)
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(this.state.generatedMeme)
+    };
+    fetch(this.props.URL + '/memes/saveMeme', requestOptions)
+      .then(async response => {
+        const data = await response.json();
+        console.log(data);
+        // check for error response
+        if (!response.ok) {
+          // get error message from body or default to response status
+          const error = (data && data.message) || response.status;
+          return Promise.reject(error);
+        }
+      })
+      .catch(error => {
+        this.setState({
+          errorMessage: error.toString()
+        });
+        console.error('There was an error!', error);
+      });
+  }
+
   // Render
   render() {
-    return (<div class="ImageView">
-      <div class="SearchView">
-        <input type="text" class="textBox" id="searchText" />
-        <button id="searchButton" onClick={this.searchImage}> Search </button>
-      </div>
-
-      <div class="Create" >
-        <div class="ImageDisplay"><div id="slideShowImages" >
-          <h2 > {this.state.currentMeme.name} </h2>
-
-          <div className="imageNumber" > </div>
-          <img src={this.state.currentMeme.url}
-            alt="Target" id="imageTemplate" />
-        </div>
-        </div>
-        <div class="Controls">
-          <button onClick={this.prevButton} id="prevButton" > ❮ </button>
-          <button onClick={this.nextButton} id="nextButton" > ❯ </button>
-
-          <div id="dynamicInput">
-            {this.createUI()}
+    return (
+      <div class="image-view">
+        <div class="outer-grid-container">
+          <div id="control-view">
+            <div id="inner-grid-container">
+              <h1 id="header-text"> Meme Generator </h1>
+              <input type="text" id="search-text-box" class="textBox" />
+              <button id="search-button" class="button" onClick={this.searchImage}> Search </button>
+              <button onClick={this.prevButton} id="prev-button" class="button" > Previous </button>
+              <button onClick={this.nextButton} id="next-button" class="button" > Next </button>
+              <button onClick={this.generateMeme} id="generate-button" class="button" > Generate</button>
+              <button onClick={this.saveMeme} id="save-button" class="button" > Save Meme </button>
+            </div>
+            <p>Insert text below </p>
+            <div id="ui-buttons"> {this.createUI()}</div>
+          </div>
+          <div id="sample-image-view" class="image-display">
+            <h2 > {this.state.currentMeme.name} </h2>
+            <div className="imageNumber" > </div>
+            <img src={this.state.currentMeme.url} onError={i => i.target.style.display='none'}
+              alt="Target" id="imageTemplate" />
           </div>
 
-          <div id="inputText" > </div>
-          <div id="inputColor" > </div>
+          <div id="generated-image-view" class="image-display">
+            <h2 > Generated Image: </h2>
+            <div className="resultImageNumber" > </div>
+            <h2> {this.state.generatedName} </h2>
+            <img src={this.state.generatedMeme.url} onError={i => i.target.src=''} alt="Generated Image"  id="imageTemplate" />
+          </div >
+
+
         </div>
       </div>
-      <ResultComponent URL={this.props.URL} currentMeme={this.state.currentMeme} inputBoxes={this.state.inputBoxes} /> </div>
     )
   }
 }
