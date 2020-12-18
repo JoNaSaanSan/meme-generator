@@ -11,7 +11,9 @@ class ResultComponent extends React.Component {
     this.state = {
       generatedMeme: '',
     }
+
     this.generateMeme = this.generateMeme.bind(this);
+    this.saveMeme = this.saveMeme.bind(this);
   }
 
   //Generate Meme
@@ -20,7 +22,8 @@ class ResultComponent extends React.Component {
     var memeObject = {};
     memeObject.id = this.props.currentMeme.id;
     memeObject.inputBoxes = this.props.inputBoxes
-    console.log(JSON.stringify(memeObject))
+
+    console.log(memeObject)
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -31,7 +34,7 @@ class ResultComponent extends React.Component {
     fetch(this.props.URL + '/memes/generateMeme', requestOptions)
       .then(async response => {
         const data = await response.json();
-        console.log(response);
+        console.log(data);
         // check for error response
         if (!response.ok) {
           // get error message from body or default to response status
@@ -40,7 +43,8 @@ class ResultComponent extends React.Component {
         }
 
         var tmp = new Meme();
-        tmp.url = data.url;
+        tmp.url = data.data.url;
+
 
         this.setState({
           generatedMeme: tmp,
@@ -54,30 +58,53 @@ class ResultComponent extends React.Component {
       });
   }
 
+  saveMeme() {
+    // POST request using fetch with error handling
+
+    console.log(this.state.generatedMeme)
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(this.state.generatedMeme)
+    };
+    fetch(this.props.URL + '/memes/saveMeme', requestOptions)
+      .then(async response => {
+        const data = await response.json();
+        console.log(data);
+        // check for error response
+        if (!response.ok) {
+          // get error message from body or default to response status
+          const error = (data && data.message) || response.status;
+          return Promise.reject(error);
+        }
+      })
+      .catch(error => {
+        this.setState({
+          errorMessage: error.toString()
+        });
+        console.error('There was an error!', error);
+      });
+
+  }
 
   render() {
     return (
 
-      <
-      div className = "Result" >
-      <
-      div id = "resultImage" >
-      <
-      div className = "resultImageNumber" > < /div> <
-      h2 > {
-        this.state.generatedName
-      } < /h2> <p > Nothing generated yet. </
-      p > < img src = {
-        this.state.generatedMeme.url
-      }
-      alt = "Target" / >
-      <
-      /div>
+      <div className="Result" >
+        <div id="resultImage" >
+          <div className="resultImageNumber" > </div>
+          <h2> {this.state.generatedName} </h2>
+          <p> Nothing generated yet. </p>
+          <img src={this.state.generatedMeme.url} alt="Target" />
+        </div>
 
-      <
-      button onClick = {
-        this.generateMeme
-      } > Generate < /button> </div >
+        <div>
+          <button onClick={this.generateMeme} > Generate Meme</button>
+          <button onClick={this.saveMeme} > Save Meme </button>
+        </div>
+      </div >
     )
   }
 }

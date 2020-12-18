@@ -44,7 +44,12 @@ class ImageViewComponent extends React.Component {
     var newInputBoxesArray = [];
 
     for (var i = 0; i < this.props.samplesMemeArray[index].box_count; i++) {
-      newInputBoxesArray.push({ textID: i, text: '', color: '' });
+      // Check if box is undefined
+      if (this.state.inputBoxes[i] !== undefined) {
+        newInputBoxesArray.push({ textID: i, text: this.state.inputBoxes[i].text, color: this.state.inputBoxes[i].color });
+      } else {
+        newInputBoxesArray.push({ textID: i, text: '', color: '' });
+      }
     }
 
     this.setState({
@@ -55,7 +60,7 @@ class ImageViewComponent extends React.Component {
   }
 
   //Set new index with step
-  setNewIndex(step){
+  setNewIndex(step) {
     var newIndex = (this.state.index + step + (this.props.samplesMemeArray.length)) % (this.props.samplesMemeArray.length)
     this.setCurrentMemeState(newIndex)
   }
@@ -75,7 +80,7 @@ class ImageViewComponent extends React.Component {
     for (var i = 0; i < this.props.samplesMemeArray.length; i++) {
       if (this.props.samplesMemeArray[i].name.toLowerCase().includes(document.getElementById('searchText').value.toLowerCase())) {
         console.log("found " + i)
-       this.setCurrentMemeState(i)
+        this.setCurrentMemeState(i)
       }
     }
   }
@@ -102,8 +107,8 @@ class ImageViewComponent extends React.Component {
   render() {
     return (<div class="ImageView">
       <div class="SearchView">
-        <input type="text"class="textBox" id="searchText" />
-        <button id="searchButton"  onClick={this.searchImage}> Search </button>
+        <input type="text" class="textBox" id="searchText" />
+        <button id="searchButton" onClick={this.searchImage}> Search </button>
       </div>
 
       <div class="Create" >
@@ -125,7 +130,7 @@ class ImageViewComponent extends React.Component {
         <div id="inputText" > </div>
         <div id="inputColor" > </div>
       </div>
-      <ResultComponent URL={this.props.URL} currentMeme={this.state.currentMeme} inputBoxes={this.state.inputBoxes}/> </div>
+      <ResultComponent URL={this.props.URL} currentMeme={this.state.currentMeme} inputBoxes={this.state.inputBoxes} /> </div>
     )
   }
 }
