@@ -1,21 +1,8 @@
 import ImageViewComponent from './components/ImageViewComponent';
 import PreviewComponent from './components/PreviewComponent';
+import Meme from './components/Meme'
 const React = require('react');
 require('./App.css');
-
-
-// Meme Class
-class Meme {
-  constructor(url, id, width, height, name, boxcount) {
-    this.url = url;
-    this.id = id;
-    this.width = width;
-    this.height = height;
-    this.name = name;
-    this.boxcount = boxcount;
-  }
-}
-
 
 class App extends React.Component {
   constructor() {

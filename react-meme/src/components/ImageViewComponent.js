@@ -5,8 +5,6 @@ const {
 require('./ImageViewComponent.css');
 
 
-
-
 class ImageViewComponent extends React.Component {
 
   constructor(props) {
@@ -17,15 +15,23 @@ class ImageViewComponent extends React.Component {
       currentMeme: '',
       // Index of array
       index: 0,
+
+      //Handle inputTextBoxes
+      inputBoxes: [
+        {
+          textID: '',
+          text: '',
+          color: '',
+        }
+      ],
     }
 
     // Binds
     this.prevButton = this.prevButton.bind(this);
     this.nextButton = this.nextButton.bind(this);
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
-    this.createInputBoxes = this.createInputBoxes.bind(this);
     this.searchImage = this.searchImage.bind(this);
-
+    this.createUI = this.createUI.bind(this);
   }
 
   // Initialize
@@ -36,12 +42,17 @@ class ImageViewComponent extends React.Component {
   // Set Current Meme State
   setCurrentMemeState(step) {
     var newIndex = this.state.index + step
+    var newInputBoxesArray = [];
+
+    for (var i = 0; i < this.props.samplesMemeArray[newIndex].box_count; i++) {
+      newInputBoxesArray.push({ textID: i, text: '', color: '' });
+    }
+
     this.setState({
       currentMeme: this.props.samplesMemeArray[newIndex],
       index: (newIndex + (this.props.samplesMemeArray.length)) % (this.props.samplesMemeArray.length),
+      inputBoxes: newInputBoxesArray,
     })
-
-    this.createInputBoxes(this.props.samplesMemeArray[newIndex].box_count)
   }
 
   // Previous Button
@@ -54,35 +65,6 @@ class ImageViewComponent extends React.Component {
     this.setCurrentMemeState(1)
   }
 
-  // Create Input Boxes
-  createInputBoxes(boxcount) {
-    // Remove all existing boxes
-    while (document.getElementById('inputText').firstChild) {
-      document.getElementById('inputText').removeChild(document.getElementById('inputText').lastChild);
-    }
-
-    while (document.getElementById('inputColor').firstChild) {
-      document.getElementById('inputColor').removeChild(document.getElementById('inputColor').lastChild);
-    }
-
-    // Add Text Input Boxes
-    for (var i = 0; i < boxcount; i++) {
-      var input = document.createElement("input");
-      input.type = "text";
-      input.className = "inputClass"; // set the CSS class
-      input.id = "textBox_" + i;
-      document.getElementById('inputText').appendChild(input); // put it into the DOM
-
-
-      // Add Color Input Boxes
-      var inputColor = document.createElement("input");
-      inputColor.type = "color";
-      inputColor.className = "inputColorClass"; // set the CSS class
-      inputColor.id = "color_" + i;
-      document.getElementById('inputColor').appendChild(inputColor); // put it into the DOM
-    }
-  }
-
   // Search Function
   searchImage() {
     for (var i = 0; i < this.props.samplesMemeArray.length; i++) {
@@ -91,6 +73,24 @@ class ImageViewComponent extends React.Component {
         this.setCurrentMemeState(i);
       }
     }
+  }
+
+  // Add Input Boxes (Text & Color) depending on the meme boxcount
+  createUI() {
+    return this.state.inputBoxes.map((el, i) =>
+      <div key={i}>
+        <input type="text" onChange={this.handleChange.bind(this, i)} />
+        <input type="color" onChange={this.handleChange.bind(this, i)} />
+      </div>)
+  }
+
+  // Handle Events when Text or Color Input changed and store it in the inputBoxesStates
+  handleChange(i, event) {
+    this.setState(prevState => ({
+      inputBoxes: prevState.inputBoxes.map(
+        obj => (obj.textID === i ? Object.assign(obj, { [event.target.type]: event.target.value }) : obj)
+      )
+    }));
   }
 
   // Render
@@ -112,16 +112,17 @@ class ImageViewComponent extends React.Component {
 
         <button onClick={this.prevButton} id="prevButton" > ❮ </button>
         <button onClick={this.nextButton} id="nextButton" > ❯ </button>
-        <div id="inputText" > </div> <div id="inputColor" > </div>
-      </div>
 
-      <button onClick={this.retrieveBoxes} id="generateButton" > Generate </button>
-      <ResultComponent URL={this.props.URL} Meme={this.state.currentMeme} /> </div>
+        <div id="dynamicInput">
+          {this.createUI()}
+        </div>
+
+        <div id="inputText" > </div>
+        <div id="inputColor" > </div>
+      </div>
+      <ResultComponent URL={this.props.URL} currentMeme={this.state.currentMeme} inputBoxes={this.state.inputBoxes}/> </div>
     )
   }
 }
-
-
-
 
 export default ImageViewComponent;
