@@ -112,23 +112,25 @@ class ImageViewComponent extends React.Component {
       </div>
 
       <div class="Create" >
-        <div id="slideShowImages" >
+        <div class="ImageDisplay"><div id="slideShowImages" >
           <h2 > {this.state.currentMeme.name} </h2>
 
           <div className="imageNumber" > </div>
           <img src={this.state.currentMeme.url}
             alt="Target" id="imageTemplate" />
         </div>
-
-        <button onClick={this.prevButton} id="prevButton" > ❮ </button>
-        <button onClick={this.nextButton} id="nextButton" > ❯ </button>
-
-        <div id="dynamicInput">
-          {this.createUI()}
         </div>
+        <div class="Controls">
+          <button onClick={this.prevButton} id="prevButton" > ❮ </button>
+          <button onClick={this.nextButton} id="nextButton" > ❯ </button>
 
-        <div id="inputText" > </div>
-        <div id="inputColor" > </div>
+          <div id="dynamicInput">
+            {this.createUI()}
+          </div>
+
+          <div id="inputText" > </div>
+          <div id="inputColor" > </div>
+        </div>
       </div>
       <ResultComponent URL={this.props.URL} currentMeme={this.state.currentMeme} inputBoxes={this.state.inputBoxes} /> </div>
     )

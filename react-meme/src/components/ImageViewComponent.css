@@ -31,7 +31,6 @@
 
 .Create{
     margin: 1em;
-    max-width: 50%;
 }
 
 .textBox{
@@ -61,6 +60,10 @@
 }
 
 #imageTemplate{
-    max-width: 75%;;
+    display: block;
+    max-width:800px;
+    max-height:400px;
+    width: auto;
+    height: auto;
 }
 
