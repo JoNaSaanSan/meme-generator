@@ -1,6 +1,8 @@
 const React = require('react');
 require('./ResultComponent.css');
 
+
+
 class ResultComponent extends React.Component {
 
   constructor(props) {
@@ -79,28 +81,22 @@ class ResultComponent extends React.Component {
 
 
   render() {
-    return ( <
-      div className = "Result" >
-      <
-      div id = "resultImage" >
-      <
-      div className = "resultImageNumber" > < /div> <
-      h2 > {
-        this.state.generatedName
-      } < /h2> <
-      p > Nothing generated yet. < /p> <
-      img src = {
-        this.state.generatedImgURL
-      }
-      alt = "Target" / >
-      <
-      /div>
+    return (
 
-      <
-      button onClick = {
-        this.generateMeme
-      } > Generate < /button> < /
-      div >
+      <div className="Result" >
+        <div id="resultImage" >
+          <div className="resultImageNumber" > </div>
+          <h2 > {
+            this.state.generatedName
+          } </h2> <p > Nothing generated yet. </ p> <
+            img src={
+              this.state.generatedImgURL
+            }
+            alt="Target" />
+        </div>
+
+        <button onClick={this.generateMeme
+        } > Generate </button> </div>
     )
   }
 }

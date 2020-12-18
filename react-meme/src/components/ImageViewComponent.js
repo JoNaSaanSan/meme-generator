@@ -5,23 +5,18 @@ const {
 require('./ImageViewComponent.css');
 
 
+
+
 class ImageViewComponent extends React.Component {
 
   constructor(props) {
     super(props);
 
-    // Index of array
-    this.index = 0;
-
     // Init state
     this.state = {
-      currentID: '',
-      currentName: '',
-      currentBoxCount: '',
-      currentWidth: '',
-      currentHeight: '',
-      currentImgURL: '',
-      currentBoxes: '',
+      currentMeme: '',
+      // Index of array
+      index: 0,
     }
 
     // Binds
@@ -39,34 +34,24 @@ class ImageViewComponent extends React.Component {
   }
 
   // Set Current Meme State
-  setCurrentMemeState(index) {
-
+  setCurrentMemeState(step) {
+    var newIndex = this.state.index + step
     this.setState({
-      currentID: this.props.samplesMemeArray[index].width,
-      currentName: this.props.samplesMemeArray[index].name,
-      currentBoxCount: this.props.samplesMemeArray[index].box_count,
-      currentWidth: this.props.samplesMemeArray[index].width,
-      currentHeight: this.props.samplesMemeArray[index].height,
-      currentImgURL: this.props.samplesMemeArray[index].url,
+      currentMeme: this.props.samplesMemeArray[newIndex],
+      index: (newIndex + (this.props.samplesMemeArray.length)) % (this.props.samplesMemeArray.length),
     })
 
-    this.createInputBoxes(this.props.samplesMemeArray[index].box_count)
-
+    this.createInputBoxes(this.props.samplesMemeArray[newIndex].box_count)
   }
-
-
 
   // Previous Button
   prevButton() {
-    console.log(this.props.samplesMemeArray[this.index])
-    this.index = (this.index + (this.props.samplesMemeArray.length) - 1) % (this.props.samplesMemeArray.length)
-    this.setCurrentMemeState(this.index)
+    this.setCurrentMemeState(-1)
   }
 
   // Next Button
   nextButton() {
-    this.index = (this.index + (this.props.samplesMemeArray.length) + 1) % (this.props.samplesMemeArray.length)
-    this.setCurrentMemeState(this.index)
+    this.setCurrentMemeState(1)
   }
 
   // Create Input Boxes
@@ -108,69 +93,30 @@ class ImageViewComponent extends React.Component {
     }
   }
 
-
+  // Render
   render() {
-    return ( <
-      div >
-      <
-      div >
-      <
-      input type = "text"
-      id = "searchText" / > <
-      button id = "searchButton"
-      onClick = {
-        this.searchImage
-      } > Search < /button> < /
-      div >
+    return (<div>
+      <div>
+        <input type="text" id="searchText" />
+        <button id="searchButton" onClick={this.searchImage}> Search </button>
+      </div>
 
-      <
-      div className = "Create" >
-      <
-      div id = "slideShowImages" >
-      <
-      h2 > {
-        this.state.currentName
-      } < /h2>
+      <div className="Create" >
+        <div id="slideShowImages" >
+          <h2 > {this.state.currentMeme.name} </h2>
 
-      <
-      div className = "imageNumber" > < /div> <
-      img src = {
-        this.state.currentImgURL
-      }
-      alt = "Target" / >
+          <div className="imageNumber" > </div>
+          <img src={this.state.currentMeme.url}
+            alt="Target" />
+        </div>
 
-      <
-      /div>
+        <button onClick={this.prevButton} id="prevButton" > ❮ </button>
+        <button onClick={this.nextButton} id="nextButton" > ❯ </button>
+        <div id="inputText" > </div> <div id="inputColor" > </div>
+      </div>
 
-      <
-      button onClick = {
-        this.prevButton
-      }
-      id = "prevButton" > ❮ < /button> <
-      button onClick = {
-        this.nextButton
-      }
-      id = "nextButton" > ❯ < /button>
-
-      <
-      div id = "inputText" > < /div> <
-      div id = "inputColor" > < /div>
-
-      <
-      /div>
-
-      <
-      button onClick = {
-        this.retrieveBoxes
-      }
-      id = "generateButton" > Generate < /button> <
-      ResultComponent URL = {
-        this.props.URL
-      } {
-        ...this.state
-      }
-      /> < /
-      div >
+      <button onClick={this.retrieveBoxes} id="generateButton" > Generate </button>
+      <ResultComponent URL={this.props.URL} Meme={this.state.currentMeme} /> </div>
     )
   }
 }

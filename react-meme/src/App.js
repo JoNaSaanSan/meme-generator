@@ -4,6 +4,18 @@ const React = require('react');
 require('./App.css');
 
 
+// Meme Class
+class Meme {
+  constructor(url, id, width, height, name, boxcount) {
+    this.url = url;
+    this.id = id;
+    this.width = width;
+    this.height = height;
+    this.name = name;
+    this.boxcount = boxcount;
+  }
+}
+
 
 class App extends React.Component {
   constructor() {
@@ -16,11 +28,9 @@ class App extends React.Component {
     this.fetchImages = this.fetchImages.bind(this);
   }
 
-
-
   // Called when window is loaded
   componentDidMount() {
-    // staring your fetching
+    // Start fetching
     this.setState({
       isFetching: true
     });
@@ -28,7 +38,7 @@ class App extends React.Component {
     this.fetchImages();
   }
 
-  // fetch all images from /samplememes and store them into a state array
+  // Fetch all images from /samplememes and store them into a state array
   fetchImages() {
     fetch(this.state.URL + '/memes/sampleMemes')
       .then(response => {
@@ -37,10 +47,17 @@ class App extends React.Component {
       .then(data => {
         console.log("Fetching Memes...")
         let tmpArray = []
-        for (var i = 0; i < data.length; i++) {
-          tmpArray.push(data[i])
-        }
-        console.log(tmpArray);
+          for (var i = 0; i < data.length; i++) {
+            var tmp = new Meme();
+            tmp.id = data[i].id
+            tmp.name = data[i].name
+            tmp.box_count = data[i].box_count
+            tmp.width = data[i].width
+            tmp.height = data[i].height
+            tmp.url = data[i].url
+            tmpArray.push(tmp)
+          }
+        // Populate Meme Array
         this.setState({
           samplesMemeArray: tmpArray,
           isFetching: false
@@ -53,29 +70,15 @@ class App extends React.Component {
           isFetching: false
         })
       });
-
-
   }
-
 
   render() {
-    if (this.state.isFetching) return <div > Loading... < /div>;
-    if (this.state.samplesMemeArray.length === 0) return <div > There seems to be no connection to the server! < /div>;
-
-    return <div >
-      <
-      ImageViewComponent URL = {
-        this.state.URL
-      }
-    samplesMemeArray = {
-      this.state.samplesMemeArray
-    }
-    /> <
-    PreviewComponent / > < /div>
+    if (this.state.isFetching)
+      return <div> Loading... </div>;
+    if (this.state.samplesMemeArray.length === 0)
+      return <div> There seems to be no connection to the server! </div>;
+    return <div> <ImageViewComponent URL={this.state.URL} samplesMemeArray={this.state.samplesMemeArray} /> <PreviewComponent /> </div>
   }
-
 }
-
-
 
 export default App;
