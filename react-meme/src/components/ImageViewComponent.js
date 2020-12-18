@@ -39,38 +39,43 @@ class ImageViewComponent extends React.Component {
     this.setCurrentMemeState(0);
   }
 
-  // Set Current Meme State
-  setCurrentMemeState(step) {
-    var newIndex = (this.state.index + step + (this.props.samplesMemeArray.length)) % (this.props.samplesMemeArray.length)
+  // Set Current Meme State with index
+  setCurrentMemeState(index) {
     var newInputBoxesArray = [];
 
-    for (var i = 0; i < this.props.samplesMemeArray[newIndex].box_count; i++) {
+    for (var i = 0; i < this.props.samplesMemeArray[index].box_count; i++) {
       newInputBoxesArray.push({ textID: i, text: '', color: '' });
     }
 
     this.setState({
-      currentMeme: this.props.samplesMemeArray[newIndex],
-      index: newIndex,
+      currentMeme: this.props.samplesMemeArray[index],
+      index: index,
       inputBoxes: newInputBoxesArray,
     })
   }
 
+  //Set new index with step
+  setNewIndex(step){
+    var newIndex = (this.state.index + step + (this.props.samplesMemeArray.length)) % (this.props.samplesMemeArray.length)
+    this.setCurrentMemeState(newIndex)
+  }
+
   // Previous Button
   prevButton() {
-    this.setCurrentMemeState(-1)
+    this.setNewIndex(-1)
   }
 
   // Next Button
   nextButton() {
-    this.setCurrentMemeState(1)
+    this.setNewIndex(1)
   }
 
   // Search Function
   searchImage() {
     for (var i = 0; i < this.props.samplesMemeArray.length; i++) {
       if (this.props.samplesMemeArray[i].name.toLowerCase().includes(document.getElementById('searchText').value.toLowerCase())) {
-        console.log("found" + i)
-        this.setCurrentMemeState(i);
+        console.log("found " + i)
+       this.setCurrentMemeState(i)
       }
     }
   }
