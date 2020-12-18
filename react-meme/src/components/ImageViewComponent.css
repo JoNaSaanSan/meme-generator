@@ -30,7 +30,8 @@
 }
 
 .Create{
-    margin: 1em
+    margin: 1em;
+    max-width: 50%;
 }
 
 .textBox{
@@ -57,5 +58,9 @@
     text-decoration: none;
     margin: 4px 6px;
     cursor: pointer;
+}
+
+#imageTemplate{
+    max-width: 75%;;
 }
 

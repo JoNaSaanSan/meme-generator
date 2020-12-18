@@ -16,14 +16,17 @@ class ResultComponent extends React.Component {
 
   //Generate Meme
   generateMeme() {
-    // POST request using fetch with error handling
-    console.log(this.props.currentMeme.id, this.props.inputBoxes)
+    // POST request using fetch with error handling 
+    var memeObject = {};
+    memeObject.id = this.props.currentMeme.id;
+    memeObject.inputBoxes = this.props.inputBoxes
+    console.log(JSON.stringify(memeObject))
     const requestOptions = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(this.props.currentMeme.id, this.props.inputBoxes)
+      body: JSON.stringify(memeObject)
     };
     fetch(this.props.URL + '/memes/generateMeme', requestOptions)
       .then(async response => {

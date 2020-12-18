@@ -112,7 +112,7 @@ class ImageViewComponent extends React.Component {
 
           <div className="imageNumber" > </div>
           <img src={this.state.currentMeme.url}
-            alt="Target" />
+            alt="Target" id="imageTemplate" />
         </div>
 
         <button onClick={this.prevButton} id="prevButton" > ❮ </button>
