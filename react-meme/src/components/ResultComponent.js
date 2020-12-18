@@ -92,19 +92,34 @@ class ResultComponent extends React.Component {
   render() {
     return (
 
-      <div className="Result" >
-        <div id="resultImage" >
-          <div className="resultImageNumber" > </div>
-          <h2> {this.state.generatedName} </h2>
-          <p> Nothing generated yet. </p>
-          <img src={this.state.generatedMeme.url} alt="Target" />
-        </div>
+      <
+      div className = "Result" >
+      <
+      div id = "resultImage" >
+      <
+      div className = "resultImageNumber" > < /div> <
+      h2 > {
+        this.state.generatedName
+      } < /h2> <
+      p > Nothing generated yet. < /p> <
+      img src = {
+        this.state.generatedMeme.url
+      }
+      alt = "Target" / >
+      <
+      /div>
 
-        <div>
-          <button onClick={this.generateMeme} > Generate Meme</button>
-          <button onClick={this.saveMeme} > Save Meme </button>
-        </div>
-      </div >
+      <
+      div >
+      <
+      button onClick = {
+        this.generateMeme
+      } > Generate Meme < /button> <
+      button onClick = {
+        this.saveMeme
+      } > Save Meme < /button> <
+      /div> <
+      /div >
     )
   }
 }

@@ -56,8 +56,16 @@ router.post('/generateMeme', (req, res, next) => {
 /* GET home page. */
 router.post('/saveMeme', function(req, res, next) {
   const memes = req.db.get('memes');
-  console.log(req.query);
-  memes.insert(req.query);
+  console.log(req.body);
+  meme = {
+    url: req.body.url,
+    title: "title",
+    creator: "creator",
+    upvotes: 0,
+    downvotes: 0,
+    dateCreated: new Date().toLocaleString()
+  }
+  memes.insert(meme);
   res.send("Meme saved!");
 
 });
