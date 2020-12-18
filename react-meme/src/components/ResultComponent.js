@@ -16,7 +16,7 @@ class ResultComponent extends React.Component {
 
   //Generate Meme
   generateMeme() {
-    // POST request using fetch with error handling 
+    // POST request using fetch with error handling
     var memeObject = {};
     memeObject.id = this.props.currentMeme.id;
     memeObject.inputBoxes = this.props.inputBoxes
@@ -40,9 +40,7 @@ class ResultComponent extends React.Component {
         }
 
         var tmp = new Meme();
-        tmp.id = data.id
         tmp.url = data.url;
-        tmp.name = data.name;
 
         this.setState({
           generatedMeme: tmp,
@@ -60,16 +58,26 @@ class ResultComponent extends React.Component {
   render() {
     return (
 
-      <div className="Result" >
-        <div id="resultImage" >
-          <div className="resultImageNumber" > </div>
-          <h2 > {
-            this.state.generatedName
-          } </h2> <p > Nothing generated yet. </ p> <img src={this.state.generatedMeme.url} alt="Target" />
-        </div>
+      <
+      div className = "Result" >
+      <
+      div id = "resultImage" >
+      <
+      div className = "resultImageNumber" > < /div> <
+      h2 > {
+        this.state.generatedName
+      } < /h2> <p > Nothing generated yet. </
+      p > < img src = {
+        this.state.generatedMeme.url
+      }
+      alt = "Target" / >
+      <
+      /div>
 
-        <button onClick={this.generateMeme
-        } > Generate </button> </div>
+      <
+      button onClick = {
+        this.generateMeme
+      } > Generate < /button> </div >
     )
   }
 }

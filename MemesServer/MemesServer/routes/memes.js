@@ -26,25 +26,26 @@ router.get('/sampleMemes', function(req, res, next) {
 
 router.post('/generateMeme', (req, res, next) => {
   const URL = "https://api.imgflip.com/caption_image";
-  console.log(req.query);
-  var boxes = req.query.boxes;
-  console.log(boxes)
-  //console.log(typeof(boxes));
+  var id = req.body.id;
+  var boxes = []
+  req.body.inputBoxes.map(el => boxes.push({
+    text: el.text,
+    color: el.color
+  }));
   var options = {
-    template_id: req.query.memeID,
+    template_id: id,
     username: username,
     password: password,
-    boxes: req.query.boxes,
+    boxes: boxes,
   };
-  console.log(options)
   axios.post(URL, qs.stringify(options))
     .then(response => {
-      console.log(response);
-      if (response.success != true) {
+      if (response.data.success !== true) {
         console.log("An error occured: ", response.data);
         res.send(response.data)
       } else {
-        res.send(response.data.data);
+        console.log("sending: ", response.data);
+        res.send(response.data);
       }
     })
     .catch(error => {
