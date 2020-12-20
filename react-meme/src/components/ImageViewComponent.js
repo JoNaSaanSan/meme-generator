@@ -78,7 +78,7 @@ class ImageViewComponent extends React.Component {
   // Search Function
   searchImage() {
     for (var i = 0; i < this.props.samplesMemeArray.length; i++) {
-      if (this.props.samplesMemeArray[i].name.toLowerCase().includes(document.getElementById('searchText').value.toLowerCase())) {
+      if (this.props.samplesMemeArray[i].name.toLowerCase().includes(document.getElementById('search-text-box').value.toLowerCase())) {
         console.log("found " + i)
         this.setCurrentMemeState(i)
       }
