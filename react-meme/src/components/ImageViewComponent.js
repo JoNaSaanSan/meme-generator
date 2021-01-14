@@ -188,7 +188,7 @@ class ImageViewComponent extends React.Component {
               <button onClick={this.prevButton} id="prev-button" class="button" > Previous </button>
               <button onClick={this.nextButton} id="next-button" class="button" > Next </button>
               <button onClick={this.generateMeme} id="generate-button" class="button" > Generate</button>
-              <button onClick={this.saveMeme} id="save-button" class="button" > Save Meme </button>
+
             </div>
             <p>Insert text below </p>
             <div id="ui-buttons"> {this.createUI()}</div>
@@ -201,10 +201,11 @@ class ImageViewComponent extends React.Component {
           </div>
 
           <div id="generated-image-view" class="image-display">
-            <h2 > Generated Image: </h2>
-            <div className="resultImageNumber" > </div>
+            <h2 id="generated-title"> Generated Image: </h2>
+            <div className="result-image-number" > </div>
             <h2> {this.state.generatedName} </h2>
-            <img src={this.state.generatedMeme.url} onError={i => i.target.src=''} alt="Generated Image"  id="imageTemplate" />
+            <img src={this.state.generatedMeme.url} onError={i => i.target.src=''} alt="Generated"  id="imageTemplate" />
+            <button onClick={this.saveMeme} id="save-button" class="button" > Save Meme </button>
           </div >
 
 

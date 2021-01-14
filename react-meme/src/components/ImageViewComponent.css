@@ -39,9 +39,6 @@
     grid-area: generate-button;
 }
 
-#save-button {
-    grid-area: save-button;
-}
 
 #control-view {
     height: 500pt;
@@ -56,15 +53,30 @@
     'header-text header-text header-text header-text' 
     'search-text-box search-text-box search-text-box search-button' 
     'prev-button  prev-button next-button next-button' 
-    'generate-button generate-button save-button save-button';
+    'generate-button generate-button generate-button generate-button';
     grid-gap: 10px;
     margin-bottom: 2em;
 }
 
 .image-display{
+    display: flex;
     background-color: rgb(41, 41, 41);
     padding: 2em;
     margin: 2em;
+    flex-wrap: no-wrap;
+}
+
+.result-image-number {
+    align-items: center;
+}
+
+#generated-title {
+    align-items: flex-start;
+}
+
+
+#save-button {
+    align-items: flex-end;
 }
 
 .textBox {
@@ -93,7 +105,7 @@
 }
 
 #imageTemplate {
-    display: block;
+    align-items: center;
     max-width: 400px;
     max-height: 400px;
     width: auto;

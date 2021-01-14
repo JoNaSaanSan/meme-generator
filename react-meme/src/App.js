@@ -1,5 +1,6 @@
 import ImageViewComponent from './components/ImageViewComponent';
 import PreviewComponent from './components/PreviewComponent';
+import HeaderComponent from './components/HeaderComponent';
 import Meme from './components/Meme'
 const React = require('react');
 require('./App.css');
@@ -64,7 +65,7 @@ class App extends React.Component {
       return <div class="App"> Loading... </div>;
     if (this.state.samplesMemeArray.length === 0)
       return <div class="App"> There seems to be no connection to the server! </div>;
-    return <div class="App"> <ImageViewComponent URL={this.state.URL} samplesMemeArray={this.state.samplesMemeArray} /> <PreviewComponent /> </div>
+    return <div class="App"> <HeaderComponent> </HeaderComponent><ImageViewComponent URL={this.state.URL} samplesMemeArray={this.state.samplesMemeArray} /> <PreviewComponent /> </div>
   }
 }
 
