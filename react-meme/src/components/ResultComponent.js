@@ -45,7 +45,6 @@ class ResultComponent extends React.Component {
         var tmp = new Meme();
         tmp.url = data.data.url;
 
-
         this.setState({
           generatedMeme: tmp,
         })
@@ -117,8 +116,8 @@ class ResultComponent extends React.Component {
       } > Generate Meme < /button> <
       button onClick = {
         this.saveMeme
-      } > Save Meme < /button> <
-      /div> <
+      } > Save Meme < /button> < /
+      div > <
       /div >
     )
   }
