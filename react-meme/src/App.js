@@ -61,10 +61,10 @@ class App extends React.Component {
 
   render() {
     if (this.state.isFetching)
-      return <div> Loading... </div>;
+      return <div class="App"> Loading... </div>;
     if (this.state.samplesMemeArray.length === 0)
-      return <div> There seems to be no connection to the server! </div>;
-    return <div> <ImageViewComponent URL={this.state.URL} samplesMemeArray={this.state.samplesMemeArray} /> <PreviewComponent /> </div>
+      return <div class="App"> There seems to be no connection to the server! </div>;
+    return <div class="App"> <ImageViewComponent URL={this.state.URL} samplesMemeArray={this.state.samplesMemeArray} /> <PreviewComponent /> </div>
   }
 }
 
