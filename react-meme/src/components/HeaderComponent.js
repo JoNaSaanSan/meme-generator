@@ -11,7 +11,17 @@ class HeaderComponent extends React.Component {
         super(props);
     }
     render() {
-        return (<div> <Login /> <Logout /></div>);
+        return (
+            <div class="header-view">
+                <div id="menu-view">
+                    <div class="menu-item">Generator</div>
+                    <div class="menu-item">Browse</div>
+                </div>
+                <div id="title-view">MemeLab</div>
+                <div id="account-view">
+                    <Login /> <Logout />
+                </div> </div>
+        );
     }
 }
 
