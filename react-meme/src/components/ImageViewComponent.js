@@ -140,7 +140,7 @@ class ImageViewComponent extends React.Component {
     return (
       <div class="generator-view">
         <div class="outer-container">
-          <ControlsComponent URL={this.state.URL} inputBoxes={this.state.inputBoxes} index={this.state.index} samplesMemeArray={this.props.samplesMemeArray} setCurrentMemeState={newIndex => this.setCurrentMemeState(newIndex)} generateMemeButton={() => this.generateMeme()} handleChange={(i) => this.handleChange.bind(this, i)}/>
+          <ControlsComponent URL={this.state.URL} inputBoxes={this.state.inputBoxes} index={this.state.index} samplesMemeArray={this.props.samplesMemeArray} setCurrentMemeState={newIndex => this.setCurrentMemeState(newIndex)} generateMeme={() => this.generateMeme()} handleChange={(i) => this.handleChange.bind(this, i)}/>
           <div class="image-view" id="center-container">
             <h2 > {this.state.currentMeme.name} </h2>
             <div className="image-display" >

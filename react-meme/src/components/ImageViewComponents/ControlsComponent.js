@@ -57,7 +57,7 @@ class ControlsComponent extends React.Component {
 
   //Generate Meme Button
   generateMemeButton() {
-    this.props.generateMemeButton();
+    this.props.generateMeme();
   }
 
   // Render
