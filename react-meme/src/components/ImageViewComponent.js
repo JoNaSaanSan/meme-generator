@@ -1,4 +1,5 @@
 import ControlsComponent from './ImageViewComponents/ControlsComponent';
+import PreviewComponent from './PreviewComponent';
 const React = require('react');
 require('./ImageViewComponent.css');
 
@@ -26,7 +27,7 @@ class ImageViewComponent extends React.Component {
     }
 
     // Binds
-    this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
+    //this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
     this.saveMeme = this.saveMeme.bind(this);
   }
 
@@ -46,6 +47,7 @@ class ImageViewComponent extends React.Component {
         newInputBoxesArray.push({ textID: i, text: '', color: '' });
       }
     }
+    console.log("CURRENT MEME NAME " + this.props.samplesMemeArray[index].name)
 
     this.setState({
       currentMeme: this.props.samplesMemeArray[index],
@@ -158,6 +160,8 @@ class ImageViewComponent extends React.Component {
           </div >
 
         </div>
+
+        <PreviewComponent currentMeme={this.state.currentMeme}/>
       </div>
     )
   }

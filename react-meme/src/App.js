@@ -1,5 +1,4 @@
 import ImageViewComponent from './components/ImageViewComponent';
-import PreviewComponent from './components/PreviewComponent';
 import HeaderComponent from './components/HeaderComponent';
 import Meme from './components/Meme'
 const React = require('react');
@@ -75,7 +74,7 @@ class App extends React.Component {
       return <div class="App"> Loading... </div>;
     if (this.state.samplesMemeArray.length === 0)
       return <div class="App"> There seems to be no connection to the server! </div>;
-    return <div class="App"> <HeaderComponent setUser = {(accessToken, isLogined) => this.setUser(accessToken, isLogined)}/><ImageViewComponent URL={this.state.URL} samplesMemeArray={this.state.samplesMemeArray} accessToken={this.state.accessToken} isLogined={this.state.isLogined}/> <PreviewComponent /> </div>
+    return <div class="App"> <HeaderComponent setUser = {(accessToken, isLogined) => this.setUser(accessToken, isLogined)}/><ImageViewComponent URL={this.state.URL} samplesMemeArray={this.state.samplesMemeArray} accessToken={this.state.accessToken} isLogined={this.state.isLogined}/> </div>
   }
 }
 
