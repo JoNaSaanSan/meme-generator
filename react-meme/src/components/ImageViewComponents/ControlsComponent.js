@@ -5,22 +5,6 @@ class ControlsComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    // Init state
-    this.state = {
-      currentMeme: '',
-      generatedMeme: '',
-      // Index of array
-      index: 0,
-
-      //Handle inputTextBoxes
-      inputBoxes: [
-        {
-          textID: '',
-          text: '',
-          color: '',
-        }
-      ],
-    }
 
     // Binds
     this.prevButton = this.prevButton.bind(this);
@@ -31,16 +15,21 @@ class ControlsComponent extends React.Component {
     this.generateMemeButton = this.generateMemeButton.bind(this);
   }
 
-
+ //Set new index with step
+ setNewIndex(step) {
+  var newIndex = (this.props.index + step + (this.props.samplesMemeArray.length)) % (this.props.samplesMemeArray.length)
+  console.log("index" + newIndex)
+  this.props.setCurrentMemeState(newIndex)
+}
 
   // Previous Button
   prevButton() {
-    this.props.setNewIndex(-1)
+    this.setNewIndex(-1)
   }
 
   // Next Button
   nextButton() {
-    this.props.setNewIndex(1)
+    this.setNewIndex(1)
   }
 
   uploadButton() {
@@ -52,7 +41,7 @@ class ControlsComponent extends React.Component {
     for (var i = 0; i < this.props.samplesMemeArray.length; i++) {
       if (this.props.samplesMemeArray[i].name.toLowerCase().includes(document.getElementById('search-text-box').value.toLowerCase())) {
         console.log("found " + i)
-        this.setCurrentMemeState(i)
+        this.props.setCurrentMemeState(i)
       }
     }
   }
@@ -61,16 +50,15 @@ class ControlsComponent extends React.Component {
   createUI() {
     return this.props.inputBoxes.map((el, i) =>
       <div key={i}>
-        <input type="text" class="text-box" onChange={this.handleChange.bind(this, i)} />
-        <input type="color" class="color-box" onChange={this.handleChange.bind(this, i)} />
+        <input type="text" class="text-box" onChange={this.props.handleChange(i)} />
+        <input type="color" class="color-box" onChange={this.props.handleChange(i)} />
       </div>)
   }
 
   //Generate Meme Button
   generateMemeButton() {
-    this.props.generateMeme();
+    this.props.generateMemeButton();
   }
-
 
   // Render
   render() {

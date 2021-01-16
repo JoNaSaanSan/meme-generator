@@ -38,7 +38,6 @@ class ImageViewComponent extends React.Component {
   // Set Current Meme State with index
   setCurrentMemeState(index) {
     var newInputBoxesArray = [];
-
     for (var i = 0; i < this.props.samplesMemeArray[index].box_count; i++) {
       // Check if box is undefined
       if (this.state.inputBoxes[i] !== undefined) {
@@ -53,32 +52,6 @@ class ImageViewComponent extends React.Component {
       index: index,
       inputBoxes: newInputBoxesArray,
     })
-  }
-
-  //Set new index with step
-  setNewIndex(step) {
-    var newIndex = (this.state.index + step + (this.props.samplesMemeArray.length)) % (this.props.samplesMemeArray.length)
-    this.setCurrentMemeState(newIndex)
-  }
-
-
-  // Search Function
-  searchImage() {
-    for (var i = 0; i < this.props.samplesMemeArray.length; i++) {
-      if (this.props.samplesMemeArray[i].name.toLowerCase().includes(document.getElementById('search-text-box').value.toLowerCase())) {
-        console.log("found " + i)
-        this.setCurrentMemeState(i)
-      }
-    }
-  }
-
-  // Add Input Boxes (Text & Color) depending on the meme boxcount
-  createUI() {
-    return this.state.inputBoxes.map((el, i) =>
-      <div key={i}>
-        <input type="text" class="text-box" onChange={this.handleChange.bind(this, i)} />
-        <input type="color" class="color-box" onChange={this.handleChange.bind(this, i)} />
-      </div>)
   }
 
   // Handle Events when Text or Color Input changed and store it in the inputBoxesStates
@@ -105,7 +78,7 @@ class ImageViewComponent extends React.Component {
       },
       body: JSON.stringify(memeObject)
     };
-    fetch(this.props.URL + '/memes/generateMemeButton', requestOptions)
+    fetch(this.props.URL + '/memes/generateMeme', requestOptions)
       .then(async response => {
         const data = await response.json();
         console.log(data);
@@ -167,7 +140,7 @@ class ImageViewComponent extends React.Component {
     return (
       <div class="generator-view">
         <div class="outer-container">
-          <ControlsComponent URL={this.state.URL} currentIndex={this.state.index} inputBoxes={this.state.inputBoxes} arrayLength={this.props.samplesMemeArray.length} setNewIndex={step => this.setNewIndex(step)} generateMemeButton={() => this.generateMeme()}/>
+          <ControlsComponent URL={this.state.URL} inputBoxes={this.state.inputBoxes} index={this.state.index} samplesMemeArray={this.props.samplesMemeArray} setCurrentMemeState={newIndex => this.setCurrentMemeState(newIndex)} generateMemeButton={() => this.generateMeme()} handleChange={(i) => this.handleChange.bind(this, i)}/>
           <div class="image-view" id="center-container">
             <h2 > {this.state.currentMeme.name} </h2>
             <div className="image-display" >
