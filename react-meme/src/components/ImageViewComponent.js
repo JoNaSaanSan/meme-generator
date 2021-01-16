@@ -108,7 +108,7 @@ class ImageViewComponent extends React.Component {
   // Save Meme / Send to server
   saveMeme() {
     // POST request using fetch with error handling
-    console.log(this.state.generatedMeme)
+    console.log(this.state.generatedMeme + "access Token: " + this.props.accessToken)
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -156,7 +156,6 @@ class ImageViewComponent extends React.Component {
               <button onClick={this.saveMeme} id="save-button" class="button" > Save Meme </button>
             </div>
           </div >
-
 
         </div>
       </div>

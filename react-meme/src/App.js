@@ -12,6 +12,8 @@ class App extends React.Component {
       URL: 'http://localhost:3000',
       isFetching: false,
       samplesMemeArray: [],
+      accessToken: '',
+      isLogined: false
     }
     this.fetchImages = this.fetchImages.bind(this);
   }
@@ -60,13 +62,20 @@ class App extends React.Component {
       });
   }
 
+  setUser(accessToken, isLogined){
+    this.setState({
+      accessToken: accessToken,
+      isLogined: isLogined
+    })
+  }
+
   render() {
     
     if (this.state.isFetching)
       return <div class="App"> Loading... </div>;
     if (this.state.samplesMemeArray.length === 0)
       return <div class="App"> There seems to be no connection to the server! </div>;
-    return <div class="App"> <HeaderComponent /><ImageViewComponent URL={this.state.URL} samplesMemeArray={this.state.samplesMemeArray} /> <PreviewComponent /> </div>
+    return <div class="App"> <HeaderComponent setUser = {(accessToken, isLogined) => this.setUser(accessToken, isLogined)}/><ImageViewComponent URL={this.state.URL} samplesMemeArray={this.state.samplesMemeArray} accessToken={this.state.accessToken} isLogined={this.state.isLogined}/> <PreviewComponent /> </div>
   }
 }
 

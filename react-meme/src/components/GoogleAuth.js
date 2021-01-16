@@ -26,6 +26,7 @@ class GoogleAuth extends React.Component {
                 isLogined: true,
                 accessToken: response.accessToken
             }));
+            this.props.setUser(this.state.accessToken, this.state.isLogined)
         }
     }
 
@@ -34,6 +35,7 @@ class GoogleAuth extends React.Component {
             isLogined: false,
             accessToken: ''
         }));
+        this.props.setUser(this.state.accessToken, this.state.isLogined)
     }
 
     handleLoginFailure(response) {

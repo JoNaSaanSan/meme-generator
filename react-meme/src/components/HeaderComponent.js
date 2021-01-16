@@ -9,6 +9,11 @@ class HeaderComponent extends React.Component {
     constructor(props) {
         super(props);
     }
+
+    setUser(accessToken, isLogined) {
+        this.props.setUser(accessToken, isLogined)
+    }
+
     render() {
         return (
             <div class="header-view">
@@ -19,7 +24,7 @@ class HeaderComponent extends React.Component {
                 <div id="title-view">MemeLab</div>
                 <div id="account-view">
                     <div class="menu-item">Profile</div>
-                    <GoogleAuth /> 
+                    <GoogleAuth setUser={(accessToken, isLogined) => this.setUser(accessToken, isLogined)} />
                 </div> </div>
         );
     }
