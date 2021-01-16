@@ -1,7 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans+Narrow&display=swap');
+
 .App {
   position: relative;
   text-align: center;
-  background-color: #363636;
-  color: white;
+  font-family: 'PT Sans Narrow', sans-serif;
 }
 
+html, body { 
+  color: white;
+  background-color: #363636;
+}

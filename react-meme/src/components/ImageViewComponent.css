@@ -1,15 +1,26 @@
-.image-view {
-    position: absolute;
+.generator-view {
+    position: flex;
     background-color: #363636;
     color: white;
 }
 
-.outer-grid-container {
-    display: grid;
-    grid-template-columns: 1fr 2fr 2fr;
-    grid-gap: 10px;
+.outer-container {
+    display: flex;
     padding: 10px;
 }
+
+.outer-container>*{
+    border-radius: 5px;
+}
+
+.image-view {
+    background-color: rgb(41, 41, 41);
+    width: 650px;
+    padding: 20px;
+    margin: 20px;
+}
+
+
 
 #header-text {
     grid-area: header-text;
@@ -39,45 +50,45 @@
     grid-area: generate-button;
 }
 
-#save-button {
-    grid-area: save-button;
-}
-
 #control-view {
-    height: 500pt;
+    height: 750px;
+    width: 350px;
     background-color: rgb(41, 41, 41);
-    padding: 2em;
-    margin: 2em;
+    padding: 20px;
+    margin: 20px;
 }
 
-#inner-grid-container {
+.inner-grid{
     display: grid;
-    grid-template-areas: 
-    'header-text header-text header-text header-text' 
-    'search-text-box search-text-box search-text-box search-button' 
-    'prev-button  prev-button next-button next-button' 
-    'generate-button generate-button save-button save-button';
+    grid-template-areas: 'header-text header-text header-text header-text' 'search-text-box search-text-box search-text-box search-button' 'prev-button  prev-button next-button next-button' 'generate-button generate-button generate-button generate-button';
     grid-gap: 10px;
     margin-bottom: 2em;
 }
 
 .image-display{
-    background-color: rgb(41, 41, 41);
-    padding: 2em;
-    margin: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.textBox {
+#image-template {
+    max-width: 400px;
+    max-height: 400px;
+}
+
+.text-box {
     background-color: #363636;
     border: none;
     color: white;
     padding: 16px 16px;
     text-decoration: none;
     margin: 6px 6px;
+    border-radius: 5px;
 }
 
-.colorBox {
+.color-box {
     background-color: rgb(41, 41, 41);
+    border-radius: 5px;
     border: none;
     color: white;
 }
@@ -90,13 +101,5 @@
     text-decoration: none;
     margin: 6px 6px;
     cursor: pointer;
-}
-
-#imageTemplate {
-    display: block;
-    max-width: 400px;
-    max-height: 400px;
-    width: auto;
-    height: auto;
-    margin: 5em;
+    border-radius: 5px;
 }

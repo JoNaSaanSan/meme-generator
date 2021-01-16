@@ -89,8 +89,8 @@ class ImageViewComponent extends React.Component {
   createUI() {
     return this.state.inputBoxes.map((el, i) =>
       <div key={i}>
-        <input type="text" class="textBox" onChange={this.handleChange.bind(this, i)} />
-        <input type="color" class="colorBox" onChange={this.handleChange.bind(this, i)} />
+        <input type="text" class="text-box" onChange={this.handleChange.bind(this, i)} />
+        <input type="color" class="color-box" onChange={this.handleChange.bind(this, i)} />
       </div>)
   }
 
@@ -178,33 +178,35 @@ class ImageViewComponent extends React.Component {
   // Render
   render() {
     return (
-      <div class="image-view">
-        <div class="outer-grid-container">
+      <div class="generator-view">
+        <div class="outer-container">
           <div id="control-view">
-            <div id="inner-grid-container">
+            <div class="inner-grid" id="left-container">
               <h1 id="header-text"> Meme Generator </h1>
-              <input type="text" id="search-text-box" class="textBox" />
+              <input type="text" id="search-text-box" class="text-box" />
               <button id="search-button" class="button" onClick={this.searchImage}> Search </button>
-              <button onClick={this.prevButton} id="prev-button" class="button" > Previous </button>
+              <button onClick={this.prevButton} id="prev-button" class="button" > Back </button>
               <button onClick={this.nextButton} id="next-button" class="button" > Next </button>
               <button onClick={this.generateMeme} id="generate-button" class="button" > Generate</button>
-              <button onClick={this.saveMeme} id="save-button" class="button" > Save Meme </button>
+
             </div>
             <p>Insert text below </p>
             <div id="ui-buttons"> {this.createUI()}</div>
           </div>
-          <div id="sample-image-view" class="image-display">
+          <div class="image-view" id="center-container">
             <h2 > {this.state.currentMeme.name} </h2>
-            <div className="imageNumber" > </div>
-            <img src={this.state.currentMeme.url} onError={i => i.target.style.display='none'}
-              alt="Target" id="imageTemplate" />
+            <div className="image-display" >
+              <img src={this.state.currentMeme.url} onError={i => i.target.style.display = 'none'}
+                alt="Target" id="image-template" /></div>
           </div>
 
-          <div id="generated-image-view" class="image-display">
-            <h2 > Generated Image: </h2>
-            <div className="resultImageNumber" > </div>
-            <h2> {this.state.generatedName} </h2>
-            <img src={this.state.generatedMeme.url} onError={i => i.target.src=''} alt="Generated Image"  id="imageTemplate" />
+          <div class="image-view" id="right-container">
+            <h2 id="generated-title"> Generated Image: {this.state.generatedName}</h2>
+            <div className="image-display" >
+              <img src={this.state.generatedMeme.url} onError={i => i.target.src = ''} alt="Generated" id="image-template" /></div>
+            <div className="button-view" >
+              <button onClick={this.saveMeme} id="save-button" class="button" > Save Meme </button>
+            </div>
           </div >
 
 
