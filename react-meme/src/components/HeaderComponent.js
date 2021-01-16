@@ -1,5 +1,4 @@
-import Login from './Login';
-import Logout from './Logout';
+import GoogleAuth from './GoogleAuth';
 
 const React = require('react');
 require('./HeaderComponent.css');
@@ -19,7 +18,8 @@ class HeaderComponent extends React.Component {
                 </div>
                 <div id="title-view">MemeLab</div>
                 <div id="account-view">
-                    <Login /> <Logout />
+                    <div class="menu-item">Profile</div>
+                    <GoogleAuth /> 
                 </div> </div>
         );
     }

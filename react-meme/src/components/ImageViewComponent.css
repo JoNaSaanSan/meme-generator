@@ -1,5 +1,5 @@
 .generator-view {
-    position: absolute;
+    position: flex;
     background-color: #363636;
     color: white;
 }
