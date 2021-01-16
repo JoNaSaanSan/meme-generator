@@ -1,3 +1,4 @@
+import ControlsComponent from './ImageViewComponents/ControlsComponent';
 const React = require('react');
 require('./ImageViewComponent.css');
 
@@ -25,12 +26,7 @@ class ImageViewComponent extends React.Component {
     }
 
     // Binds
-    this.prevButton = this.prevButton.bind(this);
-    this.nextButton = this.nextButton.bind(this);
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
-    this.searchImage = this.searchImage.bind(this);
-    this.createUI = this.createUI.bind(this);
-    this.generateMeme = this.generateMeme.bind(this);
     this.saveMeme = this.saveMeme.bind(this);
   }
 
@@ -65,15 +61,6 @@ class ImageViewComponent extends React.Component {
     this.setCurrentMemeState(newIndex)
   }
 
-  // Previous Button
-  prevButton() {
-    this.setNewIndex(-1)
-  }
-
-  // Next Button
-  nextButton() {
-    this.setNewIndex(1)
-  }
 
   // Search Function
   searchImage() {
@@ -118,7 +105,7 @@ class ImageViewComponent extends React.Component {
       },
       body: JSON.stringify(memeObject)
     };
-    fetch(this.props.URL + '/memes/generateMeme', requestOptions)
+    fetch(this.props.URL + '/memes/generateMemeButton', requestOptions)
       .then(async response => {
         const data = await response.json();
         console.log(data);
@@ -180,19 +167,7 @@ class ImageViewComponent extends React.Component {
     return (
       <div class="generator-view">
         <div class="outer-container">
-          <div id="control-view">
-            <div class="inner-grid" id="left-container">
-              <h1 id="header-text"> Meme Generator </h1>
-              <input type="text" id="search-text-box" class="text-box" />
-              <button id="search-button" class="button" onClick={this.searchImage}> Search </button>
-              <button onClick={this.prevButton} id="prev-button" class="button" > Back </button>
-              <button onClick={this.nextButton} id="next-button" class="button" > Next </button>
-              <button onClick={this.generateMeme} id="generate-button" class="button" > Generate</button>
-
-            </div>
-            <p>Insert text below </p>
-            <div id="ui-buttons"> {this.createUI()}</div>
-          </div>
+          <ControlsComponent URL={this.state.URL} currentIndex={this.state.index} inputBoxes={this.state.inputBoxes} arrayLength={this.props.samplesMemeArray.length} setNewIndex={step => this.setNewIndex(step)} generateMemeButton={() => this.generateMeme()}/>
           <div class="image-view" id="center-container">
             <h2 > {this.state.currentMeme.name} </h2>
             <div className="image-display" >

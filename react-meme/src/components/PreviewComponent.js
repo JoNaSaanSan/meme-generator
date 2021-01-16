@@ -5,7 +5,7 @@ require('./PreviewComponent.css');
 class PreviewComponent extends React.Component {
   render() {
     return (
-      <div>ImageViewComponent</div>
+      <div>PreviewViewComponent</div>
     )
   }
 }
