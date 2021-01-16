@@ -11,7 +11,6 @@ var memes = [];
 
 /* GET home page. */
 router.get('/sampleMemes', function(req, res, next) {
-  //res.send("moin")
   const URL = "https://api.imgflip.com/get_memes";
   console.log("sample memes requested");
   axios.get(URL)
@@ -53,10 +52,9 @@ router.post('/generateMeme', (req, res, next) => {
     })
 });
 
-/* GET home page. */
 router.post('/saveMeme', function(req, res, next) {
   const memes = req.db.get('memes');
-  console.log(req.body);
+
   meme = {
     url: req.body.url,
     title: "title",
@@ -69,5 +67,82 @@ router.post('/saveMeme', function(req, res, next) {
   res.send("Meme saved!");
 
 });
+
+router.get('/getmymemes', (req, res, next) => {
+  const memes = req.db.get('memes');
+  const user = req.body.user;
+
+  memes.find({
+    creator: user
+  }).then(memes => {
+    console.log(memes);
+    res.send(memes);
+  });
+});
+
+router.get('/upvote', (req, res, next) => {
+  const memes = req.db.get('memes');
+  const memeId = req.body.memeId;
+  const user = req.body.user;
+
+  //update user upvotes
+  const users = req.db.get('users');
+  users.update({
+    name: user
+  }, {
+    $push: {
+      upvotes: memeId
+    }
+  }).then(response => {
+    console.log("User upvotes updated!");
+  });
+
+  memes.update({
+    _id: memeId
+  }, {
+    $inc: {
+      upvotes: 1
+    }
+  }).then(response => {
+    console.log("Meme " + memeId + " upvoted!")
+  });
+});
+
+
+router.get('/downvote', (req, res, next) => {
+  const memes = req.db.get('memes');
+  const memeId = req.body.memeId;
+  const user = req.body.user;
+
+  //update user downvotes
+  const users = req.db.get('users');
+  users.update({
+    name: user
+  }, {
+    $push: {
+      downvotes: memeId
+    }
+  }).then(response => {
+    console.log("User downvotes updated!");
+  });
+
+  memes.update({
+    _id: memeId
+  }, {
+    $inc: {
+      downvotes: 1
+    }
+  }).then(response => {
+    console.log("Meme " + memeId + " downvoted!")
+  });
+});
+
+router.get('/browsememes', (req, res, next) => {
+  const memes = req.db.get('memes');
+  memes.find({}).then(memes => {
+    res.send(memes);
+  });
+});
+
 
 module.exports = router;
