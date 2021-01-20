@@ -1,0 +1,16 @@
+.preview-box {
+    background-color: rgb(41, 41, 41);
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    margin: auto;
+    width: 96%;
+    height: 250px;
+}
+
+.images{
+    width: 200px;
+    height: 200px;
+    padding-left: 1em;
+    padding-right: 1em;
+}

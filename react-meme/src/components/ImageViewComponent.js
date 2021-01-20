@@ -161,7 +161,7 @@ class ImageViewComponent extends React.Component {
 
         </div>
 
-        <PreviewComponent currentMeme={this.state.currentMeme}/>
+        <PreviewComponent currentMeme={this.state.currentMeme} samplesMemeArray = {this.props.samplesMemeArray} setCurrentMemeState = {this.setCurrentMemeState} />
       </div>
     )
   }
