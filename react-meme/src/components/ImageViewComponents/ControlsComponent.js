@@ -1,10 +1,14 @@
+import ImageUploader from 'react-images-upload';
 const React = require('react');
+
 
 class ControlsComponent extends React.Component {
 
   constructor(props) {
     super(props);
 
+    this.state = { pictures: [] };
+    this.onDrop = this.onDrop.bind(this);
 
     // Binds
     this.prevButton = this.prevButton.bind(this);
@@ -15,12 +19,18 @@ class ControlsComponent extends React.Component {
     this.generateMemeButton = this.generateMemeButton.bind(this);
   }
 
- //Set new index with step
- setNewIndex(step) {
-  var newIndex = (this.props.index + step + (this.props.samplesMemeArray.length)) % (this.props.samplesMemeArray.length)
-  console.log("index" + newIndex)
-  this.props.setCurrentMemeState(newIndex)
-}
+  onDrop(pictureFiles, pictureDataURLs) {
+    this.setState({
+      pictures: pictureFiles
+    });
+  }
+
+  //Set new index with step
+  setNewIndex(step) {
+    var newIndex = (this.props.index + step + (this.props.samplesMemeArray.length)) % (this.props.samplesMemeArray.length)
+    console.log("index" + newIndex)
+    this.props.setCurrentMemeState(newIndex)
+  }
 
   // Previous Button
   prevButton() {
@@ -29,6 +39,7 @@ class ControlsComponent extends React.Component {
 
   // Next Button
   nextButton() {
+    console.log(this.state.pictures)
     this.setNewIndex(1)
   }
 
@@ -73,8 +84,15 @@ class ControlsComponent extends React.Component {
           <button onClick={this.prevButton} id="prev-button" class="button" > Back </button>
           <button onClick={this.nextButton} id="next-button" class="button" > Next </button>
           <button onClick={this.generateMemeButton} id="generate-button" class="button" > Generate</button>
-          <button onClick={this.uploadButton} id="upload-button" class="button" > Upload</button>
-
+          <div id="upload-button" > <ImageUploader
+            withIcon={false}
+            withPreview={true}
+            buttonText='Choose images'
+            onChange={this.onDrop}
+            imgExtension={['.jpg', '.gif', '.png', '.gif']}
+            maxFileSize={5242880}
+          />
+          </div>
         </div>
         <p>Insert text below </p>
         <div id="ui-buttons"> {this.createUI()}</div>
