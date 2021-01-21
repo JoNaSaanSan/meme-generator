@@ -1,7 +1,7 @@
 import GoogleAuth from './GoogleAuth';
+import { Link } from 'react-router-dom'
 const React = require('react');
 require('./HeaderComponent.css');
-
 
 
 class HeaderComponent extends React.Component {
@@ -14,13 +14,13 @@ class HeaderComponent extends React.Component {
         return (
             <div class="header-view">
                 <div id="menu-view">
-                    <div class="menu-item">Generator</div>
-                    <div class="menu-item">Browse</div>
+                    <Link to="/" class="menu-item"> Generator </Link>
+                    <Link to="/browse" class="menu-item"> Browse </Link>
                 </div>
                 <div id="title-view">MemeLab</div>
                 <div id="account-view">
                     
-                    <div class="menu-item">Profile</div>
+                <Link to="/profile" class="menu-item"> Profile </Link>
                     <GoogleAuth />
                 </div> </div>
         );
