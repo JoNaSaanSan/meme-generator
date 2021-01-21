@@ -176,6 +176,7 @@ router.get('/newmemes', (req, res, next) => {
 
 router.get('/popularmemes', (req, res, next) => {
   const memes = req.db.get('memes');
+  //TODO
   memes.find({}).then(memes => {
     res.send(memes);
   });
