@@ -49,6 +49,10 @@
     grid-area: generate-button;
 }
 
+#upload-button {
+    grid-area: upload-button;
+}
+
 #control-view {
     height: 750px;
     width: 350px;
@@ -59,7 +63,7 @@
 
 .inner-grid{
     display: grid;
-    grid-template-areas: 'header-text header-text header-text header-text' 'search-text-box search-text-box search-text-box search-button' 'prev-button  prev-button next-button next-button' 'generate-button generate-button generate-button generate-button';
+    grid-template-areas: 'header-text header-text header-text header-text' 'search-text-box search-text-box search-text-box search-button' 'prev-button  prev-button next-button next-button' 'generate-button generate-button generate-button generate-button' 'upload-button upload-button upload-button upload-button';
     grid-gap: 10px;
     margin-bottom: 2em;
 }
