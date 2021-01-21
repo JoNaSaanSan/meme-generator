@@ -3,13 +3,17 @@ var router = express.Router();
 var path = require('path');
 const axios = require('axios');
 var qs = require('qs');
+var dateHelper = require('../helpers/dateHelper.js');
 
 const username = "SandraOMM";
 const password = "onlinemultimedia2020";
 
 var memes = [];
 
-/* GET home page. */
+/*
+  Requests sample memes from the imgflip API.
+  Returns an array of memes to the client.
+*/
 router.get('/sampleMemes', function(req, res, next) {
   const URL = "https://api.imgflip.com/get_memes";
   console.log("sample memes requested");
@@ -23,6 +27,10 @@ router.get('/sampleMemes', function(req, res, next) {
     })
 });
 
+/*
+  Requests to generate a meme at the imgflip api.
+  Returns the generated meme to the client.
+*/
 router.post('/generateMeme', (req, res, next) => {
   const URL = "https://api.imgflip.com/caption_image";
   var id = req.body.id;
@@ -37,6 +45,7 @@ router.post('/generateMeme', (req, res, next) => {
     password: password,
     boxes: boxes,
   };
+
   axios.post(URL, qs.stringify(options))
     .then(response => {
       if (response.data.success !== true) {
@@ -52,6 +61,9 @@ router.post('/generateMeme', (req, res, next) => {
     })
 });
 
+/*
+  Saves a meme url with title, creator to the DB.
+*/
 router.post('/saveMeme', function(req, res, next) {
   const memes = req.db.get('memes');
 
@@ -65,9 +77,12 @@ router.post('/saveMeme', function(req, res, next) {
   }
   memes.insert(meme);
   res.send("Meme saved!");
-
 });
 
+/*
+  Requests all memes created by the user.
+  Returns an array of memes.
+*/
 router.get('/getmymemes', (req, res, next) => {
   const memes = req.db.get('memes');
   const user = req.body.user;
@@ -80,6 +95,10 @@ router.get('/getmymemes', (req, res, next) => {
   });
 });
 
+/*
+  Upvotes a meme existing in the DB. Adds the id of the upvoted meme to the user document,
+   and increases the upvote counter of the meme document by 1.
+*/
 router.get('/upvote', (req, res, next) => {
   const memes = req.db.get('memes');
   const memeId = req.body.memeId;
@@ -97,6 +116,7 @@ router.get('/upvote', (req, res, next) => {
     console.log("User upvotes updated!");
   });
 
+  //increase meme updates by 1
   memes.update({
     _id: memeId
   }, {
@@ -108,7 +128,10 @@ router.get('/upvote', (req, res, next) => {
   });
 });
 
-
+/*
+  Downvotes a meme existing in the DB. Adds the id of the downvoted meme to the user document,
+   and decreases the upvote counter of the meme document by 1.
+*/
 router.get('/downvote', (req, res, next) => {
   const memes = req.db.get('memes');
   const memeId = req.body.memeId;
@@ -126,6 +149,7 @@ router.get('/downvote', (req, res, next) => {
     console.log("User downvotes updated!");
   });
 
+  //decrease meme updates by 1
   memes.update({
     _id: memeId
   }, {
@@ -137,7 +161,20 @@ router.get('/downvote', (req, res, next) => {
   });
 });
 
-router.get('/browsememes', (req, res, next) => {
+/*
+  Requests an array of memes by dateCreated
+*/
+router.get('/newmemes', (req, res, next) => {
+  const memes = req.db.get('memes');
+  memes.find({}).then(memes => {
+    console.log("found!");
+    //memes.sort((a, b) => dateHelper.stringToDateObj(a["dateCreated"]) - dateHelper.stringToDateObj(b["dateCreated"]));
+    memes.sort((b, a) => dateHelper.stringToDateObj(a["dateCreated"]) - dateHelper.stringToDateObj(b["dateCreated"]));
+    res.send(memes);
+  });
+});
+
+router.get('/popularmemes', (req, res, next) => {
   const memes = req.db.get('memes');
   memes.find({}).then(memes => {
     res.send(memes);
