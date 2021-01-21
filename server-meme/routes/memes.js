@@ -64,7 +64,7 @@ router.post('/generateMeme', (req, res, next) => {
 /*
   Saves a meme url with title, creator to the DB.
 */
-router.post('/saveMeme', function(req, res, next) {
+router.post('/savememe', function(req, res, next) {
   const memes = req.db.get('memes');
 
   meme = {
@@ -167,19 +167,26 @@ router.get('/downvote', (req, res, next) => {
 router.get('/newmemes', (req, res, next) => {
   const memes = req.db.get('memes');
   memes.find({}).then(memes => {
-    console.log("found!");
-    //memes.sort((a, b) => dateHelper.stringToDateObj(a["dateCreated"]) - dateHelper.stringToDateObj(b["dateCreated"]));
     memes.sort((b, a) => dateHelper.stringToDateObj(a["dateCreated"]) - dateHelper.stringToDateObj(b["dateCreated"]));
     res.send(memes);
   });
 });
 
+/*
+  Requests the most popular memes
+*/
 router.get('/popularmemes', (req, res, next) => {
   const memes = req.db.get('memes');
   //TODO
   memes.find({}).then(memes => {
     res.send(memes);
   });
+});
+
+router.post('/uploadtemplate', (req, res, next) => {
+  const memes = req.db.get('memes');
+  console.log(req.body);
+  console.log("Upload!");
 });
 
 
