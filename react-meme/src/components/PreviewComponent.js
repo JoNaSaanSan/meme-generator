@@ -6,6 +6,7 @@ class PreviewComponent extends React.Component {
 
   constructor(props) {
     super(props);
+    this.loadPreviewItem = this.loadPreviewItem.bind(this)
   }
 
 
@@ -50,7 +51,7 @@ class PreviewComponent extends React.Component {
     return (
 
       <div className="preview-box">
-        <img src = {this.loadPreviewItem(1)} className="images" onClick= {this.previewSelected}/>
+        <img src = {this.loadPreviewItem(1)} className="images" onClick= {this.props.setCurrentMemeState(2)}/>
         <img src = {this.loadPreviewItem(2)} className="images"/>
         <img src = {this.loadPreviewItem(3)} className="images"/>
         <img src = {this.loadPreviewItem(4)} className="images"/>
