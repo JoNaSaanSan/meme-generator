@@ -1,42 +1,49 @@
 
 import React from 'react';
-
+import { connect } from 'react-redux';
+import { authenticateUser } from '../redux/action'
+import Store from '../redux/store';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 
 
 const CLIENT_ID =
     '89707895112-7ekjj49i0ibag5dra96jrr8gcfajj89l.apps.googleusercontent.com';
 
+// Redux: AUTHENTICATE USER
+function mapDispatchToProps(dispatch) {
+    return {
+        authenticateUser: user => dispatch(authenticateUser(user))
+    };
+}
+
 class GoogleAuth extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            isLogined: false,
-            accessToken: ''
-        };
+            isSignedIn: Store.getState().user.isSignedIn,
+        }
+
         this.login = this.login.bind(this);
         this.handleLoginFailure = this.handleLoginFailure.bind(this);
         this.logout = this.logout.bind(this);
         this.handleLogoutFailure = this.handleLogoutFailure.bind(this);
     }
+    // Handle Login
     login(response) {
+        console.log(response)
         if (response.accessToken) {
-            this.setState(state => ({
-                isLogined: true,
-                accessToken: response.accessToken
-            }));
-            this.props.setUser(this.state.accessToken, this.state.isLogined)
+            this.props.authenticateUser({ name: response.profileObj.name, email: response.profileObj.email, id: response.profileObj.googleId, accessToken: response.accessToken, isSignedIn: true })
         }
     }
 
+
+
+    // Handle Log out
     logout(response) {
-        this.setState(state => ({
-            isLogined: false,
-            accessToken: ''
-        }));
-        this.props.setUser(this.state.accessToken, this.state.isLogined)
+        this.props.authenticateUser({ name: '', email: '', id:'', accessToken: '', isSignedIn: false })
     }
+
 
     handleLoginFailure(response) {
         alert('Log in failed! Please try again')
@@ -47,9 +54,12 @@ class GoogleAuth extends React.Component {
     }
 
     render() {
+   // Redux: Update Signed in State
+        Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
+
         return (
             <div>
-                { this.state.isLogined ?
+                {  this.state.isSignedIn ?
                     <GoogleLogout
                         clientId={CLIENT_ID}
                         render={renderProps => (
@@ -76,4 +86,6 @@ class GoogleAuth extends React.Component {
     }
 }
 
-export default GoogleAuth;
+
+
+export default connect(null, mapDispatchToProps)(GoogleAuth);

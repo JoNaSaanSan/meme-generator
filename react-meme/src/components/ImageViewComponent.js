@@ -1,5 +1,6 @@
 import ControlsComponent from './ImageViewComponents/ControlsComponent';
 import PreviewComponent from './PreviewComponent';
+import Store from '../redux/store';
 const React = require('react');
 require('./ImageViewComponent.css');
 
@@ -16,6 +17,8 @@ class ImageViewComponent extends React.Component {
       // Index of array
       index: 0,
 
+      isSignedIn: Store.getState().user.isSignedIn ,
+    
       //Handle inputTextBoxes
       inputBoxes: [
         {
@@ -139,10 +142,13 @@ class ImageViewComponent extends React.Component {
 
   // Render
   render() {
+    // Redux: Update Signed in State
+    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
+
     return (
       <div class="generator-view">
         <div class="outer-container">
-          <ControlsComponent URL={this.state.URL} inputBoxes={this.state.inputBoxes} index={this.state.index} samplesMemeArray={this.props.samplesMemeArray} setCurrentMemeState={newIndex => this.setCurrentMemeState(newIndex)} generateMeme={() => this.generateMeme()} handleChange={(i) => this.handleChange.bind(this, i)}/>
+          <ControlsComponent URL={this.state.URL} inputBoxes={this.state.inputBoxes} index={this.state.index} samplesMemeArray={this.props.samplesMemeArray} setCurrentMemeState={newIndex => this.setCurrentMemeState(newIndex)} generateMeme={() => this.generateMeme()} handleChange={(i) => this.handleChange.bind(this, i)} />
           <div class="image-view" id="center-container">
             <h2 > {this.state.currentMeme.name} </h2>
             <div className="image-display" >
@@ -155,13 +161,14 @@ class ImageViewComponent extends React.Component {
             <div className="image-display" >
               <img src={this.state.generatedMeme.url} onError={i => i.target.src = ''} alt="Generated" id="image-template" /></div>
             <div className="button-view" >
-              <button onClick={this.saveMeme} id="save-button" class="button" > Save Meme </button>
+            {this.state.isSignedIn ?
+            <button onClick={this.saveMeme} id="save-button" class="button" > Save Meme </button> : <button class="button"> Sign in to save! </button>}
+
             </div>
           </div >
-
         </div>
 
-        <PreviewComponent currentMeme={this.state.currentMeme}/>
+        <PreviewComponent currentMeme={this.state.currentMeme} />
       </div>
     )
   }

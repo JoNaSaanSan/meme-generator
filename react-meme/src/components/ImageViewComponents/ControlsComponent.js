@@ -32,6 +32,8 @@ class ControlsComponent extends React.Component {
     this.setNewIndex(1)
   }
 
+
+  // Upload Button
   uploadButton() {
 
   }

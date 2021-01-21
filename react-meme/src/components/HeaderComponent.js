@@ -1,5 +1,4 @@
 import GoogleAuth from './GoogleAuth';
-
 const React = require('react');
 require('./HeaderComponent.css');
 
@@ -10,9 +9,6 @@ class HeaderComponent extends React.Component {
         super(props);
     }
 
-    setUser(accessToken, isLogined) {
-        this.props.setUser(accessToken, isLogined)
-    }
 
     render() {
         return (
@@ -23,8 +19,9 @@ class HeaderComponent extends React.Component {
                 </div>
                 <div id="title-view">MemeLab</div>
                 <div id="account-view">
+                    
                     <div class="menu-item">Profile</div>
-                    <GoogleAuth setUser={(accessToken, isLogined) => this.setUser(accessToken, isLogined)} />
+                    <GoogleAuth />
                 </div> </div>
         );
     }
