@@ -27,7 +27,7 @@ class ImageViewComponent extends React.Component {
     }
 
     // Binds
-    //this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
+    this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
     this.saveMeme = this.saveMeme.bind(this);
   }
 
@@ -161,7 +161,7 @@ class ImageViewComponent extends React.Component {
 
         </div>
 
-        <PreviewComponent currentMeme={this.state.currentMeme} samplesMemeArray = {this.props.samplesMemeArray} setCurrentMemeState = {this.setCurrentMemeState} />
+        <PreviewComponent samplesMemeArray = {this.props.samplesMemeArray} indexPos = {this.state.index} setCurrentMemeState = {this.setCurrentMemeState} />
       </div>
     )
   }
