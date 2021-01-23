@@ -1,5 +1,6 @@
 import ImageUploader from 'react-images-upload';
 const React = require('react');
+require('./ControlsComponent.css');
 
 
 class ControlsComponent extends React.Component {
@@ -28,7 +29,6 @@ class ControlsComponent extends React.Component {
   //Set new index with step
   setNewIndex(step) {
     var newIndex = (this.props.index + step + (this.props.samplesMemeArray.length)) % (this.props.samplesMemeArray.length)
-    console.log("index" + newIndex)
     this.props.setCurrentMemeState(newIndex)
   }
 
@@ -39,7 +39,6 @@ class ControlsComponent extends React.Component {
 
   // Next Button
   nextButton() {
-    console.log(this.state.pictures)
     this.setNewIndex(1)
   }
 

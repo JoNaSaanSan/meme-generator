@@ -1,0 +1,65 @@
+
+#header-text {
+    grid-area: header-text;
+}
+
+#search-text {
+    grid-area: search-text;
+}
+
+#search-text-box {
+    grid-area: search-text-box;
+}
+
+#search-button {
+    grid-area: search-button;
+}
+
+#prev-button {
+    grid-area: prev-button;
+}
+
+#next-button {
+    grid-area: next-button;
+}
+
+#generate-button {
+    grid-area: generate-button;
+}
+
+#upload-button {
+    grid-area: upload-button;
+}
+
+#control-view {
+    height: 750px;
+    width: 350px;
+    background-color: rgb(41, 41, 41);
+    padding: 20px;
+    margin: 20px;
+}
+
+.inner-grid{
+    display: grid;
+    grid-template-areas: 'header-text header-text header-text header-text' 'search-text-box search-text-box search-text-box search-button' 'prev-button  prev-button next-button next-button' 'generate-button generate-button generate-button generate-button' 'upload-button upload-button upload-button upload-button';
+    grid-gap: 10px;
+    margin-bottom: 2em;
+}
+
+.text-box {
+    background-color: #363636;
+    border: none;
+    color: white;
+    padding: 16px 16px;
+    text-decoration: none;
+    margin: 6px 6px;
+    border-radius: 5px;
+}
+
+.color-box {
+    background-color: rgb(41, 41, 41);
+    border-radius: 5px;
+    border: none;
+    color: white;
+}
+
