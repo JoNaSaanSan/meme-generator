@@ -30,7 +30,7 @@ class ImageViewComponent extends React.Component {
     }
 
     // Binds
-    //this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
+    this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
     this.saveMeme = this.saveMeme.bind(this);
   }
 

@@ -12,13 +12,14 @@ class PreviewComponent extends React.Component {
   loadPreviewItem(x){
     //get Pos
     var currentArrayPos = this.props.indexPos;
-    var previewElement = currentArrayPos + x;
-    
+
+    var previewElement = (currentArrayPos + x) % this.props.samplesMemeArray.length;
+  
     return this.props.samplesMemeArray[previewElement].url;
   }
 
   previewSelected(x){
-    this.props.setCurrentMemeState(this.props.indexPos + x)
+    this.props.setCurrentMemeState((this.props.indexPos + x) % this.props.samplesMemeArray.length)
   }
 
   render() {
