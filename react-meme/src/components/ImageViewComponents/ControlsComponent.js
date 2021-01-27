@@ -62,8 +62,17 @@ class ControlsComponent extends React.Component {
   createUI() {
     return this.props.inputBoxes.map((el, i) =>
       <div key={i}>
-        <input type="text" class="text-box" onChange={this.props.handleChange(i)} />
-        <input type="color" class="color-box" onChange={this.props.handleChange(i)} />
+        <input type="text" placeholder="Text" id="text" class="input-box" onChange={this.props.handleChange(i)} />
+        <input type="text" placeholder="50" id="fontSize" class="number-input-box" min="1" max="100" maxlength="2" onChange={this.props.handleChange(i)} />
+        <select name="fontFamily" id="fontFamily" class="input-box" onChange={this.props.handleChange(i)}>
+          <option value="Impact" selected="selected">Impact</option>
+          <option value="Arial">Arial</option>
+          <option value="Comic Sans MS">Comic Sans MS</option>
+          <option value="Courier">Courier</option>
+          <option value="Times New Roman">Times New Roman</option>
+          <option value="Verdana">Verdana</option>
+        </select>
+        <input type="color" id="fontColor" class="color-input-box" value={this.props.inputBoxes[i].fontColor} onChange={this.props.handleChange(i)} />
       </div>)
   }
 
@@ -78,7 +87,7 @@ class ControlsComponent extends React.Component {
       <div id="control-view">
         <div class="inner-grid" id="left-container">
           <h1 id="header-text"> Meme Generator </h1>
-          <input type="text" id="search-text-box" class="text-box" />
+          <input type="text" id="search-text-box" class="input-box" />
           <button id="search-button" class="button" onClick={this.searchImage}> Search </button>
           <button onClick={this.prevButton} id="prev-button" class="button" > Back </button>
           <button onClick={this.nextButton} id="next-button" class="button" > Next </button>
@@ -94,6 +103,7 @@ class ControlsComponent extends React.Component {
           </div>
         </div>
         <p>Insert text below </p>
+        <div id="ui-buttons-description"> <div>Text</div><div>Font Size</div><div>Font Family</div><div>Color</div></div>
         <div id="ui-buttons"> {this.createUI()}</div>
       </div>
     )

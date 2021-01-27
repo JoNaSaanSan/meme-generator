@@ -1,5 +1,5 @@
-import Draggable from 'react-draggable';
-import CanvasDraw from 'react-canvas-draw';
+import CanvasComponent from './CanvasComponent';
+import Store from '../../redux/store';
 const React = require('react');
 require('./ImageComponent.css');
 
@@ -7,59 +7,33 @@ class ImageComponent extends React.Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
-            drawModus: false,
+            isSignedIn: Store.getState().user.isSignedIn,
+            downloadImageTrigger: false,
         }
-        this.createTextBoxes = this.createTextBoxes.bind(this);
-        this.drawMode = this.drawMode.bind(this);
-        this.editMode = this.editMode.bind(this);
+        this.downloadImage = this.downloadImage.bind(this)
     }
 
-
-
-
-    // Add Text Boxes depending on the current meme
-    createTextBoxes() {
-        this.createCanvas();
-        return this.props.inputBoxes.map((el, i) =>
-            <Draggable bounds="parent"><div key={i} type="text" className="text-box-on-image"> <div type="text" className="text-on-image" style={{ color: this.props.inputBoxes[`${i}`].color }}> {this.props.inputBoxes[i].text} </div> </div></Draggable>
-        )
-    }
-
-    createCanvas() {
-        return (<CanvasDraw
-            ref={canvasDraw => (this.canvasSpace = canvasDraw)}
-            brushColor="rgba(155,12,60,0.3)"
-            imgSrc={this.props.currentMeme.url}
-        />)
-    }
-
-    drawMode() {
-        return (<CanvasDraw
-            ref={canvasDraw => (this.canvasSpace = canvasDraw)}
-            brushColor="rgba(155,12,60,0.3)"
-            imgSrc={this.props.currentMeme.url}
-        />)
-    }
-
-    editMode() {
-        return (<div className="image-container" >
-            <img src={this.props.currentMeme.url} onError={i => i.target.src = ''} id="image-template" class="meme-template-image" />
-            {this.createTextBoxes()}
-        </div>)
+    downloadImage(){
+        this.setState(prevState => ({ downloadImageTrigger: !prevState.downloadImageTrigger }))
     }
 
     render() {
-
+        //<img src={this.props.currentMeme.url} onError={i => i.target.src = ''} id="image-template" class="meme-template-image" />
+        Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
         return (
             <div class="image-view" id="center-container">
-                { this.state.drawModus ? <button onClick={this.editMode} id="edit-button" class="button" > Edit </button> : <button onClick={this.drawMode} id="draw-button" class="button" > Draw </button>}
-                <h2 > {this.props.currentMeme.name} </h2>
-                <div className="image-display" >
-                    <div className="image-container" >
-                        <img src={this.props.currentMeme.url} onError={i => i.target.src = ''} id="image-template" class="meme-template-image" />
-                        {this.createTextBoxes()}
-                    </div></div>
+                <div class="image-container">
+                    <h2 > {this.props.currentMeme.name} </h2>
+                    <CanvasComponent currentImage={this.props.currentMeme} inputBoxes={this.props.inputBoxes} downloadImageTrigger = {this.state.downloadImageTrigger} />
+                    <div className="button-view" >
+                        <button onClick={this.generateMeme} id="generate-button" class="button" > Generate Meme with Imgflip </button>
+                        {this.state.isSignedIn ?
+                            <button onClick={this.saveMeme} id="save-button" class="button" > Save Meme </button> : <button class="button"> Sign in to save </button>}
+                        <button onClick={() => this.downloadImage()} className="button">Download Meme!</button>
+                    </div>
+                </div>
             </div>)
     }
 }

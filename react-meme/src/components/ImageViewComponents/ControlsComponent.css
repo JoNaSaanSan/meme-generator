@@ -32,8 +32,6 @@
 }
 
 #control-view {
-    height: 750px;
-    width: 350px;
     background-color: rgb(41, 41, 41);
     padding: 20px;
     margin: 20px;
@@ -45,8 +43,19 @@
     grid-gap: 10px;
     margin-bottom: 2em;
 }
+#ui-buttons-description{
+    display: flex;
+    justify-content: space-around;
+}
 
-.text-box {
+
+.color-input-box {
+    background-color: rgb(41, 41, 41);
+    border-radius: 5px;
+    border: none;
+}
+
+.input-box {
     background-color: #363636;
     border: none;
     color: white;
@@ -54,12 +63,19 @@
     text-decoration: none;
     margin: 6px 6px;
     border-radius: 5px;
+
 }
 
-.color-box {
-    background-color: rgb(41, 41, 41);
-    border-radius: 5px;
+.number-input-box {
+    background-color: #363636;
     border: none;
     color: white;
+    padding: 16px 16px;
+    text-decoration: none;
+    margin: 6px 6px;
+    border-radius: 5px;
+    width: 40px;
 }
+
+
 

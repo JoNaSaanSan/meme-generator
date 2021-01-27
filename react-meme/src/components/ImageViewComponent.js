@@ -5,6 +5,14 @@ import Store from '../redux/store';
 const React = require('react');
 require('./ImageViewComponent.css');
 
+const initializeText = {
+  textID: '',
+  text: '',
+  fontColor: '#ffffff',
+  fontFamily: '',
+  fontSize: '50px',
+}
+
 
 // This component handles the current Meme State and all surver communication
 class ImageViewComponent extends React.Component {
@@ -24,9 +32,11 @@ class ImageViewComponent extends React.Component {
       //Handle inputTextBoxes
       inputBoxes: [
         {
-          textID: '',
-          text: '',
-          color: '#000000',
+          textID: initializeText.textID,
+          text: initializeText.text,
+          fontColor: initializeText.fontColor,
+          fontFamily: initializeText.fontFamily,
+          fontSize: initializeText.fontSize,
         }
       ],
     }
@@ -47,9 +57,21 @@ class ImageViewComponent extends React.Component {
     for (var i = 0; i < this.props.samplesMemeArray[index].box_count; i++) {
       // Check if box is undefined
       if (this.state.inputBoxes[i] !== undefined) {
-        newInputBoxesArray.push({ textID: i, text: this.state.inputBoxes[i].text, color: this.state.inputBoxes[i].color });
+        newInputBoxesArray.push({
+          textID: i, 
+          text: this.state.inputBoxes[i].text, 
+          fontColor: this.state.inputBoxes[i].fontColor,
+          fontFamily: this.state.inputBoxes[i].fontFamily, 
+          fontSize: this.state.inputBoxes[i].fontSize
+        });
       } else {
-        newInputBoxesArray.push({ textID: i, text: '', color: '#000000' });
+        newInputBoxesArray.push({ 
+          textID: i, 
+          text: initializeText.text, 
+          fontColor: initializeText.fontColor,
+          fontFamily: initializeText.fontFamily, 
+          fontSize: initializeText.fontSize,
+        });
       }
     }
 
@@ -60,11 +82,12 @@ class ImageViewComponent extends React.Component {
     })
   }
 
-  // Handle Events when Text or Color Input changed and store it in the inputBoxesStates
+  // Handle Events when Text or Color Inputs changed and store it in the inputBoxesStates
   handleChange(i, event) {
+    console.log(event.target.id + " XX " +event.target.value)
     this.setState(prevState => ({
       inputBoxes: prevState.inputBoxes.map(
-        obj => (obj.textID === i ? Object.assign(obj, { [event.target.type]: event.target.value }) : obj)
+        obj => (obj.textID === i ? Object.assign(obj, { [event.target.id]: event.target.value }) : obj)
       )
     }));
   }
@@ -154,17 +177,7 @@ class ImageViewComponent extends React.Component {
         <div class="outer-container">
           <ControlsComponent URL={this.state.URL} inputBoxes={this.state.inputBoxes} index={this.state.index} samplesMemeArray={this.props.samplesMemeArray} setCurrentMemeState={newIndex => this.setCurrentMemeState(newIndex)} generateMeme={() => this.generateMeme()} handleChange={(i) => this.handleChange.bind(this, i)} />
           <ImageComponent currentMeme={this.state.currentMeme} inputBoxes={this.state.inputBoxes} />
-
-          <div class="image-view" id="right-container">
-            <h2 id="generated-title"> Generated Image: {this.state.generatedName}</h2>
-            <div className="image-display" >
-              <img src={this.state.generatedMeme.url} onError={i => i.target.src = ''} alt="Generated" id="image-template" /></div>
-            <div className="button-view" >
-              {this.state.isSignedIn ?
-                <button onClick={this.saveMeme} id="save-button" class="button" > Save Meme </button> : <button class="button"> Sign in to save! </button>}
-
-            </div>
-          </div >
+        <image src={this.state.generatedMeme.url} />
         </div>
 
         <PreviewComponent samplesMemeArray={this.props.samplesMemeArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />

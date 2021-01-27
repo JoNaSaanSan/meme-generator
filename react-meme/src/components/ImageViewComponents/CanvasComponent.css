@@ -1,0 +1,20 @@
+.canvas-containe r{
+    display: flex;
+    justify-content: center;
+}
+
+
+
+
+.text-box-on-image{
+    border-color: #000000;
+    border-width: 1px;
+    border-style: dotted;
+    width: 300px;
+    height: 80px;
+    float: left;
+    position: absolute;
+    cursor: pointer;
+    z-index: 20;
+}
+

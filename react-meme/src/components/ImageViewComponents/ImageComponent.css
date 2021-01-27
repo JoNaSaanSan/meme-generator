@@ -1,38 +1,9 @@
 .image-view {
     background-color: rgb(41, 41, 41);
-    width: 650px;
     padding: 20px;
     margin: 20px;
 }
 
-.image-display{
-    display: flex;
-    justify-content: center;
+.image-container {
+    display: inline-grid;
 }
-
-
-.image-container{
-    display: flex;
-    position: absolute;
-    max-width: 400px;
-    max-height: 400px;
-}
-
-
-.text-box-on-image{
-    border-color: #000000;
-    border-width: 1px;
-    border-style: dotted;
-    width: 100px;
-    height: 20px;
-    float: left;
-    position: absolute;
-    cursor: pointer;
-}
-
-
-.meme-template-image{   
-    max-width: 400px;
-    max-height: 400px;
-}
-
