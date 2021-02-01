@@ -1,6 +1,11 @@
 import ImageUploader from 'react-images-upload';
+import UploadComponent from './UploadComponent';
 const React = require('react');
+<<<<<<< HEAD
 var nodefetch = require('node-fetch')
+=======
+require('./ControlsComponent.css');
+>>>>>>> 80c940555f23d76fb779e2e3a99e05a922d48475
 
 
 class ControlsComponent extends React.Component {
@@ -31,7 +36,6 @@ class ControlsComponent extends React.Component {
   //Set new index with step
   setNewIndex(step) {
     var newIndex = (this.props.index + step + (this.props.samplesMemeArray.length)) % (this.props.samplesMemeArray.length)
-    console.log("index" + newIndex)
     this.props.setCurrentMemeState(newIndex)
   }
 
@@ -42,7 +46,6 @@ class ControlsComponent extends React.Component {
 
   // Next Button
   nextButton() {
-    console.log(this.state.pictures)
     this.setNewIndex(1)
   }
 
@@ -77,6 +80,7 @@ class ControlsComponent extends React.Component {
   // Add Input Boxes (Text & Color) depending on the meme boxcount
   createUI() {
     return this.props.inputBoxes.map((el, i) =>
+<<<<<<< HEAD
       <
       div key = {
         i
@@ -95,6 +99,21 @@ class ControlsComponent extends React.Component {
       }
       /> < /
       div > )
+=======
+      <div key={i}>
+        <input type="text" placeholder="Text" name="text" className="input-box" onChange={this.props.handleChange(i)} />
+        <input type="text" placeholder="50" name="fontSize" className="number-input-box" min="1" max="100" maxLength="2" onChange={this.props.handleChange(i)} />
+        <select name="fontFamily" className="input-box" onChange={this.props.handleChange(i)}>
+          <option value="Impact">Impact</option>
+          <option value="Arial">Arial</option>
+          <option value="Comic Sans MS">Comic Sans MS</option>
+          <option value="Courier">Courier</option>
+          <option value="Times New Roman">Times New Roman</option>
+          <option value="Verdana">Verdana</option>
+        </select>
+        <input type="color" name="fontColor" className="color-input-box" value={this.props.inputBoxes[i].fontColor} onChange={this.props.handleChange(i)} />
+      </div>)
+>>>>>>> 80c940555f23d76fb779e2e3a99e05a922d48475
   }
 
   //Generate Meme Button
@@ -104,6 +123,7 @@ class ControlsComponent extends React.Component {
 
   // Render
   render() {
+<<<<<<< HEAD
     console.log(this.state);
     return ( <
       div id = "control-view" >
@@ -165,6 +185,33 @@ class ControlsComponent extends React.Component {
         this.createUI()
       } < /div> < /
       div >
+=======
+    return (
+      <div id="control-view">
+        <div className="inner-grid" id="left-container">
+          <h1 id="header-text"> Meme Generator </h1>
+          <input type="text" id="search-text-box" class="input-box" />
+          <button id="search-button" class="button" onClick={this.searchImage}> Search </button>
+          <button onClick={this.prevButton} id="prev-button" className="button" > Back </button>
+          <button onClick={this.nextButton} id="next-button" className="button" > Next </button>
+          <button onClick={this.generateMemeButton} id="generate-button" className="button" > Generate</button>
+          <div id="upload-button" > <ImageUploader
+            withIcon={false}
+            withPreview={true}
+            buttonText='Choose images'
+            onChange={this.onDrop}
+            imgExtension={['.jpg', '.gif', '.png', '.gif']}
+            maxFileSize={5242880}
+          />
+
+          <UploadComponent />
+          </div>
+        </div>
+        <p>Insert text below </p>
+        <div id="ui-buttons-description"> <div>Text</div><div>Font Size</div><div>Font Family</div><div>Color</div></div>
+        <div id="ui-buttons"> {this.createUI()}</div>
+      </div>
+>>>>>>> 80c940555f23d76fb779e2e3a99e05a922d48475
     )
   }
 }

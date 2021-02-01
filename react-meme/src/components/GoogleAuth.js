@@ -63,7 +63,7 @@ class GoogleAuth extends React.Component {
                     <GoogleLogout
                         clientId={CLIENT_ID}
                         render={renderProps => (
-                            <button onClick={renderProps.onClick} disabled={renderProps.disabled} class="button">Log Out</button>
+                            <button onClick={renderProps.onClick} disabled={renderProps.disabled} className="button">Log Out</button>
                           )}
                         buttonText='Logout'
                         onLogoutSuccess={this.logout}
@@ -72,7 +72,7 @@ class GoogleAuth extends React.Component {
                     </GoogleLogout> : <GoogleLogin
                         clientId={CLIENT_ID}
                         render={renderProps => (
-                            <button onClick={renderProps.onClick} disabled={renderProps.disabled} class="button">Log In</button>
+                            <button onClick={renderProps.onClick} disabled={renderProps.disabled} className="button">Log In</button>
                         )}
                         buttonText='Login'
                         onSuccess={this.login}

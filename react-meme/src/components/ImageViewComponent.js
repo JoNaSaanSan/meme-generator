@@ -1,10 +1,20 @@
 import ControlsComponent from './ImageViewComponents/ControlsComponent';
+import ImageComponent from './ImageViewComponents/ImageComponent';
 import PreviewComponent from './PreviewComponent';
 import Store from '../redux/store';
 const React = require('react');
 require('./ImageViewComponent.css');
 
+const initializeText = {
+  textID: '',
+  text: '',
+  fontColor: '#ffffff',
+  fontFamily: '',
+  fontSize: '50px',
+}
 
+
+// This component handles the current Meme State and all surver communication
 class ImageViewComponent extends React.Component {
 
   constructor(props) {
@@ -17,14 +27,16 @@ class ImageViewComponent extends React.Component {
       // Index of array
       index: 0,
 
-      isSignedIn: Store.getState().user.isSignedIn ,
-    
+      isSignedIn: Store.getState().user.isSignedIn,
+
       //Handle inputTextBoxes
       inputBoxes: [
         {
-          textID: '',
-          text: '',
-          color: '',
+          textID: initializeText.textID,
+          text: initializeText.text,
+          fontColor: initializeText.fontColor,
+          fontFamily: initializeText.fontFamily,
+          fontSize: initializeText.fontSize,
         }
       ],
     }
@@ -32,6 +44,7 @@ class ImageViewComponent extends React.Component {
     // Binds
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
     this.saveMeme = this.saveMeme.bind(this);
+    this.generateMeme = this.generateMeme.bind(this);
   }
 
   // Initialize
@@ -45,12 +58,23 @@ class ImageViewComponent extends React.Component {
     for (var i = 0; i < this.props.samplesMemeArray[index].box_count; i++) {
       // Check if box is undefined
       if (this.state.inputBoxes[i] !== undefined) {
-        newInputBoxesArray.push({ textID: i, text: this.state.inputBoxes[i].text, color: this.state.inputBoxes[i].color });
+        newInputBoxesArray.push({
+          textID: i, 
+          text: this.state.inputBoxes[i].text, 
+          fontColor: this.state.inputBoxes[i].fontColor,
+          fontFamily: this.state.inputBoxes[i].fontFamily, 
+          fontSize: this.state.inputBoxes[i].fontSize
+        });
       } else {
-        newInputBoxesArray.push({ textID: i, text: '', color: '' });
+        newInputBoxesArray.push({ 
+          textID: i, 
+          text: initializeText.text, 
+          fontColor: initializeText.fontColor,
+          fontFamily: initializeText.fontFamily, 
+          fontSize: initializeText.fontSize,
+        });
       }
     }
-    console.log("CURRENT MEME NAME " + this.props.samplesMemeArray[index].name)
 
     this.setState({
       currentMeme: this.props.samplesMemeArray[index],
@@ -59,17 +83,23 @@ class ImageViewComponent extends React.Component {
     })
   }
 
-  // Handle Events when Text or Color Input changed and store it in the inputBoxesStates
+  // Handle Events when Text or Color Inputs changed and store it in the inputBoxesStates
   handleChange(i, event) {
+    console.log(event.target.name + " XX " +event.target.value)
     this.setState(prevState => ({
       inputBoxes: prevState.inputBoxes.map(
-        obj => (obj.textID === i ? Object.assign(obj, { [event.target.type]: event.target.value }) : obj)
+        obj => (obj.textID === i ? Object.assign(obj, { [event.target.name]: event.target.value }) : obj)
       )
     }));
   }
 
+
+
   //Generate Meme
   generateMeme() {
+
+    console.log(this.state.currentMeme)
+
     // POST request using fetch with error handling
     var memeObject = {};
     memeObject.id = this.state.currentMeme.id;
@@ -149,26 +179,11 @@ class ImageViewComponent extends React.Component {
       <div class="generator-view">
         <div class="outer-container">
           <ControlsComponent URL={this.state.URL} inputBoxes={this.state.inputBoxes} index={this.state.index} samplesMemeArray={this.props.samplesMemeArray} setCurrentMemeState={newIndex => this.setCurrentMemeState(newIndex)} generateMeme={() => this.generateMeme()} handleChange={(i) => this.handleChange.bind(this, i)} />
-          <div class="image-view" id="center-container">
-            <h2 > {this.state.currentMeme.name} </h2>
-            <div className="image-display" >
-              <img src={this.state.currentMeme.url} onError={i => i.target.style.display = 'none'}
-                alt="Target" id="image-template" /></div>
-          </div>
-
-          <div class="image-view" id="right-container">
-            <h2 id="generated-title"> Generated Image: {this.state.generatedName}</h2>
-            <div className="image-display" >
-              <img src={this.state.generatedMeme.url} onError={i => i.target.src = ''} alt="Generated" id="image-template" /></div>
-            <div className="button-view" >
-            {this.state.isSignedIn ?
-            <button onClick={this.saveMeme} id="save-button" class="button" > Save Meme </button> : <button class="button"> Sign in to save! </button>}
-
-            </div>
-          </div >
+          <ImageComponent generateMeme={this.generateMeme} currentMeme={this.state.currentMeme} inputBoxes={this.state.inputBoxes} />
+        <img src={this.state.generatedMeme.url} />
         </div>
 
-        <PreviewComponent samplesMemeArray = {this.props.samplesMemeArray} indexPos = {this.state.index} setCurrentMemeState = {this.setCurrentMemeState} />
+        <PreviewComponent samplesMemeArray={this.props.samplesMemeArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />
       </div>
     )
   }
