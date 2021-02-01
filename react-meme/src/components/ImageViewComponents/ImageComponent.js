@@ -23,14 +23,14 @@ class ImageComponent extends React.Component {
         //<img src={this.props.currentMeme.url} onError={i => i.target.src = ''} id="image-template" class="meme-template-image" />
         Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
         return (
-            <div class="image-view" id="center-container">
-                <div class="image-container">
+            <div className="image-view" id="center-container">
+                <div className="image-container">
                     <h2 > {this.props.currentMeme.name} </h2>
                     <CanvasComponent currentImage={this.props.currentMeme} inputBoxes={this.props.inputBoxes} downloadImageTrigger = {this.state.downloadImageTrigger} />
                     <div className="button-view" >
-                        <button onClick={this.generateMeme} id="generate-button" class="button" > Generate Meme with Imgflip </button>
+                        <button onClick={() => this.props.generateMeme()} id="generate-button" className="button" > Generate Meme with Imgflip </button>
                         {this.state.isSignedIn ?
-                            <button onClick={this.saveMeme} id="save-button" class="button" > Save Meme </button> : <button class="button"> Sign in to save </button>}
+                            <button onClick={this.saveMeme} id="save-button" className="button" > Save Meme </button> : <button className="button"> Sign in to save </button>}
                         <button onClick={() => this.downloadImage()} className="button">Download Meme!</button>
                     </div>
                 </div>

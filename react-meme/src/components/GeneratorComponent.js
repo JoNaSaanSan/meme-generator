@@ -61,10 +61,10 @@ class GeneratorComponent extends React.Component {
   render() {
 
     if (this.state.isFetching)
-      return <div class="App"> Loading... </div>;
+      return <div className="App"> Loading... </div>;
     if (this.state.samplesMemeArray.length === 0)
-      return <div class="App"> There seems to be no connection to the server! </div>;
-    return <div class="App">  
+      return <div className="App"> There seems to be no connection to the server! </div>;
+    return <div className="App">  
       <ImageViewComponent URL={this.state.URL} samplesMemeArray={this.state.samplesMemeArray}/>
 
 

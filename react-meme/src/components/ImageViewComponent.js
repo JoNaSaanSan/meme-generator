@@ -44,6 +44,7 @@ class ImageViewComponent extends React.Component {
     // Binds
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
     this.saveMeme = this.saveMeme.bind(this);
+    this.generateMeme = this.generateMeme.bind(this);
   }
 
   // Initialize
@@ -84,10 +85,10 @@ class ImageViewComponent extends React.Component {
 
   // Handle Events when Text or Color Inputs changed and store it in the inputBoxesStates
   handleChange(i, event) {
-    console.log(event.target.id + " XX " +event.target.value)
+    console.log(event.target.name + " XX " +event.target.value)
     this.setState(prevState => ({
       inputBoxes: prevState.inputBoxes.map(
-        obj => (obj.textID === i ? Object.assign(obj, { [event.target.id]: event.target.value }) : obj)
+        obj => (obj.textID === i ? Object.assign(obj, { [event.target.name]: event.target.value }) : obj)
       )
     }));
   }
@@ -96,6 +97,8 @@ class ImageViewComponent extends React.Component {
 
   //Generate Meme
   generateMeme() {
+
+    console.log(this.state.currentMeme)
 
     // POST request using fetch with error handling
     var memeObject = {};
@@ -176,8 +179,8 @@ class ImageViewComponent extends React.Component {
       <div class="generator-view">
         <div class="outer-container">
           <ControlsComponent URL={this.state.URL} inputBoxes={this.state.inputBoxes} index={this.state.index} samplesMemeArray={this.props.samplesMemeArray} setCurrentMemeState={newIndex => this.setCurrentMemeState(newIndex)} generateMeme={() => this.generateMeme()} handleChange={(i) => this.handleChange.bind(this, i)} />
-          <ImageComponent currentMeme={this.state.currentMeme} inputBoxes={this.state.inputBoxes} />
-        <image src={this.state.generatedMeme.url} />
+          <ImageComponent generateMeme={this.generateMeme} currentMeme={this.state.currentMeme} inputBoxes={this.state.inputBoxes} />
+        <img src={this.state.generatedMeme.url} />
         </div>
 
         <PreviewComponent samplesMemeArray={this.props.samplesMemeArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />

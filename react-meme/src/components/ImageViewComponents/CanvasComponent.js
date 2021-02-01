@@ -1,5 +1,7 @@
 import Draggable from 'react-draggable';
 import CanvasDraw from "react-canvas-draw";
+import Immutable from 'immutable';
+import { findDOMNode } from 'react-dom'
 const React = require('react');
 require('./CanvasComponent.css');
 
@@ -12,9 +14,15 @@ class CanvasComponent extends React.Component {
       drawModus: false,
       currentImagebase64: null,
       textBoxes: 0,
-      isDragging: '',
-      textPosY: '',
+      isDragging: false,
+      isDrawing: false,
       textPosX: '',
+      textPosY: '',
+      mousePosX: '',
+      mousePosY: '',
+      prevMousePosX: '',
+      prevMousePosY: '',
+      color: '#000000',
     }
     this.createTextBoxes = this.createTextBoxes.bind(this);
     this.editMode = this.editMode.bind(this);
@@ -59,8 +67,6 @@ class CanvasComponent extends React.Component {
 
   // Handle deselection of text
   handleMouseUp = (event) => {
-    document.removeEventListener('mousemove', this.handleMouseMove);
-
     // Create temp array 
     let tmpisDragging = [];
     for (var x = 0; x < this.state.textBoxes; x++) {
@@ -70,30 +76,40 @@ class CanvasComponent extends React.Component {
     // Set isDragging state of all text to false
     this.setState({
       isDragging: tmpisDragging,
+      isDrawing: false,
     });
   }
 
 
   // Handle Text selection
   handleMouseDown = (e, type) => {
-    const stateObj = this.getStateObj(e, type);
-    document.addEventListener('mousemove', (event) => this.handleMouseMove(event, type));
-    this.setState({
-      ...stateObj
-    })
+    if (this.state.drawModus) {
+
+
+    } else {
+      const stateObj = this.getStateObj(e, type);
+      document.addEventListener('mousemove', (event) => this.handleMouseMove(event, type));
+      this.setState({
+        ...stateObj
+      })
+    }
   }
 
   // Handle Text dragging
   handleMouseMove = (e, type) => {
-    for (var x = 0; x < this.state.textBoxes; x++) {
-      if (this.state.isDragging[x]) {
-        let stateObj = {};
-        if (type === "text_" + x) {
-          stateObj = this.getStateObj(e, type);
+    if (this.state.drawModus) {
+
+    } else {
+      for (var x = 0; x < this.state.textBoxes; x++) {
+        if (this.state.isDragging[x]) {
+          let stateObj = {};
+          if (type === "text_" + x) {
+            stateObj = this.getStateObj(e, type);
+          }
+          this.setState({
+            ...stateObj
+          });
         }
-        this.setState({
-          ...stateObj
-        });
       }
     }
   };
@@ -144,6 +160,11 @@ class CanvasComponent extends React.Component {
     return result;
   }
 
+  // Called when window is loaded
+  componentDidMount() {
+
+  }
+
   // When state is being updated
   componentDidUpdate(prevProps) {
 
@@ -173,6 +194,49 @@ class CanvasComponent extends React.Component {
       this.convertSvgToImage(this.props.downloadImageState);
     }
   }
+
+
+
+  changeMode() {
+    this.setState(prevState => ({ drawModus: !prevState.drawModus }))
+  }
+
+  drawMode() {
+    if (this.state.drawModus) {
+
+
+    }
+
+  }
+
+  showCanvas(currentImage) {
+    return (<div className="canvas-container" >
+      {this.editMode(currentImage)}
+    </div>
+    )
+  }
+
+  convertSvgToImage = () => {
+    const svg = this.svgRef;
+    let svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("id", "canvas");
+    const svgSize = svg.getBoundingClientRect();
+    canvas.width = svgSize.width;
+    canvas.height = svgSize.height;
+    const img = document.createElement("img");
+    img.setAttribute("src", "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData))));
+    img.onload = function () {
+      canvas.getContext("2d").drawImage(img, 0, 0);
+      const canvasdata = canvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.download = "meme.png";
+      a.href = canvasdata;
+      document.body.appendChild(a);
+      a.click();
+    };
+  }
+
 
 
   // Edit Mode is the mode where the text can be dragged
@@ -205,55 +269,13 @@ class CanvasComponent extends React.Component {
           width={newWidth}
         />
         {this.createTextBoxes()}
+       
       </svg>
     )
   }
 
-  changeMode() {
-    this.setState(prevState => ({ drawModus: !prevState.drawModus }))
-  }
 
-  drawMode(imageUrl) {
-    return (
-      <CanvasDraw
-        ref={canvasDraw => (this.saveableCanvas = canvasDraw)}
-        brushColor={this.state.color}
-        imgSrc={imageUrl}
-        brushRadius={this.state.brushRadius}
-        lazyRadius={this.state.lazyRadius}
-        canvasWidth={this.props.currentImage.width}
-        canvasHeight={this.props.currentImage.height}
-      />
-    )
-  }
 
-  showCanvas(currentImage) {
-    return (<div className="canvas-container" >
-      {this.editMode(currentImage)}
-    </div>
-    )
-  }
-
-  convertSvgToImage = () => {
-    const svg = this.svgRef;
-    let svgData = new XMLSerializer().serializeToString(svg);
-    const canvas = document.createElement("canvas");
-    canvas.setAttribute("id", "canvas");
-    const svgSize = svg.getBoundingClientRect();
-    canvas.width = svgSize.width;
-    canvas.height = svgSize.height;
-    const img = document.createElement("img");
-    img.setAttribute("src", "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData))));
-    img.onload = function () {
-      canvas.getContext("2d").drawImage(img, 0, 0);
-      const canvasdata = canvas.toDataURL("image/png");
-      const a = document.createElement("a");
-      a.download = "meme.png";
-      a.href = canvasdata;
-      document.body.appendChild(a);
-      a.click();
-    };
-  }
 
   render() {
 
