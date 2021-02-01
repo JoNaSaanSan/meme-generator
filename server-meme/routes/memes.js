@@ -3,7 +3,10 @@ var router = express.Router();
 var path = require('path');
 const axios = require('axios');
 var qs = require('qs');
+const fs = require('fs');
 var dateHelper = require('../helpers/dateHelper.js');
+const upload = require("../middlewares/upload");
+
 
 const username = "SandraOMM";
 const password = "onlinemultimedia2020";
@@ -183,10 +186,30 @@ router.get('/popularmemes', (req, res, next) => {
   });
 });
 
-router.post('/uploadtemplate', (req, res, next) => {
-  const memes = req.db.get('memes');
-  console.log(req.body);
+/*router.post('/uploadtemplate2', upload.single("upload"), async (req, res) => {
+
   console.log("Upload!");
+  const memes = req.db.get('memes');
+  console.log(req.file);
+
+
+});*/
+
+router.post("/uploadtemplate", async (req, res) => {
+  try {
+    await upload(req, res);
+
+    if (req.file == undefined) {
+      return res.send(`You must select a file.`);
+    }
+    console.log(req)
+
+    return res.send(`File has been uploaded with id ${req.file.id}.`);
+
+  } catch (error) {
+    console.log(error);
+    return res.send(`Error when trying upload image: ${error}`);
+  }
 });
 
 

@@ -1,5 +1,6 @@
 import ImageUploader from 'react-images-upload';
 const React = require('react');
+var nodefetch = require('node-fetch')
 
 
 class ControlsComponent extends React.Component {
@@ -7,7 +8,9 @@ class ControlsComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { pictures: [] };
+    this.state = {
+      pictures: []
+    };
     this.onDrop = this.onDrop.bind(this);
 
     // Binds
@@ -46,7 +49,19 @@ class ControlsComponent extends React.Component {
 
   // Upload Button
   uploadButton() {
-
+    //
+    function upload(url, picture) {
+      console.log(picture);
+      const form = new FormData();
+      form.append('file', picture);
+      console.log(form)
+      return fetch(url, {
+        method: 'POST',
+        body: form
+      }).then(() => console.log("done"));
+    }
+    this.state.pictures.map(picture => upload("localhost:3000/memes/uploadtemplate", picture));
+    //
   }
 
   // Search Function
@@ -62,10 +77,24 @@ class ControlsComponent extends React.Component {
   // Add Input Boxes (Text & Color) depending on the meme boxcount
   createUI() {
     return this.props.inputBoxes.map((el, i) =>
-      <div key={i}>
-        <input type="text" class="text-box" onChange={this.props.handleChange(i)} />
-        <input type="color" class="color-box" onChange={this.props.handleChange(i)} />
-      </div>)
+      <
+      div key = {
+        i
+      } >
+      <
+      input type = "text"
+      class = "text-box"
+      onChange = {
+        this.props.handleChange(i)
+      }
+      /> <
+      input type = "color"
+      class = "color-box"
+      onChange = {
+        this.props.handleChange(i)
+      }
+      /> < /
+      div > )
   }
 
   //Generate Meme Button
@@ -75,28 +104,67 @@ class ControlsComponent extends React.Component {
 
   // Render
   render() {
-    return (
-      <div id="control-view">
-        <div class="inner-grid" id="left-container">
-          <h1 id="header-text"> Meme Generator </h1>
-          <input type="text" id="search-text-box" class="text-box" />
-          <button id="search-button" class="button" onClick={this.searchImage}> Search </button>
-          <button onClick={this.prevButton} id="prev-button" class="button" > Back </button>
-          <button onClick={this.nextButton} id="next-button" class="button" > Next </button>
-          <button onClick={this.generateMemeButton} id="generate-button" class="button" > Generate</button>
-          <div id="upload-button" > <ImageUploader
-            withIcon={false}
-            withPreview={true}
-            buttonText='Choose images'
-            onChange={this.onDrop}
-            imgExtension={['.jpg', '.gif', '.png', '.gif']}
-            maxFileSize={5242880}
-          />
-          </div>
-        </div>
-        <p>Insert text below </p>
-        <div id="ui-buttons"> {this.createUI()}</div>
-      </div>
+    console.log(this.state);
+    return ( <
+      div id = "control-view" >
+      <
+      div class = "inner-grid"
+      id = "left-container" >
+      <
+      h1 id = "header-text" > Meme Generator < /h1> <
+      input type = "text"
+      id = "search-text-box"
+      class = "text-box" / >
+      <
+      button id = "search-button"
+      class = "button"
+      onClick = {
+        this.searchImage
+      } > Search < /button> <
+      button onClick = {
+        this.prevButton
+      }
+      id = "prev-button"
+      class = "button" > Back < /button> <
+      button onClick = {
+        this.nextButton
+      }
+      id = "next-button"
+      class = "button" > Next < /button> <
+      button onClick = {
+        this.generateMemeButton
+      }
+      id = "generate-button"
+      class = "button" > Generate < /button> <
+      div id = "upload-button" > < ImageUploader withIcon = {
+        false
+      }
+      withPreview = {
+        true
+      }
+      buttonText = 'Choose images'
+      onChange = {
+        this.onDrop
+      }
+      imgExtension = {
+        ['.jpg', '.gif', '.png', '.gif']
+      }
+      maxFileSize = {
+        5242880
+      }
+      /> <
+      button id = "upload-button"
+      class = "button"
+      onClick = {
+        this.uploadButton
+      } > upload < /button> < /
+      div > <
+      /div> <
+      p > Insert text below < /p> <
+      div id = "ui-buttons" > {
+        this.createUI()
+      } < /div> < /
+      div >
     )
   }
 }
