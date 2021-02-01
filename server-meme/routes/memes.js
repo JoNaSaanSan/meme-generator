@@ -5,13 +5,20 @@ const axios = require('axios');
 var qs = require('qs');
 const fs = require('fs');
 var dateHelper = require('../helpers/dateHelper.js');
-const upload = require("../middlewares/upload");
+//const upload = require("../middlewares/upload");
+const util = require("util");
+let multer = require("multer");
+//const GridFsStorage = require("multer-gridfs-storage");
+let upload = multer();
 
 
 const username = "SandraOMM";
 const password = "onlinemultimedia2020";
 
 var memes = [];
+/*
+  memes document: _id, title, creatorId, imgstring, upvotes, downvotes, comments, dateCreated, tags(?)
+*/
 
 /*
   Requests sample memes from the imgflip API.
@@ -34,7 +41,7 @@ router.get('/sampleMemes', function(req, res, next) {
   Requests to generate a meme at the imgflip api.
   Returns the generated meme to the client.
 */
-router.post('/generateMeme', (req, res, next) => {
+router.post('/generateMeme', upload.fields([]), (req, res, next) => {
   const URL = "https://api.imgflip.com/caption_image";
   var id = req.body.id;
   var boxes = []
@@ -67,8 +74,9 @@ router.post('/generateMeme', (req, res, next) => {
 /*
   Saves a meme url with title, creator to the DB.
 */
-router.post('/savememe', function(req, res, next) {
+router.post('/savememe', upload.fields([]), function(req, res, next) {
   const memes = req.db.get('memes');
+  console.log(req);
 
   meme = {
     url: req.body.url,
@@ -139,7 +147,6 @@ router.get('/downvote', (req, res, next) => {
   const memes = req.db.get('memes');
   const memeId = req.body.memeId;
   const user = req.body.user;
-
   //update user downvotes
   const users = req.db.get('users');
   users.update({
@@ -195,14 +202,40 @@ router.get('/popularmemes', (req, res, next) => {
 
 });*/
 
-router.post("/uploadtemplate", async (req, res) => {
+/*router.post("/uploadtemplate", async (req, res) => {
+  console.log(req.db)
+  var storage = new GridFsStorage({
+    url: "mongodb+srv://memeAdmin:memeAdmin@memescluster.0vfqo.mongodb.net/templates",
+    options: {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    },
+    file: (req, file) => {
+      const match = ["image/png", "image/jpeg"];
+
+      if (match.indexOf(file.mimetype) === -1) {
+        const filename = `${Date.now()}-memes-${file.originalname}`;
+        return filename;
+      }
+
+      return {
+        bucketName: "uploads",
+        filename: `${Date.now()}-memes-${file.originalname}`
+      };
+    }
+  });
+
+  var uploadFile = multer({
+    storage: storage
+  }).single("template");
+  var uploadFilesPromise = util.promisify(uploadFile);
+
   try {
-    await upload(req, res);
+    await uploadFilesPromise(req, res);
 
     if (req.file == undefined) {
       return res.send(`You must select a file.`);
     }
-    console.log(req)
 
     return res.send(`File has been uploaded with id ${req.file.id}.`);
 
@@ -210,7 +243,33 @@ router.post("/uploadtemplate", async (req, res) => {
     console.log(error);
     return res.send(`Error when trying upload image: ${error}`);
   }
-});
+});*/
 
+/*
+  Uploads a template to the MongoDB
+*/
+router.post('/uploadtemplate', upload.fields([]), (req, res) => {
+  console.log(req.body);
+  const templates = req.db.get('templates');
+  const creator = req.body.creator;
+  const title = req.body.title;
+  const imgstring = req.body.imgstring;
+
+  //var imgBuffer = new Buffer(imgstring, "base64")
+  //console.log(imgstring)
+  template = {
+    title: title,
+    creatorId: creator,
+    imgstring: imgstring,
+    dateCreated: new Date().toLocaleString()
+  }
+
+  templates.insert(template).then(newObj => {
+    console.log("done");
+    res.send(`Template saved with id ${newObj._id}!`);
+  });
+
+
+});
 
 module.exports = router;
