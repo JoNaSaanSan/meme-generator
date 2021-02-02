@@ -5,6 +5,21 @@ import { findDOMNode } from 'react-dom'
 const React = require('react');
 require('./CanvasComponent.css');
 
+// Convert an image to data urls
+function getBase64Image(image) {
+  var canvas = document.createElement("canvas");
+  canvas.width = image.width;
+  canvas.height = image.height;
+
+  if (canvas.getContext) {
+    var ctx = canvas.getContext('2d');
+  }
+  ctx.drawImage(image, 0, 0);
+  let dataUrl = canvas.toDataURL("image/png")
+  console.log(dataUrl)
+  return dataUrl;
+}
+
 class CanvasComponent extends React.Component {
 
   constructor(props) {
@@ -12,7 +27,14 @@ class CanvasComponent extends React.Component {
     this.state = {
       imgLoaded: false,
       drawModus: false,
-      currentImagebase64: null,
+      currentImageBase64: null,
+      curretnDrawingBase64: null,
+      canvasDimensions: {
+        canvasWidth: 0,
+        canvasHeight: 0,
+        canvasWrH: 1,
+        keepRatio: false,
+      },
       textBoxes: 0,
       isDragging: false,
       isDrawing: false,
@@ -27,6 +49,7 @@ class CanvasComponent extends React.Component {
     this.createTextBoxes = this.createTextBoxes.bind(this);
     this.editMode = this.editMode.bind(this);
     this.changeMode = this.changeMode.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
 
@@ -35,6 +58,7 @@ class CanvasComponent extends React.Component {
 
     let rect;
 
+    // assigns rect a DOMRect object of the image
     if (this.imageRef !== null) {
       rect = this.imageRef.getBoundingClientRect();
     }
@@ -135,25 +159,39 @@ class CanvasComponent extends React.Component {
     )
   }
 
-  getBase64Image(imgUrl) {
 
-    console.log(imgUrl)
+  // Handle Draw
+  draw() {
 
+    console.log("Draw");
+    var canvas = document.createElement("canvas");
+    canvas.width = this.state.canvasDimensions.canvasWidth;
+    canvas.height = this.state.canvasDimensions.canvasHeight;
+
+
+    if (canvas.getContext) {
+      var ctx = canvas.getContext('2d');
+      ctx.beginPath();
+      ctx.moveTo(75, 50);
+      ctx.lineTo(100, 75);
+      ctx.lineTo(100, 25);
+      ctx.fill();
+      let dataUrl = canvas.toDataURL("image/png")
+      console.log(dataUrl)
+      return dataUrl;
+    }
+  }
+
+  // Load Image
+  loadImage(imgUrl) {
     var result = new Promise((resolve, reject) => {
-
       var img = new Image();
       // set attributes and src 
       img.setAttribute('crossOrigin', 'anonymous'); //
       img.src = imgUrl;
 
       img.onload = function () {
-        var canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        let dataUrl = canvas.toDataURL("image/png")
-        resolve(dataUrl);
+        resolve(getBase64Image(img));
       };
       img.onerror = reject;
     });
@@ -179,13 +217,14 @@ class CanvasComponent extends React.Component {
       })
 
       // Create Base Image
-      this.getBase64Image(this.props.currentImage.url).then(result =>
+      this.loadImage(this.props.currentImage.url).then(result =>
         this.setState({
-          currentImagebase64: result,
+          currentImageBase64: result,
           textBoxes: this.props.inputBoxes.length,
           isDragging: tmpArr,
           textPosX: tmpPosX,
           textPosY: tmpPosY,
+          canvasDimensions: { canvasHeight: 400, canvasWidth: 400, canvasWrH: (this.props.currentImage.width / this.props.currentImage.height), keepRatio: false }
         })
       )
     }
@@ -199,23 +238,114 @@ class CanvasComponent extends React.Component {
 
   changeMode() {
     this.setState(prevState => ({ drawModus: !prevState.drawModus }))
+    if (this.state.drawModus) {
+      const base64 = this.draw();
+      this.setState({
+        drawModus: false,
+        currentDrawingBase64: base64,
+      }
+      )
+    }
   }
 
   drawMode() {
     if (this.state.drawModus) {
-
-
+      const base64 = this.draw();
+      this.setState({
+        drawModus: false,
+        currentDrawingBase64: base64,
+      }
+      )
     }
-
   }
 
-  showCanvas(currentImage) {
-    return (<div className="canvas-container" >
-      {this.editMode(currentImage)}
+
+  // Controls of canvas
+  canvasSettings() {
+
+    return (<div className="canvas-settings-container" >
+      <input type="number" placeholder="width" name="canvasWidth" className="width-input-box" min="1" max="1000" defaultValue="400" onChange={e => this.handleChange(e)} />
+      <input type="number" placeholder="height" name="canvasHeight" className="height-input-box" min="1" max="1000" defaultValue="400" onChange={e => this.handleChange(e)} />
     </div>
     )
   }
 
+  // Handle Events when Text or Color Inputs changed and store it in the inputBoxesStates
+  handleChange(event) {
+    console.log(event.target.name + ": " + event.target.value)
+
+    this.setState({
+      canvasDimensions: Object.assign(this.state.canvasDimensions, { [event.target.name]: event.target.value })
+    });
+  }
+
+
+
+  // Display Canvas
+  showCanvas() {
+    return (<div className="canvas-container" >
+      {this.editMode()}
+      {this.resizers()}
+    </div>
+    )
+  }
+
+
+  addImages(image) {
+
+
+  }
+
+
+
+  // Edit Mode is the mode where the text can be dragged
+  editMode() {
+    var wrh = this.state.canvasDimensions.canvasWrH;
+    var newWidth = this.state.canvasDimensions.canvasWidth;
+    var newHeight = this.state.canvasDimensions.canvasHeight;
+
+
+    if (newWidth > 400) {
+      newWidth = 400;
+      newHeight = newWidth / wrh;
+    }
+
+    if (newHeight > 400) {
+      newHeight = 400;
+      newWidth = newHeight * wrh;
+    }
+
+
+    return (
+      <svg
+        id="svg_ref"
+        height={newHeight}
+        width={newWidth}
+        ref={element => { this.svgRef = element }}
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+        className="canvasSvg">
+        <image
+          ref={element => { this.imageRef = element }}
+          xlinkHref={this.state.currentImageBase64}
+          height={newHeight}
+          width={newWidth}
+          className="meme-image"
+        />
+        <image
+          xlinkHref={this.state.currentDrawingBase64}
+          height={newHeight}
+          width={newWidth}
+        />
+        {this.createTextBoxes()}
+
+      </svg>
+    )
+  }
+
+
+
+  // Donwload Meme as png
   convertSvgToImage = () => {
     const svg = this.svgRef;
     let svgData = new XMLSerializer().serializeToString(svg);
@@ -237,44 +367,10 @@ class CanvasComponent extends React.Component {
     };
   }
 
+  resizers() {
 
 
-  // Edit Mode is the mode where the text can be dragged
-  editMode(currentImage) {
-    var wrh = currentImage.width / currentImage.height;
-    var newWidth = currentImage.width;
-    var newHeight = currentImage.height;
-    if (newWidth > 400) {
-      newWidth = 400;
-      newHeight = newWidth / wrh;
-    }
-
-    if (newHeight > 400) {
-      newHeight = 400;
-      newWidth = newHeight * wrh;
-    }
-
-    return (
-      <svg
-        width={newWidth}
-        id="svg_ref"
-        height={newHeight}
-        ref={el => { this.svgRef = el }}
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink">
-        <image
-          ref={el => { this.imageRef = el }}
-          xlinkHref={this.state.currentImagebase64}
-          height={newHeight}
-          width={newWidth}
-        />
-        {this.createTextBoxes()}
-       
-      </svg>
-    )
   }
-
-
 
 
   render() {
@@ -282,7 +378,8 @@ class CanvasComponent extends React.Component {
     return (
       <div>
         {this.state.drawModus ? <button onClick={this.changeMode} id="change-mode-button" className="button" > Edit </button> : <button onClick={this.changeMode} id="change-mode-button" class="button" > Draw </button>}
-        {this.showCanvas(this.props.currentImage)}
+        {this.canvasSettings()}
+        {this.showCanvas()}
       </div>
     )
   }
