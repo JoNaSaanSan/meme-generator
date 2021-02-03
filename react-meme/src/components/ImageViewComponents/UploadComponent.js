@@ -11,13 +11,20 @@ class UploadComponent extends React.Component {
     handleChange(event) {
         this.setState({
             file: URL.createObjectURL(event.target.files[0])
-        })
+        })        
+        this.props.uploadedImage(event.target.files[0]);
     }
     render() {
+
         return (
-            <div>
-                <input type="file" onChange={this.handleChange} />
-                <img src={this.state.file} />
+            <div id="upload-button" className="button" > 
+                <label for="file-upload">
+                 Upload Image</label>
+                <input type="file" id="file-upload" onChange={this.handleChange}/>
+                <div className="sample-image-container">
+                    <img src={this.state.file} className="sample-images"/>  
+                </div>
+              
             </div>
         );
     }

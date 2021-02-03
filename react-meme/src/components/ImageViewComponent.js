@@ -39,6 +39,8 @@ class ImageViewComponent extends React.Component {
           fontSize: initializeText.fontSize,
         }
       ],
+
+      currentImageModus: null,
     }
 
     // Binds
@@ -59,18 +61,18 @@ class ImageViewComponent extends React.Component {
       // Check if box is undefined
       if (this.state.inputBoxes[i] !== undefined) {
         newInputBoxesArray.push({
-          textID: i, 
-          text: this.state.inputBoxes[i].text, 
+          textID: i,
+          text: this.state.inputBoxes[i].text,
           fontColor: this.state.inputBoxes[i].fontColor,
-          fontFamily: this.state.inputBoxes[i].fontFamily, 
+          fontFamily: this.state.inputBoxes[i].fontFamily,
           fontSize: this.state.inputBoxes[i].fontSize
         });
       } else {
-        newInputBoxesArray.push({ 
-          textID: i, 
-          text: initializeText.text, 
+        newInputBoxesArray.push({
+          textID: i,
+          text: initializeText.text,
           fontColor: initializeText.fontColor,
-          fontFamily: initializeText.fontFamily, 
+          fontFamily: initializeText.fontFamily,
           fontSize: initializeText.fontSize,
         });
       }
@@ -85,7 +87,7 @@ class ImageViewComponent extends React.Component {
 
   // Handle Events when Text or Color Inputs changed and store it in the inputBoxesStates
   handleChange(i, event) {
-    console.log(event.target.name + " XX " +event.target.value)
+    console.log(event.target.name + " XX " + event.target.value)
     this.setState(prevState => ({
       inputBoxes: prevState.inputBoxes.map(
         obj => (obj.textID === i ? Object.assign(obj, { [event.target.name]: event.target.value }) : obj)
@@ -170,6 +172,12 @@ class ImageViewComponent extends React.Component {
       });
   }
 
+  changeImageMode(mode) {
+    this.setState({
+      currentImageModus: mode,
+    })
+  }
+
   // Render
   render() {
     // Redux: Update Signed in State
@@ -178,9 +186,9 @@ class ImageViewComponent extends React.Component {
     return (
       <div class="generator-view">
         <div class="outer-container">
-          <ControlsComponent URL={this.state.URL} inputBoxes={this.state.inputBoxes} index={this.state.index} samplesMemeArray={this.props.samplesMemeArray} setCurrentMemeState={newIndex => this.setCurrentMemeState(newIndex)} generateMeme={() => this.generateMeme()} handleChange={(i) => this.handleChange.bind(this, i)} />
+          <ControlsComponent URL={this.state.URL} inputBoxes={this.state.inputBoxes} index={this.state.index} samplesMemeArray={this.props.samplesMemeArray} setCurrentMemeState={newIndex => this.setCurrentMemeState(newIndex)} generateMeme={() => this.generateMeme()} handleChange={(i) => this.handleChange.bind(this, i)} changeImageMode={this.changeImageMode} />
           <ImageComponent generateMeme={this.generateMeme} currentMeme={this.state.currentMeme} inputBoxes={this.state.inputBoxes} />
-        <img src={this.state.generatedMeme.url} />
+          <img src={this.state.generatedMeme.url} />
         </div>
 
         <PreviewComponent samplesMemeArray={this.props.samplesMemeArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />

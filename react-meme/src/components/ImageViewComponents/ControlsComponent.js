@@ -9,7 +9,10 @@ class ControlsComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { pictures: [] };
+    this.state = {
+      pictures: [],
+      selectImageMode: "ïmgFlip",
+    };
     this.onDrop = this.onDrop.bind(this);
 
     // Binds
@@ -19,6 +22,8 @@ class ControlsComponent extends React.Component {
     this.searchImage = this.searchImage.bind(this);
     this.createUI = this.createUI.bind(this);
     this.generateMemeButton = this.generateMemeButton.bind(this);
+    this.changeImageMode = this.changeImageMode(this);
+
   }
 
   onDrop(pictureFiles, pictureDataURLs) {
@@ -82,28 +87,34 @@ class ControlsComponent extends React.Component {
     this.props.generateMeme();
   }
 
+ /* uploadedImage(img) {
+    console.log(img);
+   // changeImageMode("uploadedImage");
+  }*/
+
+  changeImageMode(mode) {
+
+   // this.props.changeImageMode(mode);
+  }
+
+
+
   // Render
   render() {
     return (
       <div id="control-view">
         <div className="inner-grid" id="left-container">
           <h1 id="header-text"> Meme Generator </h1>
+          <div id="select-img-buttons">
+            <button  id="select-img-flip-button" className="button" > Img Flip </button>
+            <UploadComponent uploadedImage={this.uploadedImage} />
+            <button id="select-img-url-button" className="button" > URL </button>
+          </div>
           <input type="text" id="search-text-box" class="input-box" />
           <button id="search-button" class="button" onClick={this.searchImage}> Search </button>
           <button onClick={this.prevButton} id="prev-button" className="button" > Back </button>
           <button onClick={this.nextButton} id="next-button" className="button" > Next </button>
           <button onClick={this.generateMemeButton} id="generate-button" className="button" > Generate</button>
-          <div id="upload-button" > <ImageUploader
-            withIcon={false}
-            withPreview={true}
-            buttonText='Choose images'
-            onChange={this.onDrop}
-            imgExtension={['.jpg', '.gif', '.png', '.gif']}
-            maxFileSize={5242880}
-          />
-
-          <UploadComponent />
-          </div>
         </div>
         <p>Insert text below </p>
         <div id="ui-buttons-description"> <div>Text</div><div>Font Size</div><div>Font Family</div><div>Color</div></div>
