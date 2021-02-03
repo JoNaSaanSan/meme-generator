@@ -145,6 +145,7 @@ class CanvasComponent extends React.Component {
       stroke: "#000",
       userSelect: "none",
     }
+    if(this.props.inputBoxes !== undefined){
     return this.props.inputBoxes.map((el, i) =>
       <text
         key={i}
@@ -157,6 +158,9 @@ class CanvasComponent extends React.Component {
         onMouseUp={event => this.handleMouseUp(event, `text_${i}`)}
       >{this.props.inputBoxes[i].text} </text>
     )
+    } else {
+      return;
+    }
   }
 
 

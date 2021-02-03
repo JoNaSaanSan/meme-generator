@@ -1,4 +1,4 @@
-import GeneratorComponent from './components/GeneratorComponent';
+import MemeGenerator from './components/MemeGenerator/MemeGenerator';
 import HeaderComponent from './components/HeaderComponent';
 import ProfileViewComponent from './components/ProfileViewComponent';
 import BrowseViewComponent from './components/BrowseViewComponent';
@@ -13,7 +13,7 @@ class App extends React.Component {
       <div>
         <HeaderComponent />
         <Switch>
-          <Route path="/" component={GeneratorComponent} exact />
+          <Route path="/" component={MemeGenerator} exact />
           <Route path="/browse" component={BrowseViewComponent} />
           <Route path="/profile" component={ProfileViewComponent} />
           <Route component={Error} />
