@@ -6,6 +6,7 @@ var qs = require('qs');
 const fs = require('fs');
 var dateHelper = require('../helpers/dateHelper.js');
 //const upload = require("../middlewares/upload");
+const puppeteer = require('puppeteer');
 const util = require("util");
 let multer = require("multer");
 //const GridFsStorage = require("multer-gridfs-storage");
@@ -268,8 +269,36 @@ router.post('/uploadtemplate', upload.fields([]), (req, res) => {
     console.log("done");
     res.send(`Template saved with id ${newObj._id}!`);
   });
+});
 
+/*
+  Captures a screnshot of a url to an png/jpg and sends it as base64 to the client
+*/
+router.get("/templatefromurl", (req, res) => {
+  const url = req.query.url;
 
+  //catch if url is empty or not a png/jpeg
+  if (url == "" || (url.slice(-3) != "png" && url.slice(-3) != "jpg")) {
+    res.status(404).send("Empty url or no url to a png/jpeg image");
+  } else {
+    var type = url.slice(-3) == "png" ? "png" : "jpeg";
+    (async () => {
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.goto(url);
+      var scrsh = await page.screenshot({
+        type: type,
+        encoding: "base64"
+      });
+
+      await browser.close();
+      return scrsh;
+    })().then(pic => {
+      res.send({
+        base64_img: pic
+      });
+    });
+  }
 });
 
 module.exports = router;
