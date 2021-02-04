@@ -9,8 +9,8 @@ class ControlsComponent extends React.Component {
 
     this.state = {
       imageMemeArray: null,
-      prevIndex: 0,
       index: 0,
+      tmpInputTextObject: {},
       searchText: '',
       titleText: '',
     };
@@ -37,7 +37,6 @@ class ControlsComponent extends React.Component {
     this.setState({
       imageMemeArray: memeArray,
       index: 0,
-      prevIndex: 0,
     }, () => this.resetMemeState())
 
   }
@@ -51,21 +50,19 @@ class ControlsComponent extends React.Component {
    */
   setCurrentMemeState(index) {
     if (this.state.imageMemeArray !== undefined && this.state.imageMemeArray !== null) {
-      /* if (this.state.imageMemeArray[index].inputBoxes.length > 0 && this.state.lockText) {
- 
-      
-           console.log(this.state.imageMemeArray[index].inputBoxes[0].text)
-           this.state.imageMemeArray[index].inputBoxes = this.state.imageMemeArray[this.state.prevIndex].inputBoxes;
-         
-       }*/
-      this.props.setCurrentMeme(this.state.imageMemeArray[index])
-      this.props.setInputBoxes(this.state.imageMemeArray[index].inputBoxes);
       this.setState({
-        prevIndex: this.state.index,
         index: index,
+      }, () => {
+        this.state.imageMemeArray[this.state.index].inputBoxes.map(
+          obj => {
+            if (obj.text === '')
+              (Object.assign(obj, { text: this.state.tmpInputTextObject[obj.textID] })) 
+          }
+        )
+        this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index])
+        this.props.setInputBoxes(this.state.imageMemeArray[this.state.index].inputBoxes);
       })
     }
-
   }
 
   /**
@@ -134,7 +131,7 @@ class ControlsComponent extends React.Component {
    * @param {number} i The index number of the text box
    * @param {Event} event The event which is triggering this function
    * This function handles events whenever text, color or other settings of the text boxes are changed. 
-   * The input boxes of the meme are updated and the current state is saved as a previous index in order to 
+   * The input boxes of the meme are updated and the current text is saved in an array in order to 
    * keep the data for future memes that the user might switch to
    * 
    */
@@ -143,6 +140,9 @@ class ControlsComponent extends React.Component {
       obj => (obj.textID === i ? Object.assign(obj, { [event.target.name]: event.target.value }) : obj)
     )
     this.props.setInputBoxes(this.state.imageMemeArray[this.state.index].inputBoxes);
+
+    if (event.target.name === 'text')
+      Object.assign(this.state.tmpInputTextObject, { [i]: event.target.value })
   }
 
   /**

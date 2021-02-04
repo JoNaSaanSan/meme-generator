@@ -1,4 +1,3 @@
-import { fabric } from 'fabric';
 import { findDOMNode } from 'react-dom'
 const React = require('react');
 require('./CanvasComponent.css');
@@ -69,11 +68,7 @@ class CanvasComponent extends React.Component {
 
   // When state is being updated
   componentDidUpdate(prevProps) {
-    var text1 = new fabric.Text("SOME TEXT", {
-      left: 160,
-      top: 270,
-      fill: "#fff"
-    });
+
 //    this.state.canvas.add(text1);
 
 //    this.state.canvas.width = this.props.currentImage.width;

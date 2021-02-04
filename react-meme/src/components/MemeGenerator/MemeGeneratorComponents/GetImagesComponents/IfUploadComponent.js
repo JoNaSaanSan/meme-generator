@@ -14,7 +14,7 @@ class IfUploadComponent extends React.Component {
     /**
      * 
      * @param {event} event 
-     * Handles file upload event
+     * Handles file upload and stores the file(s) into an array
      * 
      */
     handleChange(event) {
