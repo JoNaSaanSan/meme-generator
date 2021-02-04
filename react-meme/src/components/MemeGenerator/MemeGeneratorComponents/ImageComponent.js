@@ -1,5 +1,5 @@
 import CanvasComponent from './CanvasComponent';
-import Store from '../../redux/store';
+import Store from '../../../redux/store';
 const React = require('react');
 require('./ImageComponent.css');
 

@@ -1,4 +1,3 @@
-
 #header-text {
     grid-area: header-text;
 }
@@ -27,8 +26,10 @@
     grid-area: generate-button;
 }
 
-#upload-button {
-    grid-area: upload-button;
+#select-img-buttons {
+    grid-area: select-img-buttons;
+    display: flex;
+    justify-content: center;
 }
 
 #control-view {
@@ -37,17 +38,17 @@
     margin: 20px;
 }
 
-.inner-grid{
+.inner-grid {
     display: grid;
-    grid-template-areas: 'header-text header-text header-text header-text' 'search-text-box search-text-box search-text-box search-button' 'prev-button  prev-button next-button next-button' 'generate-button generate-button generate-button generate-button' 'upload-button upload-button upload-button upload-button';
+    grid-template-areas: 'header-text header-text header-text header-text' 'select-img-buttons select-img-buttons select-img-buttons select-img-buttons' 'search-text-box search-text-box search-text-box search-button' 'prev-button  prev-button next-button next-button' 'generate-button generate-button generate-button generate-button';
     grid-gap: 10px;
     margin-bottom: 2em;
 }
-#ui-buttons-description{
+
+#ui-buttons-description {
     display: flex;
     justify-content: space-around;
 }
-
 
 .color-input-box {
     background-color: rgb(41, 41, 41);
@@ -63,7 +64,6 @@
     text-decoration: none;
     margin: 6px 6px;
     border-radius: 5px;
-
 }
 
 .number-input-box {
@@ -77,5 +77,31 @@
     width: 15px;
 }
 
+.dimension-input-box {
+    background-color: #363636;
+    border: none;
+    color: white;
+    padding: 16px 16px;
+    text-decoration: none;
+    margin: 6px 6px;
+    border-radius: 5px;
+    width: 55px;
+}
+
+input[type="file"] {
+    display: none;
+}
 
 
+.sample-images {
+    max-width: 100px;
+    height: auto;
+    display: flex;
+    justify-content: center;
+}
+
+.sample-image-container {
+    display: flex;
+    padding: 16px 16px;
+    justify-content: center;
+}
