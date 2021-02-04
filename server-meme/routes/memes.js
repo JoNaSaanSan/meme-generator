@@ -293,6 +293,7 @@ router.get("/templatefromurl", (req, res) => {
       await browser.close();
       return scrsh;
     })().then(pic => {
+      //TODO bild direkt unter templates in der db speichern?
       res.send({
         base64_img: pic
       });
