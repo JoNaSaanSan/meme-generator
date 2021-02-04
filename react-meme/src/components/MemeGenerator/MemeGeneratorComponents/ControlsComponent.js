@@ -19,7 +19,6 @@ class ControlsComponent extends React.Component {
     this.nextButton = this.nextButton.bind(this);
     this.searchTemplate = this.searchTemplate.bind(this);
     this.createUI = this.createUI.bind(this);
-    this.lockText = this.lockText.bind(this);
     this.generateMemeButton = this.generateMemeButton.bind(this);
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
   }
@@ -45,7 +44,6 @@ class ControlsComponent extends React.Component {
       imageMemeArray: memeArray,
       index: 0,
       prevIndex: 0,
-      lockText: true,
     }, () => this.resetMemeState())
 
   }
@@ -59,13 +57,13 @@ class ControlsComponent extends React.Component {
    */
   setCurrentMemeState(index) {
     if (this.state.imageMemeArray !== undefined && this.state.imageMemeArray !== null) {
-      if (this.state.imageMemeArray[index].inputBoxes.length > 0 && this.state.lockText) {
+     /* if (this.state.imageMemeArray[index].inputBoxes.length > 0 && this.state.lockText) {
 
      
           console.log(this.state.imageMemeArray[index].inputBoxes[0].text)
           this.state.imageMemeArray[index].inputBoxes = this.state.imageMemeArray[this.state.prevIndex].inputBoxes;
         
-      }
+      }*/
       this.props.setCurrentMeme(this.state.imageMemeArray[index])
       this.props.setInputBoxes(this.state.imageMemeArray[index].inputBoxes);
       this.setState({
@@ -167,11 +165,6 @@ class ControlsComponent extends React.Component {
     }
   }
 
-  lockText(){
-    this.setState({
-      lockText: !this.state.lockText,
-    })
-  }
 
   //Generate Meme Button
   generateMemeButton() {
@@ -190,7 +183,6 @@ class ControlsComponent extends React.Component {
           <button id="search-button" class="button" onClick={this.searchTemplate}> Search </button>
           <button onClick={this.prevButton} id="prev-button" className="button" > Back </button>
           <button onClick={this.nextButton} id="next-button" className="button" > Next </button>
-          <input type="checkbox" id="keepText" name="keepText" onClick={this.lockText} checked={this.state.lockText}/>
           <button onClick={this.generateMemeButton} id="generate-button" className="button" > Generate</button>
         </div>
         <p>Insert text below </p>

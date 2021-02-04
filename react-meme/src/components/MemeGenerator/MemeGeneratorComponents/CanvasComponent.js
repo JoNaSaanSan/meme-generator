@@ -87,8 +87,9 @@ class CanvasComponent extends React.Component {
       let tmpPosY = [];
       this.props.inputBoxes.map((el, i) => {
         tmpArr[i] = false;
-        tmpPosX[i] = "50%";
-        tmpPosY[i] = 10 + i * 20 + "%";
+        tmpPosX[i] = this.props.inputBoxes[i].textPosX;
+        tmpPosY[i] = this.props.inputBoxes[i].textPosY;
+        console.log(tmpPosX[i] + "positions" + tmpPosY[i])
       })
 
       console.log(this.props.currentImage)

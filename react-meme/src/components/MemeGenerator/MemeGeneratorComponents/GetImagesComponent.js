@@ -58,7 +58,7 @@ class GetImagesComponents extends React.Component {
             for (var i = 0; i < data.length; i++) {
                 let tmpInputBoxes = [];
                 for (var b = 0; b < data[i].box_count; b++) {
-                    tmpInputBoxes.push(Object.assign({}, initializeText, { textID: b }));
+                    tmpInputBoxes.push(Object.assign({}, initializeText, { textID: b, textPosY: b*initializeText.textPosY + 50 }));
                 }
 
                 
