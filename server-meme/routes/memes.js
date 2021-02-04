@@ -278,16 +278,15 @@ router.get("/templatefromurl", (req, res) => {
   const url = req.query.url;
 
   //catch if url is empty or not a png/jpeg
-  if (url == "" || (url.slice(-3) != "png" && url.slice(-3) != "jpg")) {
-    res.status(404).send("Empty url or no url to a png/jpeg image");
+  if (url == "") {
+    res.status(404).send("Empty url");
   } else {
-    var type = url.slice(-3) == "png" ? "png" : "jpeg";
     (async () => {
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
       await page.goto(url);
       var scrsh = await page.screenshot({
-        type: type,
+        type: "png",
         encoding: "base64"
       });
 
