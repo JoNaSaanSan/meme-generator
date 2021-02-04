@@ -1,5 +1,5 @@
 .generator-view {
-    position: flex;
+    display: flex;
     color: white;
 }
 
@@ -11,7 +11,6 @@
 .outer-container>*{
     border-radius: 5px;
 }
-
 
 
 .button {

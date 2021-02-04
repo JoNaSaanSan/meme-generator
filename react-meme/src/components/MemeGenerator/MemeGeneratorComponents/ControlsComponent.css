@@ -77,6 +77,17 @@
     width: 15px;
 }
 
+.dimension-input-box {
+    background-color: #363636;
+    border: none;
+    color: white;
+    padding: 16px 16px;
+    text-decoration: none;
+    margin: 6px 6px;
+    border-radius: 5px;
+    width: 55px;
+}
+
 input[type="file"] {
     display: none;
 }

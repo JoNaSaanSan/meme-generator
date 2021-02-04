@@ -150,7 +150,7 @@ class ControlsComponent extends React.Component {
           <input type="text" placeholder="Text" name="text" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].text
           } className="input-box" onChange={this.handleChange.bind(this, i)} />
           <input type="text" placeholder="50" name="fontSize" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].fontSize} className="number-input-box" min="1" max="100" maxLength="2" onChange={this.handleChange.bind(this, i)} />
-          <select name="fontFamily" className="input-box" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].fontFamily} onChange={this.handleChange.bind(this, i)}>
+            <select name="fontFamily" className="input-box" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].fontFamily} onChange={this.handleChange.bind(this, i)}>
             <option value="Impact">Impact</option>
             <option value="Arial">Arial</option>
             <option value="Comic Sans MS">Comic Sans MS</option>
@@ -159,6 +159,8 @@ class ControlsComponent extends React.Component {
             <option value="Verdana">Verdana</option>
           </select>
           <input type="color" name="fontColor" className="color-input-box" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].fontColor} onChange={this.handleChange.bind(this, i)} />
+          <input type="number" placeholder="200" name="textPosX" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].textPosX} className="dimension-input-box" min="1" max={this.state.imageMemeArray[this.state.index].width} maxLength="2" onChange={this.handleChange.bind(this, i)} />
+          <input type="number" placeholder="200" name="textPosY" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].textPosY} className="dimension-input-box" min="1" max={this.state.imageMemeArray[this.state.index].height} maxLength="2" onChange={this.handleChange.bind(this, i)} />
         </div>)
     } else {
       return;
@@ -192,7 +194,7 @@ class ControlsComponent extends React.Component {
           <button onClick={this.generateMemeButton} id="generate-button" className="button" > Generate</button>
         </div>
         <p>Insert text below </p>
-        <div id="ui-buttons-description"> <div>Text</div><div>Font Size</div><div>Font Family</div><div>Color</div></div>
+        <div id="ui-buttons-description"> <div>Text</div><div>Font Size</div><div>Font Family</div><div>Font Color</div><div>Pos X</div><div>Pos Y</div></div>
         <div id="ui-buttons"> {this.createUI()}</div>
       </div>
     )
