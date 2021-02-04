@@ -12,12 +12,16 @@ class ControlsComponent extends React.Component {
       imageMemeArray: null,
       prevIndex: 0,
       index: 0,
+      searchText: '',
+      titleText: '',
     };
 
     // Binds
     this.prevButton = this.prevButton.bind(this);
     this.nextButton = this.nextButton.bind(this);
     this.searchTemplate = this.searchTemplate.bind(this);
+    this.changeTitle = this.changeTitle.bind(this);
+    this.updateText = this.updateText.bind(this);
     this.createUI = this.createUI.bind(this);
     this.generateMemeButton = this.generateMemeButton.bind(this);
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
@@ -57,13 +61,13 @@ class ControlsComponent extends React.Component {
    */
   setCurrentMemeState(index) {
     if (this.state.imageMemeArray !== undefined && this.state.imageMemeArray !== null) {
-     /* if (this.state.imageMemeArray[index].inputBoxes.length > 0 && this.state.lockText) {
-
-     
-          console.log(this.state.imageMemeArray[index].inputBoxes[0].text)
-          this.state.imageMemeArray[index].inputBoxes = this.state.imageMemeArray[this.state.prevIndex].inputBoxes;
-        
-      }*/
+      /* if (this.state.imageMemeArray[index].inputBoxes.length > 0 && this.state.lockText) {
+ 
+      
+           console.log(this.state.imageMemeArray[index].inputBoxes[0].text)
+           this.state.imageMemeArray[index].inputBoxes = this.state.imageMemeArray[this.state.prevIndex].inputBoxes;
+         
+       }*/
       this.props.setCurrentMeme(this.state.imageMemeArray[index])
       this.props.setInputBoxes(this.state.imageMemeArray[index].inputBoxes);
       this.setState({
@@ -93,7 +97,7 @@ class ControlsComponent extends React.Component {
       var newIndex = (this.state.index + step + (this.state.imageMemeArray.length)) % (this.state.imageMemeArray.length);
       this.setCurrentMemeState(newIndex);
     } catch (e) {
-      console.log(e); 
+      console.log(e);
     }
   }
 
@@ -113,11 +117,27 @@ class ControlsComponent extends React.Component {
    */
   searchTemplate() {
     for (var i = 0; i < this.state.imageMemeArray.length; i++) {
-      if (this.state.imageMemeArray[i].name.toLowerCase().includes(document.getElementById('search-text-box').value.toLowerCase())) {
+      if (this.state.imageMemeArray[i].name.toLowerCase().includes(this.state.searchText.toLowerCase())) {
         console.log("found " + i)
         this.setCurrentMemeState(i)
       }
     }
+  }
+
+  changeTitle() {
+    console.log(this.state.titleText)
+    this.state.imageMemeArray[this.state.index].name = this.state.titleText;
+    this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index])
+  }
+
+  /**
+  * 
+  */
+  updateText(event) {
+    console.log(event);
+    this.setState({
+      [event.target.name]: event.target.value,
+    })
   }
 
   /**
@@ -148,7 +168,7 @@ class ControlsComponent extends React.Component {
           <input type="text" placeholder="Text" name="text" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].text
           } className="input-box" onChange={this.handleChange.bind(this, i)} />
           <input type="text" placeholder="50" name="fontSize" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].fontSize} className="number-input-box" min="1" max="100" maxLength="2" onChange={this.handleChange.bind(this, i)} />
-            <select name="fontFamily" className="input-box" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].fontFamily} onChange={this.handleChange.bind(this, i)}>
+          <select name="fontFamily" className="input-box" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].fontFamily} onChange={this.handleChange.bind(this, i)}>
             <option value="Impact">Impact</option>
             <option value="Arial">Arial</option>
             <option value="Comic Sans MS">Comic Sans MS</option>
@@ -179,13 +199,15 @@ class ControlsComponent extends React.Component {
           <div id="select-img-buttons">
             <GetImagesComponents setImagesArray={this.setImagesArray} URL={this.props.URL} />
           </div>
-          <input type="text" id="search-text-box" class="input-box" />
+          <input type="text" name="searchText" id="search-text-box" class="input-box" onChange={this.updateText} />
           <button id="search-button" class="button" onClick={this.searchTemplate}> Search </button>
           <button onClick={this.prevButton} id="prev-button" className="button" > Back </button>
           <button onClick={this.nextButton} id="next-button" className="button" > Next </button>
           <button onClick={this.generateMemeButton} id="generate-button" className="button" > Generate</button>
         </div>
         <p>Insert text below </p>
+        <input type="text" name="titleText" className="input-box" onChange={this.updateText} />
+        <button id="change-title-button" class="button" onClick={this.changeTitle}> Change Meme Title </button>
         <div id="ui-buttons-description"> <div>Text</div><div>Font Size</div><div>Font Family</div><div>Font Color</div><div>Pos X</div><div>Pos Y</div></div>
         <div id="ui-buttons"> {this.createUI()}</div>
       </div>
