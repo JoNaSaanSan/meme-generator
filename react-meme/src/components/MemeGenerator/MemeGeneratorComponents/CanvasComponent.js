@@ -1,6 +1,4 @@
-import Draggable from 'react-draggable';
-import CanvasDraw from "react-canvas-draw";
-import Immutable from 'immutable';
+import { fabric } from 'fabric';
 import { findDOMNode } from 'react-dom'
 const React = require('react');
 require('./CanvasComponent.css');
@@ -45,6 +43,8 @@ class CanvasComponent extends React.Component {
       prevMousePosX: '',
       prevMousePosY: '',
       color: '#000000',
+
+      canvas: null
     }
     this.createTextBoxes = this.createTextBoxes.bind(this);
     this.editMode = this.editMode.bind(this);
@@ -52,6 +52,64 @@ class CanvasComponent extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  // Called when window is loaded
+  componentDidMount() {
+  /*  var can = new fabric.Canvas("canvas", {
+      backgroundColor: "#000",
+      selection: true
+    });
+
+    this.setState({
+      canvas: can,
+    })
+*/
+
+  
+  }
+
+  // When state is being updated
+  componentDidUpdate(prevProps) {
+    var text1 = new fabric.Text("SOME TEXT", {
+      left: 160,
+      top: 270,
+      fill: "#fff"
+    });
+//    this.state.canvas.add(text1);
+
+//    this.state.canvas.width = this.props.currentImage.width;
+ //   this.state.canvas.height = this.props.currentImage.height;
+  
+
+     
+    if (this.props.currentImage.url !== prevProps.currentImage.url) {
+      let tmpArr = [];
+      let tmpPosX = [];
+      let tmpPosY = [];
+      this.props.inputBoxes.map((el, i) => {
+        tmpArr[i] = false;
+        tmpPosX[i] = "50%";
+        tmpPosY[i] = 10 + i * 20 + "%";
+      })
+
+      console.log(this.props.currentImage)
+
+      // Create Base Image
+      this.loadImage(this.props.currentImage.url).then(result =>
+        this.setState({
+          currentImageBase64: result,
+          textBoxes: this.props.inputBoxes.length,
+          isDragging: tmpArr,
+          textPosX: tmpPosX,
+          textPosY: tmpPosY,
+          canvasDimensions: { canvasHeight: 400, canvasWidth: 400, canvasWrH: (this.props.currentImage.width / this.props.currentImage.height), keepRatio: false }
+        })
+      )
+    }
+
+    if (prevProps.downloadImageTrigger !== this.props.downloadImageTrigger) {
+      this.convertSvgToImage(this.props.downloadImageState);
+    }
+  }
 
   // Handle Drag State
   getStateObj = (e, type) => {
@@ -145,19 +203,19 @@ class CanvasComponent extends React.Component {
       stroke: "#000",
       userSelect: "none",
     }
-    if(this.props.inputBoxes !== undefined){
-    return this.props.inputBoxes.map((el, i) =>
-      <text
-        key={i}
-        style={{ ...textStyle, zIndex: this.state.isDragging[i] ? 4 : 1, fill: this.props.inputBoxes[i].fontColor, fontFamily: this.props.inputBoxes[i].fontFamily, fontSize: this.props.inputBoxes[i].fontSize }}
-        x={this.state.textPosX[i]}
-        y={this.state.textPosY[i]}
-        dominantBaseline="middle"
-        textAnchor="middle"
-        onMouseDown={event => this.handleMouseDown(event, `text_${i}`)}
-        onMouseUp={event => this.handleMouseUp(event, `text_${i}`)}
-      >{this.props.inputBoxes[i].text} </text>
-    )
+    if (this.props.inputBoxes !== undefined) {
+      return this.props.inputBoxes.map((el, i) =>
+        <text
+          key={i}
+          style={{ ...textStyle, zIndex: this.state.isDragging[i] ? 4 : 1, fill: this.props.inputBoxes[i].fontColor, fontFamily: this.props.inputBoxes[i].fontFamily, fontSize: this.props.inputBoxes[i].fontSize }}
+          x={this.state.textPosX[i]}
+          y={this.state.textPosY[i]}
+          dominantBaseline="middle"
+          textAnchor="middle"
+          onMouseDown={event => this.handleMouseDown(event, `text_${i}`)}
+          onMouseUp={event => this.handleMouseUp(event, `text_${i}`)}
+        >{this.props.inputBoxes[i].text} </text>
+      )
     } else {
       return;
     }
@@ -202,41 +260,6 @@ class CanvasComponent extends React.Component {
     return result;
   }
 
-  // Called when window is loaded
-  componentDidMount() {
-
-  }
-
-  // When state is being updated
-  componentDidUpdate(prevProps) {
-
-    if (this.props.currentImage.url !== prevProps.currentImage.url) {
-      let tmpArr = [];
-      let tmpPosX = [];
-      let tmpPosY = [];
-      this.props.inputBoxes.map((el, i) => {
-        tmpArr[i] = false;
-        tmpPosX[i] = "50%";
-        tmpPosY[i] = 10 + i * 20 + "%";
-      })
-
-      // Create Base Image
-      this.loadImage(this.props.currentImage.url).then(result =>
-        this.setState({
-          currentImageBase64: result,
-          textBoxes: this.props.inputBoxes.length,
-          isDragging: tmpArr,
-          textPosX: tmpPosX,
-          textPosY: tmpPosY,
-          canvasDimensions: { canvasHeight: 400, canvasWidth: 400, canvasWrH: (this.props.currentImage.width / this.props.currentImage.height), keepRatio: false }
-        })
-      )
-    }
-
-    if (prevProps.downloadImageTrigger !== this.props.downloadImageTrigger) {
-      this.convertSvgToImage(this.props.downloadImageState);
-    }
-  }
 
 
 
@@ -277,6 +300,7 @@ class CanvasComponent extends React.Component {
   // Handle Events when Text or Color Inputs changed and store it in the inputBoxesStates
   handleChange(event) {
     console.log(event.target.name + ": " + event.target.value)
+
 
     this.setState({
       canvasDimensions: Object.assign(this.state.canvasDimensions, { [event.target.name]: event.target.value })
@@ -383,6 +407,9 @@ class CanvasComponent extends React.Component {
       <div>
         {this.state.drawModus ? <button onClick={this.changeMode} id="change-mode-button" className="button" > Edit </button> : <button onClick={this.changeMode} id="change-mode-button" class="button" > Draw </button>}
         {this.canvasSettings()}
+        <div id="canvas-container">
+      
+        </div>
         {this.showCanvas()}
       </div>
     )

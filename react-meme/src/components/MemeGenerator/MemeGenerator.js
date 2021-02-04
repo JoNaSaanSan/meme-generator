@@ -10,7 +10,6 @@ class MemeGenerator extends React.Component {
     super(props)
     this.state = {
       URL: 'http://localhost:3000/memes/sampleMemes',
-      imageMemeArray: null,
       currentMeme: '',
       generatedMeme: '',
       inputBoxes: [],
@@ -26,18 +25,15 @@ class MemeGenerator extends React.Component {
   }
 
   setCurrentMeme = (currentMemeFromChild) => {
-    console.log(currentMemeFromChild)
     this.setState({
       currentMeme: currentMemeFromChild,
     })
   }
 
   setInputBoxes = (inputBoxesFromChild) => {
-    console.log(inputBoxesFromChild)
     this.setState({
       inputBoxes: inputBoxesFromChild,
     }) 
-    console.log(this.state.inputBoxes)
   }
 
 

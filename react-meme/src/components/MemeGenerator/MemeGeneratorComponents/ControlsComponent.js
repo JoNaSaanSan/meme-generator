@@ -10,14 +10,16 @@ class ControlsComponent extends React.Component {
 
     this.state = {
       imageMemeArray: null,
+      prevIndex: 0,
       index: 0,
     };
 
     // Binds
     this.prevButton = this.prevButton.bind(this);
     this.nextButton = this.nextButton.bind(this);
-    this.searchImage = this.searchImage.bind(this);
+    this.searchTemplate = this.searchTemplate.bind(this);
     this.createUI = this.createUI.bind(this);
+    this.lockText = this.lockText.bind(this);
     this.generateMemeButton = this.generateMemeButton.bind(this);
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
   }
@@ -28,89 +30,127 @@ class ControlsComponent extends React.Component {
 
 
   componentDidUpdate(prevProps, prevState) {
+
   }
 
-  // Get Meme Array from Child
+  /**
+   * 
+   * @param {Array of Meme Objects} memeArray 
+   * Called whenever a new source of images are loaded. 
+   * Initializes the new array of meme objects and stores them in a state
+   * 
+   */
   setImagesArray = (memeArray) => {
     this.setState({
       imageMemeArray: memeArray,
       index: 0,
-    }, () =>  this.resetMemeState())
+      prevIndex: 0,
+      lockText: true,
+    }, () => this.resetMemeState())
 
   }
 
 
-  // Set Current Meme State with index
+  /**
+   * 
+   * @param {number} index The index of the target meme
+   * Creates a new Meme state: Called whenever the user changes the meme template
+   * 
+   */
   setCurrentMemeState(index) {
     if (this.state.imageMemeArray !== undefined && this.state.imageMemeArray !== null) {
-      console.log(this.state.imageMemeArray)
+      if (this.state.imageMemeArray[index].inputBoxes.length > 0 && this.state.lockText) {
+
+     
+          console.log(this.state.imageMemeArray[index].inputBoxes[0].text)
+          this.state.imageMemeArray[index].inputBoxes = this.state.imageMemeArray[this.state.prevIndex].inputBoxes;
+        
+      }
       this.props.setCurrentMeme(this.state.imageMemeArray[index])
       this.props.setInputBoxes(this.state.imageMemeArray[index].inputBoxes);
       this.setState({
+        prevIndex: this.state.index,
         index: index,
       })
     }
 
   }
 
-  //reset
-  resetMemeState(){
+  /**
+   * resets meme index to 0
+   */
+  resetMemeState() {
     this.setCurrentMemeState(0);
   }
 
 
-  //Set new index with step
+  /**
+   * 
+   * @param {number} step How large a step is 
+   * If the user wants an adjacent template, the step would be 1
+   * 
+   */
   setNewIndexWithStep(step) {
-    var newIndex = (this.state.index + step + (this.state.imageMemeArray.length)) % (this.state.imageMemeArray.length);
-    this.setCurrentMemeState(newIndex);
+    try {
+      var newIndex = (this.state.index + step + (this.state.imageMemeArray.length)) % (this.state.imageMemeArray.length);
+      this.setCurrentMemeState(newIndex);
+    } catch (e) {
+      console.log(e); 
+    }
   }
 
-  // Previous Button
+  /**
+   * Previous and next buttons
+   */
   prevButton() {
     this.setNewIndexWithStep(-1)
   }
-
-  // Next Button
   nextButton() {
     this.setNewIndexWithStep(1)
   }
 
 
-  // Search Function
-  searchImage() {
-    for (var i = 0; i < this.imageMemeArray.length; i++) {
-      if (this.imageMemeArray[i].name.toLowerCase().includes(document.getElementById('search-text-box').value.toLowerCase())) {
+  /**
+   * This method is called if the user wants to search for a template
+   */
+  searchTemplate() {
+    for (var i = 0; i < this.state.imageMemeArray.length; i++) {
+      if (this.state.imageMemeArray[i].name.toLowerCase().includes(document.getElementById('search-text-box').value.toLowerCase())) {
         console.log("found " + i)
         this.setCurrentMemeState(i)
       }
     }
   }
 
-  // Handle Events when Text or Color Inputs changed and store it in the inputBoxesStates
+  /**
+   * 
+   * @param {number} i The index number of the text box
+   * @param {Event} event The event which is triggering this function
+   * This function handles events whenever text, color or other settings of the text boxes are changed. 
+   * The input boxes of the meme are updated and the current state is saved as a previous index in order to 
+   * keep the data for future memes that the user might switch to
+   * 
+   */
   handleChange(i, event) {
-    console.log(this.state.imageMemeArray[this.state.index].inputBoxes[0])
-    console.log("id: " + this.state.imageMemeArray[this.state.index].inputBoxes[0] + "///" + event.target.name + " XX " + event.target.value)
-    console.log(this.state.imageMemeArray[this.state.index])
     this.state.imageMemeArray[this.state.index].inputBoxes.map(
       obj => (obj.textID === i ? Object.assign(obj, { [event.target.name]: event.target.value }) : obj)
     )
-
-
-
     this.props.setInputBoxes(this.state.imageMemeArray[this.state.index].inputBoxes);
-    //console.log(this.state.inputBoxes)
-
   }
 
-
-  // Add Input Boxes (Text & Color) depending on the meme boxcount
+  /**
+   *  This function adds input boxes dynamically.
+   *  It adds as many text boxes as defined by the meme object.
+   * 
+   */
   createUI() {
     if (this.state.imageMemeArray !== null) {
       return this.state.imageMemeArray[this.state.index].inputBoxes.map((el, i) =>
         <div key={i}>
-          <input type="text" placeholder="Text" name="text" className="input-box" onChange={this.handleChange.bind(this, i)} />
-          <input type="text" placeholder="50" name="fontSize" className="number-input-box" min="1" max="100" maxLength="2" onChange={this.handleChange.bind(this, i)} />
-          <select name="fontFamily" className="input-box" onChange={this.handleChange.bind(this, i)}>
+          <input type="text" placeholder="Text" name="text" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].text
+          } className="input-box" onChange={this.handleChange.bind(this, i)} />
+          <input type="text" placeholder="50" name="fontSize" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].fontSize} className="number-input-box" min="1" max="100" maxLength="2" onChange={this.handleChange.bind(this, i)} />
+          <select name="fontFamily" className="input-box" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].fontFamily} onChange={this.handleChange.bind(this, i)}>
             <option value="Impact">Impact</option>
             <option value="Arial">Arial</option>
             <option value="Comic Sans MS">Comic Sans MS</option>
@@ -125,12 +165,17 @@ class ControlsComponent extends React.Component {
     }
   }
 
+  lockText(){
+    this.setState({
+      lockText: !this.state.lockText,
+    })
+  }
+
   //Generate Meme Button
   generateMemeButton() {
     this.props.generateMeme();
   }
 
-  // Render
   render() {
     return (
       <div id="control-view">
@@ -140,9 +185,10 @@ class ControlsComponent extends React.Component {
             <GetImagesComponents setImagesArray={this.setImagesArray} URL={this.props.URL} />
           </div>
           <input type="text" id="search-text-box" class="input-box" />
-          <button id="search-button" class="button" onClick={this.searchImage}> Search </button>
+          <button id="search-button" class="button" onClick={this.searchTemplate}> Search </button>
           <button onClick={this.prevButton} id="prev-button" className="button" > Back </button>
           <button onClick={this.nextButton} id="next-button" className="button" > Next </button>
+          <input type="checkbox" id="keepText" name="keepText" onClick={this.lockText} checked={this.state.lockText}/>
           <button onClick={this.generateMemeButton} id="generate-button" className="button" > Generate</button>
         </div>
         <p>Insert text below </p>

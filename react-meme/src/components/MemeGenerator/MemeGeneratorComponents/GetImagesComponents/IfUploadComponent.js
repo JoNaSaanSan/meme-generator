@@ -1,7 +1,7 @@
 const React = require('react')
 
 // This component enables the user to upload images from the local s
-class UploadComponent extends React.Component {
+class IfUploadComponent extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -29,7 +29,6 @@ class UploadComponent extends React.Component {
             });
                 urlArray.push(URL.createObjectURL(event.target.files[i]))
         }
-        console.log(data)
         this.setState({
             file: urlArray,
             isFetching: false
@@ -53,4 +52,4 @@ class UploadComponent extends React.Component {
     }
 }
 
-export default UploadComponent
+export default IfUploadComponent
