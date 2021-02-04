@@ -16,6 +16,13 @@ const initializeText = {
     fontSize: '50px',
 }
 
+/**
+ * 
+ * @param {url} url 
+ * @param {*} timeoutT 
+ * function to check whether an image is able to be loaded
+ * 
+ */
 function testImage(url, timeoutT) {
     return new Promise(function(resolve, reject) {
       var timeout = timeoutT || 5000;

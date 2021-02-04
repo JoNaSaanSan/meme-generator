@@ -3,6 +3,10 @@ import Store from '../../../redux/store';
 const React = require('react');
 require('./ImageComponent.css');
 
+
+/**
+ * This component displays the canvas and any additional UI which is required to save a generated meme
+ */
 class ImageComponent extends React.Component {
 
     constructor(props) {

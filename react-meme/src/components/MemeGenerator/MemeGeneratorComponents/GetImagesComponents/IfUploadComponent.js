@@ -10,6 +10,13 @@ class IfUploadComponent extends React.Component {
         }
         this.handleChange = this.handleChange.bind(this)
     }
+
+    /**
+     * 
+     * @param {event} event 
+     * Handles file upload event
+     * 
+     */
     handleChange(event) {
         this.setState({
             isFetching: true

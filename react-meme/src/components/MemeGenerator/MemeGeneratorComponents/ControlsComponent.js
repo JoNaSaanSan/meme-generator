@@ -7,7 +7,6 @@ class ControlsComponent extends React.Component {
   constructor(props) {
     super(props);
 
-
     this.state = {
       imageMemeArray: null,
       prevIndex: 0,
@@ -25,15 +24,6 @@ class ControlsComponent extends React.Component {
     this.createUI = this.createUI.bind(this);
     this.generateMemeButton = this.generateMemeButton.bind(this);
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
-  }
-
-  // Initialize
-  componentDidMount() {
-  }
-
-
-  componentDidUpdate(prevProps, prevState) {
-
   }
 
   /**
@@ -113,7 +103,7 @@ class ControlsComponent extends React.Component {
 
 
   /**
-   * This method is called if the user wants to search for a template
+   * This function is called whenever the user wants to search for a template
    */
   searchTemplate() {
     for (var i = 0; i < this.state.imageMemeArray.length; i++) {
@@ -125,13 +115,12 @@ class ControlsComponent extends React.Component {
   }
 
   changeTitle() {
-    console.log(this.state.titleText)
     this.state.imageMemeArray[this.state.index].name = this.state.titleText;
     this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index])
   }
 
   /**
-  * 
+  *  Handles text inputs
   */
   updateText(event) {
     console.log(event);

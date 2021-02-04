@@ -5,6 +5,9 @@ import Store from '../../redux/store';
 require('./MemeGenerator.css');
 const React = require('react');
 
+/**
+ * Component which handles and displays th
+ */
 class MemeGenerator extends React.Component {
   constructor(props) {
     super(props)
@@ -24,6 +27,7 @@ class MemeGenerator extends React.Component {
 
   }
 
+
   setCurrentMeme = (currentMemeFromChild) => {
     this.setState({
       currentMeme: currentMemeFromChild,
@@ -35,8 +39,6 @@ class MemeGenerator extends React.Component {
       inputBoxes: inputBoxesFromChild,
     }) 
   }
-
-
 
 
   render() {
