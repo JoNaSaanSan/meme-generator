@@ -5,74 +5,60 @@ class SliderComponent extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      imageContainerArray: new Array(4), // sichtbare Bilder in Array
+      indexArray: 0
+    }
     this.createImages = this.createImages.bind(this)
+    this.createImageContainers = this.createImageContainers.bind(this)
+
   }
+
+  // befülle beim Laden der Seite leere Container mit Bildern nach indexposition 0
+  componentDidMount() { this.createImages(this.state.indexArray); console.log("did mount") }
 
   createImages(x) {
-    console.log(this.props.memesArray.slice(0+x,4+x).map((element)=><div> <img src= {element} className="images"/></div>) )
+    // erstelle neues Array welches dann Ausgangsstatus für onClick ist
+    var memesArray2 = [];
+    // 0 - Anzahl angezeigter Bilder
+    for (var i = 0; i < this.state.imageContainerArray.length; i++) {
+      // linkes Bild + Position Bild +- angezeigte Bilder(4)
+      // + länge % länge -> Rest: bei Array von vorne anfangen
+      memesArray2[i] = this.props.memesArray[(this.state.indexArray + i + x + (this.props.memesArray.length)) % this.props.memesArray.length]
 
-    console.log("wird aufgerufen")
-   
-    //löschen
-    while(document.getElementById('images')!= null){
-        var images = document.getElementById('images');
-        //images.parentNode.removeChild(images);
-        images.remove();
-        console.log("lösche")
     }
-    /*
-    
-window.onload = () => {
-    var newArr =[]
-    newArr.push(this.props.memesArray.slice(0+x,4+x))
-    newArr.forEach (function (value, index) {
-        const img = new Image();
-        img.src = newArr[index] ;
-        document.getElementById("test").appendChild(img);
-     });
-    }*/
-/*
+    console.log(this.state.indexArray)
+    //update sichtbares Array, IndexPosition Bild ganz links
+    this.setState({ imageContainerArray: memesArray2, indexArray: this.state.indexArray + x })
+  }
 
-    for(var i=0; i< newArr.length; i++){
+  /**
+   * create empty image containers
+   */
+  createImageContainers() {
+    console.log("image Containers")
+    return (
+      this.state.imageContainerArray.map((element) =>
+        <img src={element} className="images" />
+      ))
 
-        var image = document.createElement('img');
-        image.setAttribute('src', this.props.memesArray[i])
-        image.setAttribute('className', "images");
-    }
-    /*
-        .map((element)=> 
-            <div id="images"> <img src= {element} className="images"/></div>) //erzeuge aus url - Array Bilder
-
-    var image = document.createElement('img');
-    image.setAttribute('src', './images/logo.png');
-    image.src = './images/logo.png'; // Alternative!
-*/
-
-    return(
-        this.props.memesArray
-        .slice(0+x,4+x) //nur die ersten 4 Biler (Arraystellen)
-        .map((element)=> 
-            <div id="images"> <img src= {element} className="images"/></div>) //erzeuge aus url - Array Bilder
-
-    )
-     
   }
 
 
-  
+
   render() {
     return (
-        <div>
+      <div>
 
-            <div className="container_images" >
-                <button className="button" >&lsaquo;</button>
-                {this.createImages(0)}
-                <div id="test"></div>
-                <button className="button" onClick={() => this.createImages(4)} >&rsaquo;</button>
-            </div>
+        <div className="container_images" >
+          <button className="button" onClick={() => this.createImages(-this.state.imageContainerArray.length)}>&lsaquo;</button>
+          <div>{this.createImageContainers()}</div>
 
-            
+          <button className="button" onClick={() => this.createImages(this.state.imageContainerArray.length)}>&rsaquo;</button>
         </div>
+
+
+      </div>
 
     )
   }
