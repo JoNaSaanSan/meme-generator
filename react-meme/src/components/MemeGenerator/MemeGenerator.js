@@ -2,8 +2,23 @@ import ControlsComponent from './MemeGeneratorComponents/ControlsComponent';
 import ImageComponent from './MemeGeneratorComponents/ImageComponent';
 import PreviewComponent from './MemeGeneratorComponents/PreviewComponent';
 import Store from '../../redux/store';
+import TextBoxes from './TextBoxes';
 require('./MemeGenerator.css');
 const React = require('react');
+
+
+const initializeText = {
+  textID: 0,
+  text: '',
+  textPosX: 100,
+  textPosY: 100,
+  fontColor: '#ffffff',
+  fontFamily: 'Impact',
+  fontSize: '50',
+  outlineWidth: '5',
+  outlineColor: '#000000',
+}
+
 
 /**
  * Component which handles and displays the Meme Generator
@@ -16,12 +31,14 @@ class MemeGenerator extends React.Component {
       currentMeme: '',
       generatedMeme: '',
       inputBoxes: [],
+      drawPaths: [],
       isSignedIn: Store.getState().user.isSignedIn,
       inputBoxesUpdated: false,
       tmpInputTextBoxesArray: [],
     }
 
     this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
+    this.addTextBoxes = this.addTextBoxes.bind(this);
   }
 
 
@@ -30,11 +47,11 @@ class MemeGenerator extends React.Component {
 
   }
 
-/**
- * 
- * @param {Meme} currentMemeFromChild 
- * Sets current Meme
- */
+  /**
+   * 
+   * @param {Meme} currentMemeFromChild 
+   * Sets current Meme
+   */
   setCurrentMeme = (currentMemeFromChild) => {
     this.setState({
       currentMeme: currentMemeFromChild,
@@ -51,6 +68,7 @@ class MemeGenerator extends React.Component {
   assignNewText2Textboxes(textBoxesArray) {
     this.state.inputBoxes.map(
       obj => {
+        console.log(textBoxesArray[obj.textID])
         if (obj.text === '' && textBoxesArray[obj.textID] !== undefined) {
           (Object.assign(obj, textBoxesArray[obj.textID]))
         }
@@ -74,14 +92,38 @@ class MemeGenerator extends React.Component {
   */
   handleInputBoxesChange(i, eventName, eventValue) {
     this.state.inputBoxes[i] = Object.assign(this.state.inputBoxes[i], { [eventName]: eventValue })
-    this.state.tmpInputTextBoxesArray[i] = { [eventName]: eventValue }
+    if (this.state.tmpInputTextBoxesArray[i] !== undefined) {
+      Object.assign(this.state.tmpInputTextBoxesArray[i], { [eventName]: eventValue })
+    } else {
+      this.state.tmpInputTextBoxesArray[i] = { [eventName]: eventValue }
+    }
+    console.log(this.state.tmpInputTextBoxesArray[i])
     this.setState({
       ...this.state.inputBoxes,
       inputBoxesUpdated: !this.state.inputBoxesUpdated,
     })
   }
 
-
+  /**
+   * Adds a new Text Box
+   */
+  addTextBoxes() {
+    this.state.inputBoxes.push(
+      new TextBoxes(
+        this.state.inputBoxes.length,
+        initializeText.text,
+        initializeText.textPosX,
+        this.state.inputBoxes.length * initializeText.textPosY + 50,
+        initializeText.fontColor,
+        initializeText.fontFamily,
+        initializeText.fontSize,
+        initializeText.outlineWidth,
+        initializeText.outlineColor)
+    );
+    this.setState({
+      ...this.state.inputBoxes,
+    })
+  }
 
   render() {
     // Redux: Update Signed in State
@@ -95,9 +137,14 @@ class MemeGenerator extends React.Component {
             setInputBoxes={this.setInputBoxes}
             handleInputBoxesChange={this.handleInputBoxesChange}
             currentInputBoxes={this.state.inputBoxes}
-            generateMeme={() => this.generateMeme()}
-            setCurrentMeme={this.setCurrentMeme} />
-          <ImageComponent generateMeme={this.generateMeme} currentMeme={this.state.currentMeme} inputBoxes={this.state.inputBoxes} inputBoxesUpdated={this.state.inputBoxesUpdated} />
+            generateMeme={this.generateMeme}
+            setCurrentMeme={this.setCurrentMeme} 
+            addTextBoxes={this.addTextBoxes}/>
+          <ImageComponent generateMeme={this.generateMeme}
+            currentMeme={this.state.currentMeme}
+            inputBoxes={this.state.inputBoxes}
+            inputBoxesUpdated={this.state.inputBoxesUpdated}
+            handleInputBoxesChange={this.handleInputBoxesChange} />
           <img src={this.state.generatedMeme.url} />
         </div>
       </div>

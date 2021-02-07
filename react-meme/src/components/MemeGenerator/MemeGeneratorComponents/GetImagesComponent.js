@@ -3,6 +3,7 @@ import IfUrlComponent from './GetImagesComponents/IfUrlComponent'
 import IfUploadComponent from './GetImagesComponents/IfUploadComponent'
 import IfCameraComponent from './GetImagesComponents/IfCameraComponent'
 import Meme from '../Meme';
+import TextBoxes from '../TextBoxes';
 
 const React = require('react')
 
@@ -14,6 +15,8 @@ const initializeText = {
     fontColor: '#ffffff',
     fontFamily: 'Impact',
     fontSize: '50',
+    outlineWidth: '5',
+    outlineColor: '#000000',
 }
 
 /**
@@ -24,24 +27,24 @@ const initializeText = {
  * 
  */
 function testImage(url, timeoutT) {
-    return new Promise(function(resolve, reject) {
-      var timeout = timeoutT || 5000;
-      var timer, img = new Image();
-      img.onerror = img.onabort = function() {
-          clearTimeout(timer);
-      	  reject("error");
-      };
-      img.onload = function() {
-           clearTimeout(timer);
-           resolve("success");
-      };
-      timer = setTimeout(function() {
-          // reset .src to invalid URL so it stops previous
-          // loading, but doens't trigger new load
-          img.src = "//!!!!/noexist.jpg";
-          reject("timeout");
-      }, timeout); 
-      img.src = url;
+    return new Promise(function (resolve, reject) {
+        var timeout = timeoutT || 5000;
+        var timer, img = new Image();
+        img.onerror = img.onabort = function () {
+            clearTimeout(timer);
+            reject("error");
+        };
+        img.onload = function () {
+            clearTimeout(timer);
+            resolve("success");
+        };
+        timer = setTimeout(function () {
+            // reset .src to invalid URL so it stops previous
+            // loading, but doens't trigger new load
+            img.src = "//!!!!/noexist.jpg";
+            reject("timeout");
+        }, timeout);
+        img.src = url;
     });
 }
 
@@ -65,7 +68,17 @@ class GetImagesComponents extends React.Component {
             for (var i = 0; i < data.length; i++) {
                 let tmpInputBoxes = [];
                 for (var b = 0; b < data[i].box_count; b++) {
-                    tmpInputBoxes.push(Object.assign({}, initializeText, { textID: b, textPosY: b*initializeText.textPosY + 50 }));
+                    tmpInputBoxes.push(new TextBoxes(
+                        b,
+                        initializeText.text,
+                        initializeText.textPosX,
+                        b * initializeText.textPosY + 50,
+                        initializeText.fontColor,
+                        initializeText.fontFamily,
+                        initializeText.fontSize,
+                        initializeText.outlineWidth,
+                        initializeText.outlineColor)
+                    );
                 }
                 var tmp = new Meme(data[i].url, data[i].id, data[i].width, data[i].height, data[i].name, data[i].box_count, tmpInputBoxes);
                 memeArray.push(tmp)

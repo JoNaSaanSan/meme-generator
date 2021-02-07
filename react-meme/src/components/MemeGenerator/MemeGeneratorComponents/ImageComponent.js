@@ -1,5 +1,5 @@
 import CanvasComponent from './CanvasComponent';
-import Canvas2Component from './Canvas2Component';
+import Canvas2Component from './CanvasComponent';
 import Store from '../../../redux/store';
 const React = require('react');
 require('./ImageComponent.css');
@@ -18,13 +18,18 @@ class ImageComponent extends React.Component {
             downloadImageTrigger: false,
         }
         this.downloadImage = this.downloadImage.bind(this)
+        this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this)
     }
 
     /**
      * Handles download image button presses via a boolean that is passed to the child
      */
-    downloadImage(){
+    downloadImage() {
         this.setState(prevState => ({ downloadImageTrigger: !prevState.downloadImageTrigger }))
+    }
+
+    handleInputBoxesChange(i, eventName, eventValue) {
+        this.props.handleInputBoxesChange(i, eventName, eventValue);
     }
 
     render() {
@@ -34,8 +39,13 @@ class ImageComponent extends React.Component {
             <div className="image-view" id="center-container">
                 <div className="image-container">
                     <h2 > {this.props.currentMeme.name} </h2>
-                    <CanvasComponent currentImage={this.props.currentMeme} inputBoxes={this.props.inputBoxes} downloadImageTrigger = {this.state.downloadImageTrigger} />
-                    <Canvas2Component currentImage={this.props.currentMeme} inputBoxes={this.props.inputBoxes} downloadImageTrigger = {this.state.downloadImageTrigger} inputBoxesUpdated={this.props.inputBoxesUpdated}/>
+                    <CanvasComponent
+                        currentImage={this.props.currentMeme}
+                        inputBoxes={this.props.inputBoxes}
+                        downloadImageTrigger={this.state.downloadImageTrigger}
+                        inputBoxesUpdated={this.props.inputBoxesUpdated}
+                        handleInputBoxesChange={this.handleInputBoxesChange} />
+
                     <div className="button-view" >
                         <button onClick={() => this.props.generateMeme()} id="generate-button" className="button" > Generate Meme with Imgflip </button>
                         {this.state.isSignedIn ?

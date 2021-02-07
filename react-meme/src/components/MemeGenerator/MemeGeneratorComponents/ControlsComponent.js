@@ -23,6 +23,7 @@ class ControlsComponent extends React.Component {
     this.createUI = this.createUI.bind(this);
     this.generateMemeButton = this.generateMemeButton.bind(this);
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
+    this.addTextBoxes = this.addTextBoxes.bind(this);
   }
 
   /**
@@ -153,12 +154,18 @@ class ControlsComponent extends React.Component {
             <option value="Verdana">Verdana</option>
           </select>
           <input type="color" name="fontColor" className="color-input-box" value={this.props.currentInputBoxes[i].fontColor} onChange={this.handleChange.bind(this, i)} />
+          <input type="text" placeholder="3" name="outlineWidth" value={this.props.currentInputBoxes[i].outlineWidth} className="number-input-box" min="1" max="20" onChange={this.handleChange.bind(this, i)} />
+          <input type="color"  name="outlineColor" value={this.props.currentInputBoxes[i].outlineColor} className="color-input-box" onChange={this.handleChange.bind(this, i)} />
           <input type="number" placeholder="200" name="textPosX" value={this.props.currentInputBoxes[i].textPosX} className="dimension-input-box" min="1" max={this.state.imageMemeArray[this.state.index].width} maxLength="2" onChange={this.handleChange.bind(this, i)} />
           <input type="number" placeholder="200" name="textPosY" value={this.props.currentInputBoxes[i].textPosY} className="dimension-input-box" min="1" max={this.state.imageMemeArray[this.state.index].height} maxLength="2" onChange={this.handleChange.bind(this, i)} />
         </div>)
     } else {
       return;
     }
+  }
+
+  addTextBoxes() {
+    this.props.addTextBoxes();
   }
 
 
@@ -184,8 +191,9 @@ class ControlsComponent extends React.Component {
         <p>Insert text below </p>
         <input type="text" name="titleText" className="input-box" onChange={this.updateText} />
         <button id="change-title-button" class="button" onClick={this.changeTitle}> Change Meme Title </button>
-        <div id="ui-buttons-description"> <div>Text</div><div>Font Size</div><div>Font Family</div><div>Font Color</div><div>Pos X</div><div>Pos Y</div></div>
+        <div id="ui-buttons-description"> <div>Text</div><div>Font Size</div><div>Font Family</div><div>Font Color</div><div>Outline Width</div><div>Outline Color</div><div>Pos X</div><div>Pos Y</div></div>
         <div id="ui-buttons"> {this.createUI()}</div>
+        <button onClick={this.addTextBoxes} id="add-textboxes-button" className="button" > Add Text </button>
       </div>
     )
   }
