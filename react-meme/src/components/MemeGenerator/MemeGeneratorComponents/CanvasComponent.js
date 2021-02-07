@@ -51,31 +51,9 @@ class CanvasComponent extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  // Called when window is loaded
-  componentDidMount() {
-  /*  var can = new fabric.Canvas("canvas", {
-      backgroundColor: "#000",
-      selection: true
-    });
-
-    this.setState({
-      canvas: can,
-    })
-*/
-
-  
-  }
 
   // When state is being updated
   componentDidUpdate(prevProps) {
-
-//    this.state.canvas.add(text1);
-
-//    this.state.canvas.width = this.props.currentImage.width;
- //   this.state.canvas.height = this.props.currentImage.height;
-  
-
-     
     if (this.props.currentImage.url !== prevProps.currentImage.url) {
       let tmpArr = [];
       let tmpPosX = [];
@@ -105,6 +83,8 @@ class CanvasComponent extends React.Component {
     if (prevProps.downloadImageTrigger !== this.props.downloadImageTrigger) {
       this.convertSvgToImage(this.props.downloadImageState);
     }
+
+    
   }
 
   // Handle Drag State
@@ -404,7 +384,7 @@ class CanvasComponent extends React.Component {
         {this.state.drawModus ? <button onClick={this.changeMode} id="change-mode-button" className="button" > Edit </button> : <button onClick={this.changeMode} id="change-mode-button" class="button" > Draw </button>}
         {this.canvasSettings()}
         <div id="canvas-container">
-      
+
         </div>
         {this.showCanvas()}
       </div>

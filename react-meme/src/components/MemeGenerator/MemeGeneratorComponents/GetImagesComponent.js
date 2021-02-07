@@ -12,8 +12,8 @@ const initializeText = {
     textPosX: 100,
     textPosY: 100,
     fontColor: '#ffffff',
-    fontFamily: '',
-    fontSize: '50px',
+    fontFamily: 'Impact',
+    fontSize: '50',
 }
 
 /**
@@ -67,10 +67,7 @@ class GetImagesComponents extends React.Component {
                 for (var b = 0; b < data[i].box_count; b++) {
                     tmpInputBoxes.push(Object.assign({}, initializeText, { textID: b, textPosY: b*initializeText.textPosY + 50 }));
                 }
-
-                
                 var tmp = new Meme(data[i].url, data[i].id, data[i].width, data[i].height, data[i].name, data[i].box_count, tmpInputBoxes);
-
                 memeArray.push(tmp)
             }
             this.props.setImagesArray(memeArray)

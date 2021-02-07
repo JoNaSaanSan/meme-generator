@@ -1,5 +1,5 @@
 const React = require('react')
-// This component enables the user to upload images from the local s
+// This component enables the user to upload images from the local device
 class IfUrlComponent extends React.Component {
     constructor(props) {
         super(props);

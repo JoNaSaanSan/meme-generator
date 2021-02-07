@@ -1,4 +1,5 @@
 import CanvasComponent from './CanvasComponent';
+import Canvas2Component from './Canvas2Component';
 import Store from '../../../redux/store';
 const React = require('react');
 require('./ImageComponent.css');
@@ -19,6 +20,9 @@ class ImageComponent extends React.Component {
         this.downloadImage = this.downloadImage.bind(this)
     }
 
+    /**
+     * Handles download image button presses via a boolean that is passed to the child
+     */
     downloadImage(){
         this.setState(prevState => ({ downloadImageTrigger: !prevState.downloadImageTrigger }))
     }
@@ -31,6 +35,7 @@ class ImageComponent extends React.Component {
                 <div className="image-container">
                     <h2 > {this.props.currentMeme.name} </h2>
                     <CanvasComponent currentImage={this.props.currentMeme} inputBoxes={this.props.inputBoxes} downloadImageTrigger = {this.state.downloadImageTrigger} />
+                    <Canvas2Component currentImage={this.props.currentMeme} inputBoxes={this.props.inputBoxes} downloadImageTrigger = {this.state.downloadImageTrigger} inputBoxesUpdated={this.props.inputBoxesUpdated}/>
                     <div className="button-view" >
                         <button onClick={() => this.props.generateMeme()} id="generate-button" className="button" > Generate Meme with Imgflip </button>
                         {this.state.isSignedIn ?
