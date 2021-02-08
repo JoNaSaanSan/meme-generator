@@ -74,7 +74,6 @@ class CanvasComponent extends React.Component {
       canvasStack: {
         canvasMainImage: '',
         canvasOtherImages: [],
-        canvasDrawPath: [],
         canvasText: [],
       },
 
@@ -86,13 +85,16 @@ class CanvasComponent extends React.Component {
 
       startX: 0,
       startY: 0,
+      isDrawing: false,
       selectedText: -1,
+      currentPath: [],
     }
 
     this.handleMouseOut = this.handleMouseOut.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
+    this.exitMouse = this.exitMouse.bind(this);
   }
 
 
@@ -127,9 +129,10 @@ class CanvasComponent extends React.Component {
     }
 
     if (prevProps.downloadImageTrigger !== this.props.downloadImageTrigger) {
-      this.convertSvgToImage(this.props.downloadImageState);
+      this.downloadImage(this.props.downloadImageState);
     }
     this.drawText();
+    this.drawPaths();
   }
 
   resizeCanvas(newWidth, newHeight, wrh) {
@@ -142,6 +145,7 @@ class CanvasComponent extends React.Component {
     }, () => {
       this.drawBackground();
       this.drawText();
+      this.drawPaths();
     })
   }
 
@@ -160,14 +164,49 @@ class CanvasComponent extends React.Component {
    * (Re-)draws Textboxes
    */
   drawText() {
-    console.log("Draw")
     var canvas = document.getElementById('canvas-text');
     canvas.width = this.state.canvasDimensions.width;
     canvas.height = this.state.canvasDimensions.height;
     var context = canvas.getContext('2d');
-    console.log(this.props.inputBoxes)
     this.addTextBoxes(this.props.inputBoxes, context);
   }
+
+  drawPaths() {
+    var canvas = document.getElementById('canvas-draw');
+    var context = canvas.getContext('2d');
+    canvas.width = this.state.canvasDimensions.width;
+    canvas.height = this.state.canvasDimensions.height;
+    // or whatever
+    console.log(this.props.drawPaths)
+    if (this.props.drawPaths !== undefined) {
+      for (var i = 0; i < this.props.drawPaths.length; i++) {
+        for (var j = 0; j < this.props.drawPaths[i].length-1; j++) {
+          this.drawPath(this.props.drawPaths[i][j].x, this.props.drawPaths[i][j].y, this.props.drawPaths[i][j+1].x, this.props.drawPaths[i][j+1].y,this.props.drawPaths[i][j].color, this.props.drawPaths[i][j].radius, context)
+        }
+      }
+    }
+  }
+
+
+  drawPath(currX, currY, tarX, tarY, color, radius, context) {
+    context.beginPath()
+    context.strokeStyle = color;
+    context.lineWidth = radius;
+    context.lineJoin = "round";
+    context.moveTo(currX, currY);
+    context.lineTo(tarX, tarY);
+    context.closePath();
+    context.stroke();
+  }
+
+  drawTmpPath(currX, currY, color, radius, context) {
+    context.fillStyle = color;
+    context.beginPath();
+    context.moveTo(currX, currY);
+    context.arc(currX, currY, radius, 0, Math.PI * 2, false);
+    context.fill();
+  }
+
 
 
   /**
@@ -232,23 +271,31 @@ class CanvasComponent extends React.Component {
    */
   handleMouseDown(event) {
     event.preventDefault();
-    console.log("Mouse Down")
-    var canvas = document.getElementById('canvas-text');
-    var rect = canvas.getBoundingClientRect();
-    this.setState({
-      startX: parseInt(event.clientX - rect.left),
-      startY: parseInt(event.clientY - rect.top),
-    }, () => {
-      // Put your mousedown stuff here
-      console.log("Mouse Curser Start Position: " + this.state.startX + ':' + this.state.startY)
-      for (var i = 0; i < this.props.inputBoxes.length; i++) {
-        if (this.textSelected(this.props.inputBoxes[i], this.state.startX, this.state.startY, i)) {
-          this.setState({
-            selectedText: i,
-          })
+    if (this.props.isDrawMode) {
+      var canvas = document.getElementById('canvas-draw');
+      var rect = canvas.getBoundingClientRect();
+      this.setState({
+        isDrawing: true,
+      })
+    } else {
+      console.log("Mouse Down")
+      var canvas = document.getElementById('canvas-text');
+      var rect = canvas.getBoundingClientRect();
+      this.setState({
+        startX: parseInt(event.clientX - rect.left),
+        startY: parseInt(event.clientY - rect.top),
+      }, () => {
+        // Put your mousedown stuff here
+        console.log("Mouse Curser Start Position: " + this.state.startX + ':' + this.state.startY)
+        for (var i = 0; i < this.props.inputBoxes.length; i++) {
+          if (this.textSelected(this.props.inputBoxes[i], this.state.startX, this.state.startY, i)) {
+            this.setState({
+              selectedText: i,
+            })
+          }
         }
-      }
-    })
+      })
+    }
   }
 
   /**
@@ -259,9 +306,7 @@ class CanvasComponent extends React.Component {
    */
   handleMouseUp(event) {
     event.preventDefault();
-    this.setState({
-      selectedText: -1,
-    })
+    this.exitMouse();
   }
 
 
@@ -273,8 +318,15 @@ class CanvasComponent extends React.Component {
    */
   handleMouseOut(event) {
     event.preventDefault();
+    this.exitMouse();
+  }
+
+  exitMouse() {
+    this.props.addPath(this.state.currentPath);
     this.setState({
       selectedText: -1,
+      isDrawing: false,
+      currentPath: [],
     })
   }
 
@@ -289,37 +341,60 @@ class CanvasComponent extends React.Component {
    * 
    */
   handleMouseMove(event) {
-    if (this.state.selectedText < 0) {
-      return;
+    if (this.state.isDrawing) {
+      var canvas = document.getElementById('canvas-draw');
+      var context = canvas.getContext('2d');
+      var rect = canvas.getBoundingClientRect();
+      // Mouse Positions
+      var mouseX = parseInt(event.clientX - rect.left);
+      var mouseY = parseInt(event.clientY - rect.top);
+      var fillColor = this.props.drawColor;
+      var brushRadius;
+
+      if (this.props.drawBrushSize === '') {
+        brushRadius = '2'
+      } else {
+        brushRadius = this.props.drawBrushSize;
+      };
+
+      this.state.currentPath.push({
+        x: mouseX,
+        y: mouseY,
+        color: fillColor,
+        radius: brushRadius,
+      });
+      this.drawTmpPath(mouseX, mouseY, fillColor, brushRadius, context)
     }
-    event.preventDefault();
-    var canvas = document.getElementById('canvas-text');
-    var rect = canvas.getBoundingClientRect();
+    if (this.state.selectedText > -1) {
+      event.preventDefault();
+      var canvas = document.getElementById('canvas-text');
+      var rect = canvas.getBoundingClientRect();
 
-    // Mouse Positions
-    var mouseX = parseInt(event.clientX - rect.left);
-    var mouseY = parseInt(event.clientY - rect.top);
+      // Mouse Positions
+      var mouseX = parseInt(event.clientX - rect.left);
+      var mouseY = parseInt(event.clientY - rect.top);
 
-    var dx = mouseX - this.state.startX;
-    var dy = mouseY - this.state.startY;
+      var dx = mouseX - this.state.startX;
+      var dy = mouseY - this.state.startY;
 
-    this.setState({
-      startX: mouseX,
-      startY: mouseY,
-    })
+      this.setState({
+        startX: mouseX,
+        startY: mouseY,
+      })
 
-    var text = this.props.inputBoxes[this.state.selectedText];
-    text.textPosX = parseInt(text.textPosX) + dx;
-    text.textPosY = parseInt(text.textPosY) + dy;
-    this.props.handleInputBoxesChange(this.state.selectedText, 'textPosX', text.textPosX)
-    this.props.handleInputBoxesChange(this.state.selectedText, 'textPosY', text.textPosY)
-    this.drawText();
+      var text = this.props.inputBoxes[this.state.selectedText];
+      text.textPosX = parseInt(text.textPosX) + dx;
+      text.textPosY = parseInt(text.textPosY) + dy;
+      this.props.handleInputBoxesChange(this.state.selectedText, 'textPosX', text.textPosX)
+      this.props.handleInputBoxesChange(this.state.selectedText, 'textPosY', text.textPosY)
+      this.drawText();
+    }
   }
 
   /**
    *  Merges the different canvas and then downloads Meme as png
    */
-  convertSvgToImage = () => {
+  downloadImage = () => {
     const canvas = document.createElement("canvas");
     canvas.setAttribute("id", "canvas");
     canvas.width = this.state.canvasDimensions.width;
@@ -327,8 +402,10 @@ class CanvasComponent extends React.Component {
     const context = canvas.getContext("2d");
 
     const canvasBackground = document.getElementById("canvas-background");
+    const canvasDraw = document.getElementById("canvas-draw");
     const canvasText = document.getElementById("canvas-text");
     context.drawImage(canvasBackground, 0, 0);
+    context.drawImage(canvasDraw, 0, 0);
     context.drawImage(canvasText, 0, 0);
     const canvasdata = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");;
     const a = document.createElement("a");
@@ -346,7 +423,7 @@ class CanvasComponent extends React.Component {
         <div id="canvas-container">
           <canvas id="canvas-background"></canvas>
           <canvas id="canvas-images"> </canvas>
-          <canvas id="canvas-draw"> </canvas>
+          <canvas id="canvas-draw" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp}> </canvas>
           <canvas id="canvas-text" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp}> </canvas>
         </div>
       </div>

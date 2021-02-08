@@ -15,7 +15,7 @@ const initializeText = {
   fontColor: '#ffffff',
   fontFamily: 'Impact',
   fontSize: '50',
-  outlineWidth: '5',
+  outlineWidth: '3',
   outlineColor: '#000000',
 }
 
@@ -32,6 +32,7 @@ class MemeGenerator extends React.Component {
       generatedMeme: '',
       inputBoxes: [],
       drawPaths: [],
+      additionalImages: [],
       isSignedIn: Store.getState().user.isSignedIn,
       inputBoxesUpdated: false,
       tmpInputTextBoxesArray: [],
@@ -39,6 +40,9 @@ class MemeGenerator extends React.Component {
 
     this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
     this.addTextBoxes = this.addTextBoxes.bind(this);
+    this.addPath = this.addPath.bind(this);
+    this.undoDrawing = this.undoDrawing.bind(this);
+    this.clearDrawing = this.clearDrawing.bind(this);
   }
 
 
@@ -76,6 +80,38 @@ class MemeGenerator extends React.Component {
     )
     this.setState({
       ...this.state.inputBoxes,
+    })
+  }
+
+
+  addPath(path) {
+    if (path.length > 0) {
+      this.state.drawPaths.push(path);
+    }
+    this.setState({
+      ...this.state.drawPaths
+    })
+
+    console.log(this.state.drawPaths)
+  }
+
+  undoDrawing() {
+    this.state.drawPaths.pop();
+    this.setState({
+      ...this.state.drawPaths
+    })
+  }
+
+  clearDrawing() {
+    this.setState({
+      drawPaths: [],
+    })
+  }
+
+  addAdditionalImages(image) {
+    this.state.additionalImages.push(image);
+    this.setState({
+      ...this.state.additionalImages
     })
   }
 
@@ -138,13 +174,20 @@ class MemeGenerator extends React.Component {
             handleInputBoxesChange={this.handleInputBoxesChange}
             currentInputBoxes={this.state.inputBoxes}
             generateMeme={this.generateMeme}
-            setCurrentMeme={this.setCurrentMeme} 
-            addTextBoxes={this.addTextBoxes}/>
+            setCurrentMeme={this.setCurrentMeme}
+            addTextBoxes={this.addTextBoxes} />
           <ImageComponent generateMeme={this.generateMeme}
             currentMeme={this.state.currentMeme}
             inputBoxes={this.state.inputBoxes}
             inputBoxesUpdated={this.state.inputBoxesUpdated}
-            handleInputBoxesChange={this.handleInputBoxesChange} />
+            additionalImages={this.state.additionalImages}
+            drawPaths={this.state.drawPaths}
+            addPath={this.addPath}
+            addAdditionalImages={this.addAdditionalImages}
+            handleInputBoxesChange={this.handleInputBoxesChange}
+            clearDrawing={this.clearDrawing}
+            undoDrawing={this.undoDrawing}
+          />
           <img src={this.state.generatedMeme.url} />
         </div>
       </div>

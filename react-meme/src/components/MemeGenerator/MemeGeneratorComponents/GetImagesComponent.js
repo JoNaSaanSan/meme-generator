@@ -2,6 +2,7 @@ import IfServerComponent from './GetImagesComponents/IfServerComponent'
 import IfUrlComponent from './GetImagesComponents/IfUrlComponent'
 import IfUploadComponent from './GetImagesComponents/IfUploadComponent'
 import IfCameraComponent from './GetImagesComponents/IfCameraComponent'
+import BlankComponent from './GetImagesComponents/BlankComponent'
 import Meme from '../Meme';
 import TextBoxes from '../TextBoxes';
 
@@ -15,7 +16,7 @@ const initializeText = {
     fontColor: '#ffffff',
     fontFamily: 'Impact',
     fontSize: '50',
-    outlineWidth: '5',
+    outlineWidth: '3',
     outlineColor: '#000000',
 }
 
@@ -91,6 +92,7 @@ class GetImagesComponents extends React.Component {
         return (
             <div id="get-images-buttons-container">
                 <IfUploadComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
+                <BlankComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
                 <IfUrlComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
                 <IfCameraComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
                 <IfServerComponent setImagesArray={this.setImagesArray} URL={this.props.URL} getImagesButtonName={"ImgFlip"} />
