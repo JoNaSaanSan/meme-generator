@@ -18,16 +18,31 @@ class ImageComponent extends React.Component {
             isDrawMode: false,
             downloadImageTrigger: false,
             drawColor: '',
-            drawBrushSize: '',
+            drawBrushSize: 2,
+            currentImage: '',
         }
-        this.downloadImage = this.downloadImage.bind(this)
-        this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this)
-        this.addPath = this.addPath.bind(this)
-        this.addDrawing = this.addDrawing.bind(this)
-        this.addImages = this.addImages.bind(this)
+        this.downloadImage = this.downloadImage.bind(this);
+        this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
+        this.addPath = this.addPath.bind(this);
+        this.addDrawing = this.addDrawing.bind(this);
+        this.addImage = this.addImage.bind(this);
+        this.handleImageChange = this.handleImageChange.bind(this);
         this.undoDrawing = this.undoDrawing.bind(this);
         this.clearDrawing = this.clearDrawing.bind(this);
+        this.clearImages = this.clearImages.bind(this);
     }
+
+    // When state is being updated
+    componentDidUpdate(prevProps) {
+        if (this.props.currentMeme.url !== prevProps.currentMeme.url) {
+            this.loadImage(this.props.currentMeme.url).then(result => {
+                this.setState({
+                    currentImage: { ...this.props.currentMeme, image: result }
+                })
+            })
+        }
+    }
+
 
     /**
      * Handles download image button presses via a boolean that is passed to the child
@@ -38,10 +53,6 @@ class ImageComponent extends React.Component {
 
     handleInputBoxesChange(i, eventName, eventValue) {
         this.props.handleInputBoxesChange(i, eventName, eventValue);
-    }
-
-    addAdditionalImages(image) {
-        this.props.additionalImages(image);
     }
 
     addPath(path) {
@@ -62,8 +73,48 @@ class ImageComponent extends React.Component {
         this.props.clearDrawing();
     }
 
-    addImages(isAddImage) {
+    clearImages() {
+        this.props.clearImages();
+    }
 
+    addImage(event) {
+        
+        console.log(event)
+        var files = event.target.files;
+        var images = [];
+        for (var i = 0; i < files.length; ++i) {
+            var file = files[i];
+            if (!file.type.match('image'))
+                continue;
+                images.push(this.loadImage(URL.createObjectURL(file)));
+        }
+
+        var that = this;
+        Promise.all(images).then(function (result) {
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                that.props.addAdditionalImages({
+                    id: i,
+                    name: file.name,
+                    posX: 100,
+                    posY: 50,
+                    width: result[i].width / 10,
+                    height: result[i].height / 10,
+                    url: URL.createObjectURL(file),
+                    image: result[i],
+                });
+
+                console.log(file)
+            }
+        }).catch(function (errdims) {
+            console.log(errdims)
+        })
+
+
+    }
+
+    handleImageChange(image) {
+        this.props.handleImageChange(image);
     }
 
     handleDrawToolChange(event) {
@@ -71,6 +122,21 @@ class ImageComponent extends React.Component {
             [event.target.name]: event.target.value
         })
     }
+
+    loadImage(url) {
+        var result = new Promise((resolve, reject) => {
+            var img = new Image();
+            img.setAttribute('crossOrigin', 'anonymous');
+            img.onload = function () {
+                return resolve(img);
+            }
+            img.src = url;
+        })
+        return result;
+    }
+
+
+
 
     render() {
         //<img src={this.props.currentMeme.url} onError={i => i.target.src = ''} id="image-template" class="meme-template-image" />
@@ -83,21 +149,27 @@ class ImageComponent extends React.Component {
                         <div>
                             <input type="color" name="drawColor" className="color-input-box" onChange={this.handleDrawToolChange.bind(this)} />
                             <input type="text" placeholder="2" name="drawBrushSize" className="number-input-box" maxLength="1" onChange={this.handleDrawToolChange.bind(this)} />
-                            <button onClick={() => this.addDrawing(false)} id="draw-button" className="button" > Size </button>
-                            <button onClick={() => this.undoDrawing(false)} id="undo-button" className="button" > Undo </button>
-                            <button onClick={() => this.clearDrawing(false)} id="clear-button" className="button" > Clear </button>
-                            <button onClick={() => this.addDrawing(false)} id="draw-button" className="button" > Stop Draw </button>
+                            <button onClick={() => this.undoDrawing()} id="undo-button" className="button" > Undo </button>
+                            <button onClick={() => this.clearDrawing()} id="clear-button" className="button" > Clear </button>
+                            <button onClick={() => this.addDrawing()} id="draw-button" className="button" > Stop Draw </button>
                         </div>}
+                    <div>
+                        <div id="upload-button" className="button" >
+                            <label for="additional-image-upload">
+                                Add Image</label></div>
+                        <input type="file" id="additional-image-upload" onChange={this.addImage} multiple />
+                        <button onClick={() => this.clearImages()} id="clear-button" className="button" > Clear Images </button>
+                    </div>
                     <CanvasComponent
-                        currentImage={this.props.currentMeme}
+                        currentImage={this.state.currentImage}
                         inputBoxes={this.props.inputBoxes}
                         downloadImageTrigger={this.state.downloadImageTrigger}
                         inputBoxesUpdated={this.props.inputBoxesUpdated}
                         additionalImages={this.props.additionalImages}
+                        handleImageChange={this.handleImageChange}
+                        handleInputBoxesChange={this.handleInputBoxesChange}
                         drawPaths={this.props.drawPaths}
                         addPath={this.addPath}
-                        addAdditionalImages={this.addAdditionalImages}
-                        handleInputBoxesChange={this.handleInputBoxesChange}
                         isDrawMode={this.state.isDrawMode}
                         drawBrushSize={this.state.drawBrushSize}
                         drawColor={this.state.drawColor}
@@ -110,7 +182,7 @@ class ImageComponent extends React.Component {
                         <button onClick={() => this.downloadImage()} className="button">Download Meme!</button>
                     </div>
                 </div>
-            </div>)
+            </div >)
     }
 }
 

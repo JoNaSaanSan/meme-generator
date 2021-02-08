@@ -35,48 +35,11 @@ function getTextWidth(inputText, fontSize, fontFamily) {
   return Math.ceil(textWidth)
 }
 
-class Points {
-  constructor(pID, posX, posY, radius, color) {
-    this.pID = pID;
-    this.posX = posX;
-    this.posY = posY;
-    this.radius = radius;
-    this.color = color;
-  }
-}
-
-class CanvasImage {
-  /**
-   * 
-   * @param {number} imgID Image ID
-   * @param {string} url URL of Image
-   * @param {number} posX Position X on Canvas
-   * @param {number} posY Position Y on Canvas
-   * @param {number} height Height of Image
-   * @param {number} width Width of Image
-   */
-  constructor(imgID, url, posX, posY, width, height) {
-    this.imgID = imgID;
-    this.url = url;
-    this.posX = posX;
-    this.posY = posY;
-    this.height = height;
-    this.width = width;
-  }
-}
-
 class CanvasComponent extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-
-      canvasStack: {
-        canvasMainImage: '',
-        canvasOtherImages: [],
-        canvasText: [],
-      },
-
       canvasDimensions: {
         width: 0,
         height: 0,
@@ -87,6 +50,7 @@ class CanvasComponent extends React.Component {
       startY: 0,
       isDrawing: false,
       selectedText: -1,
+      selectedImage: -1,
       currentPath: [],
     }
 
@@ -121,18 +85,19 @@ class CanvasComponent extends React.Component {
         newWidth = newHeight * wrh;
       }
 
-      this.setState({
-        canvasStack: {
-          canvasMainImage: new CanvasImage(0, this.props.currentImage.url, 0, 0, newWidth, newHeight)
-        }
-      }, () => this.resizeCanvas(newWidth, newHeight, wrh))
+      this.resizeCanvas(newWidth, newHeight, wrh);
+
+
     }
 
     if (prevProps.downloadImageTrigger !== this.props.downloadImageTrigger) {
       this.downloadImage(this.props.downloadImageState);
     }
-    this.drawText();
+
+    this.drawImages();
     this.drawPaths();
+    this.drawText();
+
   }
 
   resizeCanvas(newWidth, newHeight, wrh) {
@@ -144,21 +109,12 @@ class CanvasComponent extends React.Component {
       }
     }, () => {
       this.drawBackground();
-      this.drawText();
+      this.drawImages();
       this.drawPaths();
+      this.drawText();
     })
   }
 
-  /**
-   * Draws Canvas Background
-   */
-  drawBackground() {
-    var canvas = document.getElementById('canvas-background');
-    canvas.width = this.state.canvasDimensions.width;
-    canvas.height = this.state.canvasDimensions.height;
-    var context = canvas.getContext('2d');
-    this.addImage(this.state.canvasStack.canvasMainImage, 0, 0, canvas.width, canvas.height, context);
-  }
 
   /**
    * (Re-)draws Textboxes
@@ -177,11 +133,10 @@ class CanvasComponent extends React.Component {
     canvas.width = this.state.canvasDimensions.width;
     canvas.height = this.state.canvasDimensions.height;
     // or whatever
-    console.log(this.props.drawPaths)
     if (this.props.drawPaths !== undefined) {
       for (var i = 0; i < this.props.drawPaths.length; i++) {
-        for (var j = 0; j < this.props.drawPaths[i].length-1; j++) {
-          this.drawPath(this.props.drawPaths[i][j].x, this.props.drawPaths[i][j].y, this.props.drawPaths[i][j+1].x, this.props.drawPaths[i][j+1].y,this.props.drawPaths[i][j].color, this.props.drawPaths[i][j].radius, context)
+        for (var j = 0; j < this.props.drawPaths[i].length - 1; j++) {
+          this.drawPath(this.props.drawPaths[i][j].x, this.props.drawPaths[i][j].y, this.props.drawPaths[i][j + 1].x, this.props.drawPaths[i][j + 1].y, this.props.drawPaths[i][j].color, this.props.drawPaths[i][j].radius, context)
         }
       }
     }
@@ -208,27 +163,44 @@ class CanvasComponent extends React.Component {
   }
 
 
+  /**
+   * Draws Canvas Background
+   */
+  drawBackground() {
+    var canvas = document.getElementById('canvas-background');
+    canvas.width = this.state.canvasDimensions.width;
+    canvas.height = this.state.canvasDimensions.height;
+    var context = canvas.getContext('2d');
+    this.drawImage(this.props.currentImage.image, 0, 0, canvas.width, canvas.height, context)
+  }
+
+
+  drawImages() {
+    var canvas = document.getElementById('canvas-images');
+    canvas.width = this.state.canvasDimensions.width;
+    canvas.height = this.state.canvasDimensions.height;
+    var context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < this.props.additionalImages.length; i++) {
+      this.drawImage(this.props.additionalImages[i].image, this.props.additionalImages[i].posX, this.props.additionalImages[i].posY, this.props.additionalImages[i].width, this.props.additionalImages[i].height, context);
+    }
+  }
 
   /**
-   * 
-   * @param {*} image Image Object 
-   * @param {*} posX Position X of Image
-   * @param {*} posY Position Y of Image
-   * @param {*} width Width of Image
-   * @param {*} height Height of Image
-   * @param {*} context The Context which the image is drawn to
-   * Loads and adds Images to the passed context
-   * 
-   */
-  addImage(image, posX, posY, width, height, context) {
-    var img = new Image();
-    img.setAttribute('crossOrigin', 'anonymous');
-    img.onload = function () {
-      context.drawImage(img, posX, posY, width, height);
-
-    };
-    img.src = image.url;
+  * 
+  * @param {*} image Image Object 
+  * @param {*} posX Position X of Image
+  * @param {*} posY Position Y of Image
+  * @param {*} width Width of Image
+  * @param {*} height Height of Image
+  * @param {*} context The Context which the image is drawn to
+  * Loads and adds Images to the passed context
+  * 
+  */
+  drawImage(img, posX, posY, width, height, context) {
+    context.drawImage(img, posX, posY, width, height);
   }
+
 
   /**
    * 
@@ -259,6 +231,12 @@ class CanvasComponent extends React.Component {
    */
   textSelected(text, x, y) {
     return (x >= parseInt(text.textPosX) && x <= (parseInt(text.textPosX) + getTextWidth(text.text, text.fontSize, text.fontFamily)) && y >= (parseInt(text.textPosY) - text.fontSize) && y <= parseInt(text.textPosY));
+  }
+
+  imageSelected(image, x, y) {
+
+    console.log(x + '>' + image.posX + '-' + (parseInt(image.posX) + image.width) + ' y: ' + y + '>' + (parseInt(image.posY) + image.height) + '-' + image.posY)
+    return (x >= parseInt(image.posX) && x <= (parseInt(image.posX) + image.width) && y <= (parseInt(image.posY) + image.height) && y >= parseInt(image.posY));
   }
 
   /**
@@ -294,6 +272,13 @@ class CanvasComponent extends React.Component {
             })
           }
         }
+        for (var i = 0; i < this.props.additionalImages.length; i++) {
+          if (this.imageSelected(this.props.additionalImages[i], this.state.startX, this.state.startY, i)) {
+            this.setState({
+              selectedImage: i,
+            })
+          }
+        }
       })
     }
   }
@@ -325,6 +310,7 @@ class CanvasComponent extends React.Component {
     this.props.addPath(this.state.currentPath);
     this.setState({
       selectedText: -1,
+      selectedImage: -1,
       isDrawing: false,
       currentPath: [],
     })
@@ -349,46 +335,54 @@ class CanvasComponent extends React.Component {
       var mouseX = parseInt(event.clientX - rect.left);
       var mouseY = parseInt(event.clientY - rect.top);
       var fillColor = this.props.drawColor;
-      var brushRadius;
-
-      if (this.props.drawBrushSize === '') {
-        brushRadius = '2'
-      } else {
-        brushRadius = this.props.drawBrushSize;
-      };
-
+      var brushRadius = this.props.drawBrushSize;
+      this.drawTmpPath(mouseX, mouseY, fillColor, brushRadius, context)
       this.state.currentPath.push({
         x: mouseX,
         y: mouseY,
         color: fillColor,
         radius: brushRadius,
       });
-      this.drawTmpPath(mouseX, mouseY, fillColor, brushRadius, context)
+
     }
     if (this.state.selectedText > -1) {
       event.preventDefault();
       var canvas = document.getElementById('canvas-text');
-      var rect = canvas.getBoundingClientRect();
-
-      // Mouse Positions
-      var mouseX = parseInt(event.clientX - rect.left);
-      var mouseY = parseInt(event.clientY - rect.top);
-
-      var dx = mouseX - this.state.startX;
-      var dy = mouseY - this.state.startY;
-
-      this.setState({
-        startX: mouseX,
-        startY: mouseY,
-      })
+      var pos = this.calculatePos(event, canvas);
 
       var text = this.props.inputBoxes[this.state.selectedText];
-      text.textPosX = parseInt(text.textPosX) + dx;
-      text.textPosY = parseInt(text.textPosY) + dy;
+      text.textPosX = parseInt(text.textPosX) + pos.dx;
+      text.textPosY = parseInt(text.textPosY) + pos.dy;
       this.props.handleInputBoxesChange(this.state.selectedText, 'textPosX', text.textPosX)
       this.props.handleInputBoxesChange(this.state.selectedText, 'textPosY', text.textPosY)
       this.drawText();
     }
+    if (this.state.selectedImage > -1) {
+      event.preventDefault();
+      var canvas = document.getElementById('canvas-images');
+      var pos = this.calculatePos(event, canvas);
+
+      var image = this.props.additionalImages[this.state.selectedImage];
+      image.posX = parseInt(image.posX) + pos.dx;
+      image.posY = parseInt(image.posY) + pos.dy;
+      this.props.handleImageChange({ id: this.state.selectedImage, posX: image.posX, posY: image.posY })
+    }
+  }
+
+  calculatePos(event, canvas) {
+    var rect = canvas.getBoundingClientRect();
+    // Mouse Positions
+    var mouseX = parseInt(event.clientX - rect.left);
+    var mouseY = parseInt(event.clientY - rect.top);
+
+    var dx = mouseX - this.state.startX;
+    var dy = mouseY - this.state.startY;
+
+    this.setState({
+      startX: mouseX,
+      startY: mouseY,
+    })
+    return ({ dx: dx, dy: dy })
   }
 
   /**
@@ -402,9 +396,11 @@ class CanvasComponent extends React.Component {
     const context = canvas.getContext("2d");
 
     const canvasBackground = document.getElementById("canvas-background");
+    const canvasImages = document.getElementById("canvas-images");
     const canvasDraw = document.getElementById("canvas-draw");
     const canvasText = document.getElementById("canvas-text");
     context.drawImage(canvasBackground, 0, 0);
+    context.drawImage(canvasImages, 0, 0);
     context.drawImage(canvasDraw, 0, 0);
     context.drawImage(canvasText, 0, 0);
     const canvasdata = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");;
@@ -422,7 +418,7 @@ class CanvasComponent extends React.Component {
       <div>
         <div id="canvas-container">
           <canvas id="canvas-background"></canvas>
-          <canvas id="canvas-images"> </canvas>
+          <canvas id="canvas-images" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp}> </canvas>
           <canvas id="canvas-draw" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp}> </canvas>
           <canvas id="canvas-text" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp}> </canvas>
         </div>

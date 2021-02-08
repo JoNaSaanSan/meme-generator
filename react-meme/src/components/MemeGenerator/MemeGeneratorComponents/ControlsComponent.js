@@ -53,7 +53,11 @@ class ControlsComponent extends React.Component {
       this.setState({
         index: index,
       }, () => {
-        this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index]);
+        try {
+          this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index]);
+        } catch (e) {
+          console.log(e);
+        }
         //this.props.setInputBoxes(this.state.imageMemeArray[this.state.index].inputBoxes);
       })
     }
@@ -140,7 +144,7 @@ class ControlsComponent extends React.Component {
    * 
    */
   createUI() {
-    if (this.state.imageMemeArray !== null) {
+    if (this.state.imageMemeArray !== null && this.state.imageMemeArray.length > 0) {
       return this.props.currentInputBoxes.map((el, i) =>
         <div key={i}>
           <input type="text" placeholder="Text" name="text" value={this.props.currentInputBoxes[i].text} className="input-box" onChange={this.handleChange.bind(this, i)} />
@@ -155,7 +159,7 @@ class ControlsComponent extends React.Component {
           </select>
           <input type="color" name="fontColor" className="color-input-box" value={this.props.currentInputBoxes[i].fontColor} onChange={this.handleChange.bind(this, i)} />
           <input type="text" placeholder="3" name="outlineWidth" value={this.props.currentInputBoxes[i].outlineWidth} className="number-input-box" min="1" max="20" onChange={this.handleChange.bind(this, i)} />
-          <input type="color"  name="outlineColor" value={this.props.currentInputBoxes[i].outlineColor} className="color-input-box" onChange={this.handleChange.bind(this, i)} />
+          <input type="color" name="outlineColor" value={this.props.currentInputBoxes[i].outlineColor} className="color-input-box" onChange={this.handleChange.bind(this, i)} />
           <input type="number" placeholder="200" name="textPosX" value={this.props.currentInputBoxes[i].textPosX} className="dimension-input-box" min="1" max={this.state.imageMemeArray[this.state.index].width} maxLength="2" onChange={this.handleChange.bind(this, i)} />
           <input type="number" placeholder="200" name="textPosY" value={this.props.currentInputBoxes[i].textPosY} className="dimension-input-box" min="1" max={this.state.imageMemeArray[this.state.index].height} maxLength="2" onChange={this.handleChange.bind(this, i)} />
         </div>)

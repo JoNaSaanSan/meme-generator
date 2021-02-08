@@ -39,10 +39,13 @@ class MemeGenerator extends React.Component {
     }
 
     this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
+    this.handleImageChange = this.handleImageChange.bind(this);
     this.addTextBoxes = this.addTextBoxes.bind(this);
+    this.addAdditionalImages = this.addAdditionalImages.bind(this);
     this.addPath = this.addPath.bind(this);
     this.undoDrawing = this.undoDrawing.bind(this);
     this.clearDrawing = this.clearDrawing.bind(this);
+    this.clearImages = this.clearImages.bind(this);
   }
 
 
@@ -72,7 +75,6 @@ class MemeGenerator extends React.Component {
   assignNewText2Textboxes(textBoxesArray) {
     this.state.inputBoxes.map(
       obj => {
-        console.log(textBoxesArray[obj.textID])
         if (obj.text === '' && textBoxesArray[obj.textID] !== undefined) {
           (Object.assign(obj, textBoxesArray[obj.textID]))
         }
@@ -91,8 +93,6 @@ class MemeGenerator extends React.Component {
     this.setState({
       ...this.state.drawPaths
     })
-
-    console.log(this.state.drawPaths)
   }
 
   undoDrawing() {
@@ -108,8 +108,36 @@ class MemeGenerator extends React.Component {
     })
   }
 
+
   addAdditionalImages(image) {
     this.state.additionalImages.push(image);
+    console.log(image)
+    this.setState({
+      ...this.state.additionalImages
+    })
+  }
+
+
+  imageAdded(image){
+    this.loadImage(image.url).then(result => {
+      this.state.currentImages.push(result);
+      this.setState({
+        ...this.state.currentImages,
+      })
+    })
+  }
+
+
+  clearImages() {
+    this.setState({
+      additionalImages: [],
+    })
+  }
+  
+
+  handleImageChange(image){
+    console.log(image)
+    Object.assign(this.state.additionalImages[image.id], image)
     this.setState({
       ...this.state.additionalImages
     })
@@ -181,9 +209,11 @@ class MemeGenerator extends React.Component {
             inputBoxes={this.state.inputBoxes}
             inputBoxesUpdated={this.state.inputBoxesUpdated}
             additionalImages={this.state.additionalImages}
+            addAdditionalImages={this.addAdditionalImages}
+            handleImageChange={this.handleImageChange}
+            clearImages={this.clearImages}
             drawPaths={this.state.drawPaths}
             addPath={this.addPath}
-            addAdditionalImages={this.addAdditionalImages}
             handleInputBoxesChange={this.handleInputBoxesChange}
             clearDrawing={this.clearDrawing}
             undoDrawing={this.undoDrawing}

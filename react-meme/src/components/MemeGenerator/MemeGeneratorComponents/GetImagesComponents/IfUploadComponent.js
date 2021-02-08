@@ -5,8 +5,10 @@ class IfUploadComponent extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            file: null,
+            filesArray: null,
             isFetching: false,
+            isFetchingDone: false,
+            fileData: null,
         }
         this.handleChange = this.handleChange.bind(this)
     }
@@ -19,39 +21,64 @@ class IfUploadComponent extends React.Component {
      */
     handleChange(event) {
         this.setState({
-            isFetching: true
+            isFetching: true,
+            isFetchingDone: false,
         })
         var files = event.target.files;
-        // Creates an array of Meme Objects upload by user
-        let data = []
-        let urlArray = [];
-        for (var i = 0; i < files.length; i++) {
-            data.push({
-                id: i,
-                name: event.target.files[i].name,
-                box_count: 2,
-                width: 400,
-                height: 400,
-                url: URL.createObjectURL(event.target.files[i]),
-            });
-                urlArray.push(URL.createObjectURL(event.target.files[i]))
+
+
+
+        var dimensions = [];
+        for (var i = 0; i < files.length; ++i) {
+            var file = files[i];
+            if (!file.type.match('image'))
+            continue;
+            dimensions.push(new Promise(function (resolve, reject) {
+                var src = URL.createObjectURL(file);
+                var img = new Image;
+                img.onload = function () {
+                    resolve({width: img.width, height: img.height});
+                    URL.revokeObjectURL(src);
+                };
+                img.src = src;
+            }));
         }
-        this.setState({
-            file: urlArray,
-            isFetching: false
+
+        var that = this;
+        Promise.all(dimensions).then(function (dims) {
+            let data = []
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                data.push({
+                    id: i,
+                    name: 'URL',
+                    box_count: 2,
+                    width: dims[i].width, //Todo: User width and height from image
+                    height: dims[i].height,
+                    url: URL.createObjectURL(file),
+                });
+            }
+            that.setState({
+                isFetching: false,
+            }, () => that.props.setImagesArray(data, that.state.isFetching))
+        }).catch(function (errdims) {
+            console.log(errdims)
         })
-        this.props.setImagesArray(data, this.state.isFetching);
+
         console.log("Upload Images is done!")
     }
+
+
     render() {
 
         return (
-            <div id="upload-button" className="button" >
-                <label for="file-upload">
-                    Upload Image</label>
-                <input type="file" id="file-upload" onChange={this.handleChange} />
+            <div>
+                <div id="upload-button" className="button" >
+                    <label for="file-upload">
+                        Upload Image</label></div>
+                <input type="file" id="file-upload" onChange={this.handleChange} multiple />
                 <div className="sample-image-container">
-                    <img src={this.state.file} className="sample-images" />
+                    <img src={this.state.filesArray} id="previewImage" className="sample-images" />
                 </div>
 
             </div>

@@ -63,6 +63,8 @@ class GetImagesComponents extends React.Component {
      * 
      */
     setImagesArray = (data, isFetching) => {
+
+        console.log(data)
         if (!isFetching) {
             // Creates an array of Meme Objects fetched from server
             let memeArray = [];
@@ -81,6 +83,7 @@ class GetImagesComponents extends React.Component {
                         initializeText.outlineColor)
                     );
                 }
+
                 var tmp = new Meme(data[i].url, data[i].id, data[i].width, data[i].height, data[i].name, data[i].box_count, tmpInputBoxes);
                 memeArray.push(tmp)
             }
