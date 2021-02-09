@@ -35,9 +35,27 @@ class ImageComponent extends React.Component {
     // When state is being updated
     componentDidUpdate(prevProps) {
         if (this.props.currentMeme.url !== prevProps.currentMeme.url) {
+
+
+            var wrh = this.props.currentMeme.width / this.props.currentMeme.height;
+            var newWidth = this.props.currentMeme.width;
+            var newHeight = this.props.currentMeme.height;
+            var maxWidth = 400;
+            var maxHeight = 400;
+            if (newWidth > maxWidth) {
+                newWidth = maxWidth;
+                newHeight = newWidth / wrh;
+            }
+
+            if (newHeight > maxHeight) {
+                newHeight = maxHeight;
+                newWidth = newHeight * wrh;
+            }
+
             this.loadImage(this.props.currentMeme.url).then(result => {
                 this.setState({
-                    currentImage: { ...this.props.currentMeme, image: result }
+                    currentImage: { ...this.props.currentMeme, image: result, width: newWidth, height: newHeight, wrh: wrh },
+                    //  canvasSize: { width: this.props.currentMeme.width, height: this.props.currentMeme.height }
                 })
             })
         }
@@ -78,7 +96,7 @@ class ImageComponent extends React.Component {
     }
 
     addImage(event) {
-        
+
         console.log(event)
         var files = event.target.files;
         var images = [];
@@ -86,7 +104,7 @@ class ImageComponent extends React.Component {
             var file = files[i];
             if (!file.type.match('image'))
                 continue;
-                images.push(this.loadImage(URL.createObjectURL(file)));
+            images.push(this.loadImage(URL.createObjectURL(file)));
         }
 
         var that = this;
@@ -123,6 +141,12 @@ class ImageComponent extends React.Component {
         })
     }
 
+    handleCanvasChange(event) {
+        this.setState({
+            currentImage: { ...this.state.currentImage, [event.target.name]: event.target.value }
+        })
+    }
+
     loadImage(url) {
         var result = new Promise((resolve, reject) => {
             var img = new Image();
@@ -148,7 +172,7 @@ class ImageComponent extends React.Component {
                     {!this.state.isDrawMode ? <button onClick={() => this.addDrawing(true)} id="draw-button" className="button" > Draw </button> :
                         <div>
                             <input type="color" name="drawColor" className="color-input-box" onChange={this.handleDrawToolChange.bind(this)} />
-                            <input type="text" placeholder="2" name="drawBrushSize" className="number-input-box" maxLength="1" onChange={this.handleDrawToolChange.bind(this)} />
+                            <input type="text" placeholder="2" name="drawBrushSize" className="number-input-box" maxLength="1" value={this.state.drawBrushSize} onChange={this.handleDrawToolChange.bind(this)} />
                             <button onClick={() => this.undoDrawing()} id="undo-button" className="button" > Undo </button>
                             <button onClick={() => this.clearDrawing()} id="clear-button" className="button" > Clear </button>
                             <button onClick={() => this.addDrawing()} id="draw-button" className="button" > Stop Draw </button>
@@ -160,6 +184,10 @@ class ImageComponent extends React.Component {
                         <input type="file" id="additional-image-upload" onChange={this.addImage} multiple />
                         <button onClick={() => this.clearImages()} id="clear-button" className="button" > Clear Images </button>
                     </div>
+                    <input type="text" placeholder="400" name="width" className="dimension-input-box" maxLength="3" value={this.state.currentImage.width} onChange={this.handleCanvasChange.bind(this)} />
+                    <input type="text" placeholder="400" name="height" className="dimension-input-box" maxLength="3" value={this.state.currentImage.height} onChange={this.handleCanvasChange.bind(this)} />
+
+
                     <CanvasComponent
                         currentImage={this.state.currentImage}
                         inputBoxes={this.props.inputBoxes}
@@ -173,6 +201,7 @@ class ImageComponent extends React.Component {
                         isDrawMode={this.state.isDrawMode}
                         drawBrushSize={this.state.drawBrushSize}
                         drawColor={this.state.drawColor}
+                        canvasSize={this.state.canvasSize}
                     />
 
                     <div className="button-view" >

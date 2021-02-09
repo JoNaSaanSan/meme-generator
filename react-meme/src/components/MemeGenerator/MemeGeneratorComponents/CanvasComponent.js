@@ -69,29 +69,15 @@ class CanvasComponent extends React.Component {
   // When state is being updated
   componentDidUpdate(prevProps) {
     if (this.props.currentImage.url !== prevProps.currentImage.url) {
-
-      var wrh = this.props.currentImage.width / this.props.currentImage.height;
-      var newWidth = this.props.currentImage.width;
-      var newHeight = this.props.currentImage.height;
-      var maxWidth = 400;
-      var maxHeight = 400;
-      if (newWidth > maxWidth) {
-        newWidth = maxWidth;
-        newHeight = newWidth / wrh;
-      }
-
-      if (newHeight > maxHeight) {
-        newHeight = maxHeight;
-        newWidth = newHeight * wrh;
-      }
-
-      this.resizeCanvas(newWidth, newHeight, wrh);
-
-
+      this.resizeCanvas(this.props.currentImage.width, this.props.currentImage.height, this.props.currentImage.wrh);
     }
 
     if (prevProps.downloadImageTrigger !== this.props.downloadImageTrigger) {
       this.downloadImage(this.props.downloadImageState);
+    }
+
+    if (prevProps.currentImage.width !== this.props.currentImage.width || prevProps.currentImage.height !== this.props.currentImage.height) {
+      this.resizeCanvas(this.props.currentImage.width, this.props.currentImage.height,  this.props.currentImage.wrh);
     }
 
     this.drawImages();
@@ -100,7 +86,16 @@ class CanvasComponent extends React.Component {
 
   }
 
+  /**
+   * 
+   * @param {*} newWidth 
+   * @param {*} newHeight 
+   * @param {*} wrh
+   * Resizes Canvas and Redraws everything
+   *  
+   */
   resizeCanvas(newWidth, newHeight, wrh) {
+    console.log(newHeight, newWidth)
     this.setState({
       canvasDimensions: {
         width: newWidth,
@@ -143,6 +138,18 @@ class CanvasComponent extends React.Component {
   }
 
 
+  /**
+   * 
+   * @param {*} currX 
+   * @param {*} currY 
+   * @param {*} tarX 
+   * @param {*} tarY 
+   * @param {*} color 
+   * @param {*} radius 
+   * @param {*} context 
+   * Draws Path
+   *  
+   */
   drawPath(currX, currY, tarX, tarY, color, radius, context) {
     context.beginPath()
     context.strokeStyle = color;
@@ -154,13 +161,6 @@ class CanvasComponent extends React.Component {
     context.stroke();
   }
 
-  drawTmpPath(currX, currY, color, radius, context) {
-    context.fillStyle = color;
-    context.beginPath();
-    context.moveTo(currX, currY);
-    context.arc(currX, currY, radius, 0, Math.PI * 2, false);
-    context.fill();
-  }
 
 
   /**
@@ -175,6 +175,9 @@ class CanvasComponent extends React.Component {
   }
 
 
+  /** 
+   * Draws Images
+  */
   drawImages() {
     var canvas = document.getElementById('canvas-images');
     canvas.width = this.state.canvasDimensions.width;
@@ -327,6 +330,8 @@ class CanvasComponent extends React.Component {
    * 
    */
   handleMouseMove(event) {
+
+    // Handle Drawing
     if (this.state.isDrawing) {
       var canvas = document.getElementById('canvas-draw');
       var context = canvas.getContext('2d');
@@ -336,15 +341,17 @@ class CanvasComponent extends React.Component {
       var mouseY = parseInt(event.clientY - rect.top);
       var fillColor = this.props.drawColor;
       var brushRadius = this.props.drawBrushSize;
-      this.drawTmpPath(mouseX, mouseY, fillColor, brushRadius, context)
+      if(this.state.currentPath.length>0)
+      this.drawPath(this.state.currentPath[this.state.currentPath.length-1].x, this.state.currentPath[this.state.currentPath.length-1].y, mouseX, mouseY, fillColor, brushRadius, context)
       this.state.currentPath.push({
         x: mouseX,
         y: mouseY,
         color: fillColor,
         radius: brushRadius,
       });
-
+      
     }
+    // Handle Text Dragging
     if (this.state.selectedText > -1) {
       event.preventDefault();
       var canvas = document.getElementById('canvas-text');
@@ -357,6 +364,8 @@ class CanvasComponent extends React.Component {
       this.props.handleInputBoxesChange(this.state.selectedText, 'textPosY', text.textPosY)
       this.drawText();
     }
+
+    // Handle Image Dragging
     if (this.state.selectedImage > -1) {
       event.preventDefault();
       var canvas = document.getElementById('canvas-images');
@@ -369,6 +378,13 @@ class CanvasComponent extends React.Component {
     }
   }
 
+  /**
+   * 
+   * @param {*} event 
+   * @param {*} canvas 
+   * Calculates the change of position of the mouse
+   * 
+   */
   calculatePos(event, canvas) {
     var rect = canvas.getBoundingClientRect();
     // Mouse Positions
