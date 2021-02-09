@@ -1,107 +1,27 @@
-#header-text {
-    grid-area: header-text;
-}
 
-#search-text {
-    grid-area: search-text;
-}
 
-#search-text-box {
-    grid-area: search-text-box;
+.control-view>* {
+    display: flex;    display: block;   justify-content: center;
+    align-items: flex-start;
 }
-
-#search-button {
-    grid-area: search-button;
-}
-
-#prev-button {
-    grid-area: prev-button;
-}
-
-#next-button {
-    grid-area: next-button;
-}
-
-#generate-button {
-    grid-area: generate-button;
-}
-
-#select-img-buttons {
-    grid-area: select-img-buttons;
+ 
+.image-text-boxes-container {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-#control-view {
-    background-color: rgb(41, 41, 41);
-    padding: 20px;
-    margin: 20px;
-}
-
-.inner-grid {
-    display: grid;
-    grid-template-areas: 'header-text header-text header-text header-text' 'select-img-buttons select-img-buttons select-img-buttons select-img-buttons' 'search-text-box search-text-box search-text-box search-button' 'prev-button  prev-button next-button next-button' 'generate-button generate-button generate-button generate-button';
-    grid-gap: 10px;
-    margin-bottom: 2em;
-}
-
-#ui-buttons-description {
-    display: flex;
-    justify-content: space-around;
-}
-
-.color-input-box {
-    background-color: rgb(41, 41, 41);
-    border-radius: 5px;
-    border: none;
-}
-
-.input-box {
-    background-color: #363636;
-    border: none;
-    color: white;
-    padding: 16px 16px;
-    text-decoration: none;
-    margin: 6px 6px;
-    border-radius: 5px;
-}
-
-.number-input-box {
-    background-color: #363636;
-    border: none;
-    color: white;
-    padding: 16px 16px;
-    text-decoration: none;
-    margin: 6px 6px;
-    border-radius: 5px;
-    width: 15px;
-}
-
-.dimension-input-box {
-    background-color: #363636;
-    border: none;
-    color: white;
-    padding: 16px 16px;
-    text-decoration: none;
-    margin: 6px 6px;
-    border-radius: 5px;
-    width: 55px;
-}
-
-input[type="file"] {
-    display: none;
-}
-
-
-.sample-images {
-    max-width: 100px;
-    height: auto;
-    display: flex;
-    justify-content: center;
-}
-
-.sample-image-container {
-    display: flex;
-    padding: 16px 16px;
-    justify-content: center;
-}
+.control-view {
+    height: 100%;
+    width: 15vw;
+    position: absolute;
+    left: 20px;
+    top: 120px;
+    background-color: rgb(41, 41, 41);;
+    }
+    
+    .control-view div {
+    padding: 8px;
+    display: block;
+    }
+    

@@ -1,9 +1,7 @@
 .image-view {
-    background-color: rgb(41, 41, 41);
-    padding: 20px;
-    margin: 20px;
+    display: block;
 }
 
-.image-container {
-    display: inline-grid;
+.canvas-controls {
+    background-color: rgb(41, 41, 41);
 }

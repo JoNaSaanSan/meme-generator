@@ -25,19 +25,16 @@ class IfUploadComponent extends React.Component {
             isFetchingDone: false,
         })
         var files = event.target.files;
-
-
-
         var dimensions = [];
         for (var i = 0; i < files.length; ++i) {
             var file = files[i];
             if (!file.type.match('image'))
-            continue;
+                continue;
             dimensions.push(new Promise(function (resolve, reject) {
                 var src = URL.createObjectURL(file);
                 var img = new Image;
                 img.onload = function () {
-                    resolve({width: img.width, height: img.height});
+                    resolve({ width: img.width, height: img.height });
                     URL.revokeObjectURL(src);
                 };
                 img.src = src;
@@ -64,7 +61,6 @@ class IfUploadComponent extends React.Component {
         }).catch(function (errdims) {
             console.log(errdims)
         })
-
         console.log("Upload Images is done!")
     }
 
@@ -80,7 +76,6 @@ class IfUploadComponent extends React.Component {
                 <div className="sample-image-container">
                     <img src={this.state.filesArray} id="previewImage" className="sample-images" />
                 </div>
-
             </div>
         );
     }

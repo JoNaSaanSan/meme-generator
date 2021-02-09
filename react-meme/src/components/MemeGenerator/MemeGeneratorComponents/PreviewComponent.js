@@ -24,7 +24,6 @@ class PreviewComponent extends React.Component {
 
   render() {
     return (
-
       <div className="preview-box">
         <img src={this.loadPreviewItem(-2)} className="images" onClick={() => this.previewSelected(-2)} />
         <img src={this.loadPreviewItem(-1)} className="images" onClick={() => this.previewSelected(-1)} />

@@ -40,8 +40,8 @@ class ImageComponent extends React.Component {
             var wrh = this.props.currentMeme.width / this.props.currentMeme.height;
             var newWidth = this.props.currentMeme.width;
             var newHeight = this.props.currentMeme.height;
-            var maxWidth = 400;
-            var maxHeight = 400;
+            var maxWidth = 1200;
+            var maxHeight = 1200;
             if (newWidth > maxWidth) {
                 newWidth = maxWidth;
                 newHeight = newWidth / wrh;
@@ -166,9 +166,9 @@ class ImageComponent extends React.Component {
         //<img src={this.props.currentMeme.url} onError={i => i.target.src = ''} id="image-template" class="meme-template-image" />
         Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
         return (
-            <div className="image-view" id="center-container">
-                <div className="image-container">
-                    <h2 > {this.props.currentMeme.name} </h2>
+            <div className="image-view">
+                <div className="canvas-controls">
+                <h2 > {this.props.currentMeme.name} </h2>
                     {!this.state.isDrawMode ? <button onClick={() => this.addDrawing(true)} id="draw-button" className="button" > Draw </button> :
                         <div>
                             <input type="color" name="drawColor" className="color-input-box" onChange={this.handleDrawToolChange.bind(this)} />
@@ -186,30 +186,29 @@ class ImageComponent extends React.Component {
                     </div>
                     <input type="text" placeholder="400" name="width" className="dimension-input-box" maxLength="3" value={this.state.currentImage.width} onChange={this.handleCanvasChange.bind(this)} />
                     <input type="text" placeholder="400" name="height" className="dimension-input-box" maxLength="3" value={this.state.currentImage.height} onChange={this.handleCanvasChange.bind(this)} />
+                </div>
 
+                <CanvasComponent
+                    currentImage={this.state.currentImage}
+                    inputBoxes={this.props.inputBoxes}
+                    downloadImageTrigger={this.state.downloadImageTrigger}
+                    inputBoxesUpdated={this.props.inputBoxesUpdated}
+                    additionalImages={this.props.additionalImages}
+                    handleImageChange={this.handleImageChange}
+                    handleInputBoxesChange={this.handleInputBoxesChange}
+                    drawPaths={this.props.drawPaths}
+                    addPath={this.addPath}
+                    isDrawMode={this.state.isDrawMode}
+                    drawBrushSize={this.state.drawBrushSize}
+                    drawColor={this.state.drawColor}
+                    canvasSize={this.state.canvasSize}
+                />
 
-                    <CanvasComponent
-                        currentImage={this.state.currentImage}
-                        inputBoxes={this.props.inputBoxes}
-                        downloadImageTrigger={this.state.downloadImageTrigger}
-                        inputBoxesUpdated={this.props.inputBoxesUpdated}
-                        additionalImages={this.props.additionalImages}
-                        handleImageChange={this.handleImageChange}
-                        handleInputBoxesChange={this.handleInputBoxesChange}
-                        drawPaths={this.props.drawPaths}
-                        addPath={this.addPath}
-                        isDrawMode={this.state.isDrawMode}
-                        drawBrushSize={this.state.drawBrushSize}
-                        drawColor={this.state.drawColor}
-                        canvasSize={this.state.canvasSize}
-                    />
-
-                    <div className="button-view" >
-                        <button onClick={() => this.props.generateMeme()} id="generate-button" className="button" > Generate Meme with Imgflip </button>
-                        {this.state.isSignedIn ?
-                            <button onClick={this.saveMeme} id="save-button" className="button" > Save Meme </button> : <button className="button"> Sign in to save </button>}
-                        <button onClick={() => this.downloadImage()} className="button">Download Meme!</button>
-                    </div>
+                <div className="button-view" >
+                    <button onClick={() => this.props.generateMeme()} id="generate-button" className="button" > Generate Meme with Imgflip </button>
+                    {this.state.isSignedIn ?
+                        <button onClick={this.saveMeme} id="save-button" className="button" > Save Meme </button> : <button className="button"> Sign in to save </button>}
+                    <button onClick={() => this.downloadImage()} className="button">Download Meme!</button>
                 </div>
             </div >)
     }

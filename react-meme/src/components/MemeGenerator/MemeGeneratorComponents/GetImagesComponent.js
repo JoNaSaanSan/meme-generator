@@ -7,6 +7,7 @@ import Meme from '../Meme';
 import TextBoxes from '../TextBoxes';
 
 const React = require('react')
+require('./GetImagesComponent.css');
 
 const initializeText = {
     textID: 0,
@@ -93,12 +94,20 @@ class GetImagesComponents extends React.Component {
 
     render() {
         return (
-            <div id="get-images-buttons-container">
-                <IfUploadComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
-                <BlankComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
-                <IfUrlComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
-                <IfCameraComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
-                <IfServerComponent setImagesArray={this.setImagesArray} URL={this.props.URL} getImagesButtonName={"ImgFlip"} />
+        <div>
+            <a className="button" href="#open-modal">Open Image Template</a>
+            <div id="open-modal" class="modal-window">
+                <div>
+                    <a href="#" title="Close" class="modal-close">Close</a>
+                    <div className="get-images-container">
+                        <BlankComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
+                        <IfCameraComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
+                        <IfServerComponent setImagesArray={this.setImagesArray} URL={this.props.URL} getImagesButtonName={"ImgFlip"} />
+                        <IfUploadComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
+                        <IfUrlComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
+                    </div>
+                    </div>
+                </div>
             </div>
         );
     }

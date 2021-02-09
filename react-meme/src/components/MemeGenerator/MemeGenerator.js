@@ -195,7 +195,6 @@ class MemeGenerator extends React.Component {
 
     return (
       <div class="generator-view">
-        <div class="outer-container">
           <ControlsComponent
             URL={this.state.URL}
             setInputBoxes={this.setInputBoxes}
@@ -218,8 +217,6 @@ class MemeGenerator extends React.Component {
             clearDrawing={this.clearDrawing}
             undoDrawing={this.undoDrawing}
           />
-          <img src={this.state.generatedMeme.url} />
-        </div>
       </div>
     )
   }

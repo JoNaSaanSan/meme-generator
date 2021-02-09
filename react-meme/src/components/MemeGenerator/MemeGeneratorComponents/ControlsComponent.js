@@ -101,10 +101,12 @@ class ControlsComponent extends React.Component {
    * This function is called whenever the user wants to search for a template
    */
   searchTemplate() {
-    for (var i = 0; i < this.state.imageMemeArray.length; i++) {
-      if (this.state.imageMemeArray[i].name.toLowerCase().includes(this.state.searchText.toLowerCase())) {
-        console.log("found " + i)
-        this.setCurrentMemeState(i)
+    if (this.state.imageMemeArray !== null) {
+      for (var i = 0; i < this.state.imageMemeArray.length; i++) {
+        if (this.state.imageMemeArray[i].name.toLowerCase().includes(this.state.searchText.toLowerCase())) {
+          console.log("found " + i)
+          this.setCurrentMemeState(i)
+        }
       }
     }
   }
@@ -113,8 +115,10 @@ class ControlsComponent extends React.Component {
    * This function is called whenever the user wants to change the title
    */
   changeTitle() {
-    this.state.imageMemeArray[this.state.index].name = this.state.titleText;
-    this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index])
+    if (this.state.titleText !== '' && this.state.imageMemeArray !== null) {
+      this.state.imageMemeArray[this.state.index].name = this.state.titleText;
+      this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index])
+    }
   }
 
   /**
@@ -146,7 +150,7 @@ class ControlsComponent extends React.Component {
   createUI() {
     if (this.state.imageMemeArray !== null && this.state.imageMemeArray.length > 0) {
       return this.props.currentInputBoxes.map((el, i) =>
-        <div key={i}>
+        <div key={i} className="ïnput-box-container">
           <input type="text" placeholder="Text" name="text" value={this.props.currentInputBoxes[i].text} className="input-box" onChange={this.handleChange.bind(this, i)} />
           <input type="text" placeholder="50" name="fontSize" value={this.props.currentInputBoxes[i].fontSize} className="number-input-box" min="1" max="100" maxLength="2" onChange={this.handleChange.bind(this, i)} />
           <select name="fontFamily" className="input-box" value={this.props.currentInputBoxes[i].fontFamily} onChange={this.handleChange.bind(this, i)}>
@@ -180,24 +184,29 @@ class ControlsComponent extends React.Component {
 
   render() {
     return (
-      <div id="control-view">
-        <div className="inner-grid" id="left-container">
-          <h1 id="header-text"> Meme Generator </h1>
-          <div id="select-img-buttons">
-            <GetImagesComponents setImagesArray={this.setImagesArray} URL={this.props.URL} />
-          </div>
+      <div className="control-view">
+        <div>
+          <GetImagesComponents setImagesArray={this.setImagesArray} URL={this.props.URL} />
+        </div>
+        <div className="search-buttons-container">
           <input type="text" name="searchText" id="search-text-box" class="input-box" onChange={this.updateText} />
           <button id="search-button" class="button" onClick={this.searchTemplate}> Search </button>
+        </div>
+
+        <div className="image-selection-buttons-container">
           <button onClick={this.prevButton} id="prev-button" className="button" > Back </button>
           <button onClick={this.nextButton} id="next-button" className="button" > Next </button>
           <button onClick={this.generateMemeButton} id="generate-button" className="button" > Generate</button>
         </div>
-        <p>Insert text below </p>
-        <input type="text" name="titleText" className="input-box" onChange={this.updateText} />
-        <button id="change-title-button" class="button" onClick={this.changeTitle}> Change Meme Title </button>
-        <div id="ui-buttons-description"> <div>Text</div><div>Font Size</div><div>Font Family</div><div>Font Color</div><div>Outline Width</div><div>Outline Color</div><div>Pos X</div><div>Pos Y</div></div>
-        <div id="ui-buttons"> {this.createUI()}</div>
-        <button onClick={this.addTextBoxes} id="add-textboxes-button" className="button" > Add Text </button>
+
+        <div className="image-title-input-container">
+          <input type="text" name="titleText" className="input-box" onChange={this.updateText} />
+          <button id="change-title-button" class="button" onClick={this.changeTitle}> Change Meme Title </button>
+        </div>
+        <div className="image-text-boxes-container">
+            <div id="ui-buttons"> {this.createUI()}</div>
+          <button onClick={this.addTextBoxes} id="add-textboxes-button" className="button" > Add Text </button>
+        </div>
       </div>
     )
   }
