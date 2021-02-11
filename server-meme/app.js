@@ -11,6 +11,13 @@ var usersRouter = require('./routes/users');
 var memesRouter = require('./routes/memes');
 
 var app = express();
+/*
+var corsOptions = {
+  origin: "http://localhost:3006"
+};
+
+app.use(cors(corsOptions));
+*/
 
 app.use(cors());
 // view engine setup
