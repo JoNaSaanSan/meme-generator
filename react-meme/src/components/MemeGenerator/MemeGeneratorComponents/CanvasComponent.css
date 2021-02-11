@@ -1,8 +1,10 @@
 
 
   #canvas-container {
-    display: flex;
+    display: block;  
+    justify-content: center;
     position: relative;
+ 
   }
   #canvas-container > canvas {
     position: absolute;

@@ -1,6 +1,7 @@
 import ControlsComponent from './MemeGeneratorComponents/ControlsComponent';
 import ImageComponent from './MemeGeneratorComponents/ImageComponent';
 import PreviewComponent from './MemeGeneratorComponents/PreviewComponent';
+import TextUIComponent from './MemeGeneratorComponents/TextUIComponent';
 import Store from '../../redux/store';
 import TextBoxes from './TextBoxes';
 require('./MemeGenerator.css');
@@ -36,9 +37,12 @@ class MemeGenerator extends React.Component {
       isSignedIn: Store.getState().user.isSignedIn,
       inputBoxesUpdated: false,
       tmpInputTextBoxesArray: [],
+      canvasWidth: 0,
+      canvasHeight: 0
     }
 
     this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
+    this.handleCanvasChange = this.handleCanvasChange.bind(this);
     this.handleImageChange = this.handleImageChange.bind(this);
     this.addTextBoxes = this.addTextBoxes.bind(this);
     this.addAdditionalImages = this.addAdditionalImages.bind(this);
@@ -60,10 +64,29 @@ class MemeGenerator extends React.Component {
    * Sets current Meme
    */
   setCurrentMeme = (currentMemeFromChild) => {
+
+    var wrh = currentMemeFromChild.width / currentMemeFromChild.height;
+    var newWidth =  currentMemeFromChild.width;
+    var newHeight = currentMemeFromChild.height;
+    var maxWidth = 700;
+    var maxHeight = 700;
+    if (newWidth > maxWidth) {
+        newWidth = maxWidth;
+        newHeight = newWidth / wrh;
+    }
+
+    if (newHeight > maxHeight) {
+        newHeight = maxHeight;
+        newWidth = newHeight * wrh;
+    }
     this.setState({
       currentMeme: currentMemeFromChild,
       inputBoxes: currentMemeFromChild.inputBoxes,
+      canvasWidth: newWidth,
+      canvasHeight: newHeight,
     }, () => this.assignNewText2Textboxes(this.state.tmpInputTextBoxesArray))
+
+    console.log(this.state.currentMeme)
   }
 
   /**
@@ -73,33 +96,30 @@ class MemeGenerator extends React.Component {
  *  
  */
   assignNewText2Textboxes(textBoxesArray) {
-    this.state.inputBoxes.map(
+    let inputBoxes = [...this.state.inputBoxes]
+    inputBoxes.map(
       obj => {
         if (obj.text === '' && textBoxesArray[obj.textID] !== undefined) {
           (Object.assign(obj, textBoxesArray[obj.textID]))
         }
       }
     )
-    this.setState({
-      ...this.state.inputBoxes,
-    })
+    this.setState({ inputBoxes })
   }
 
 
   addPath(path) {
     if (path.length > 0) {
-      this.state.drawPaths.push(path);
+      this.setState(prevState => ({
+        drawPaths: [...prevState.drawPaths, path]
+      }))
     }
-    this.setState({
-      ...this.state.drawPaths
-    })
   }
 
   undoDrawing() {
-    this.state.drawPaths.pop();
-    this.setState({
-      ...this.state.drawPaths
-    })
+    let drawPaths = [...this.state.drawPaths];
+    drawPaths.pop();
+    this.setState({ drawPaths });
   }
 
   clearDrawing() {
@@ -110,20 +130,17 @@ class MemeGenerator extends React.Component {
 
 
   addAdditionalImages(image) {
-    this.state.additionalImages.push(image);
-    console.log(image)
-    this.setState({
-      ...this.state.additionalImages
-    })
+    this.setState(prevState => ({
+      additionalImages: [...prevState.additionalImages, image]
+    }))
   }
 
 
-  imageAdded(image){
+  imageAdded(image) {
     this.loadImage(image.url).then(result => {
-      this.state.currentImages.push(result);
-      this.setState({
-        ...this.state.currentImages,
-      })
+      this.setState(prevState => ({
+        currentImages: [...prevState.currentImages, result]
+      }))
     })
   }
 
@@ -133,33 +150,38 @@ class MemeGenerator extends React.Component {
       additionalImages: [],
     })
   }
-  
 
-  handleImageChange(image){
-    console.log(image)
+  handleCanvasChange(event) {
+    console.log(parseInt(event.target.value))
+    if (event.target.value !== '') {
+      this.setState({ [event.target.name]: parseInt(event.target.value) })
+    } else {
+      this.setState({ [event.target.name]: 0 })
+    }
+  }
+  handleImageChange(image) {
+    let additionalImages = [...this.state.additionalImages]
     Object.assign(this.state.additionalImages[image.id], image)
     this.setState({
-      ...this.state.additionalImages
+      additionalImages
     })
   }
-
 
   /**
   * 
   * @param {number} i The index number of the text box
-  * @param {string} eventName The event name which is triggering this function
-  * @param {string} eventValue The event value that comes with the event name
+  * @param {Event} event The event name which is triggering this function
   * This function handles events whenever text, color or other settings of the text boxes are changed. 
   * The changed input boxes of the meme are updated and the current input box state is saved in an array in order to 
   * keep the data for future memes that the user might switch to
   * 
   */
-  handleInputBoxesChange(i, eventName, eventValue) {
-    this.state.inputBoxes[i] = Object.assign(this.state.inputBoxes[i], { [eventName]: eventValue })
+  handleInputBoxesChange(i, event) {
+    this.state.inputBoxes[i] = Object.assign(this.state.inputBoxes[i], { [event.target.name]: event.target.value })
     if (this.state.tmpInputTextBoxesArray[i] !== undefined) {
-      Object.assign(this.state.tmpInputTextBoxesArray[i], { [eventName]: eventValue })
+      Object.assign(this.state.tmpInputTextBoxesArray[i], { [event.target.name]: event.target.value })
     } else {
-      this.state.tmpInputTextBoxesArray[i] = { [eventName]: eventValue }
+      this.state.tmpInputTextBoxesArray[i] = { [event.target.name]: event.target.value }
     }
     console.log(this.state.tmpInputTextBoxesArray[i])
     this.setState({
@@ -172,8 +194,8 @@ class MemeGenerator extends React.Component {
    * Adds a new Text Box
    */
   addTextBoxes() {
-    this.state.inputBoxes.push(
-      new TextBoxes(
+    this.setState(prevState => ({
+      inputBoxes: [...prevState.inputBoxes, new TextBoxes(
         this.state.inputBoxes.length,
         initializeText.text,
         initializeText.textPosX,
@@ -182,11 +204,8 @@ class MemeGenerator extends React.Component {
         initializeText.fontFamily,
         initializeText.fontSize,
         initializeText.outlineWidth,
-        initializeText.outlineColor)
-    );
-    this.setState({
-      ...this.state.inputBoxes,
-    })
+        initializeText.outlineColor)]
+    }))
   }
 
   render() {
@@ -195,28 +214,38 @@ class MemeGenerator extends React.Component {
 
     return (
       <div class="generator-view">
-          <ControlsComponent
-            URL={this.state.URL}
-            setInputBoxes={this.setInputBoxes}
-            handleInputBoxesChange={this.handleInputBoxesChange}
-            currentInputBoxes={this.state.inputBoxes}
-            generateMeme={this.generateMeme}
-            setCurrentMeme={this.setCurrentMeme}
-            addTextBoxes={this.addTextBoxes} />
-          <ImageComponent generateMeme={this.generateMeme}
-            currentMeme={this.state.currentMeme}
-            inputBoxes={this.state.inputBoxes}
-            inputBoxesUpdated={this.state.inputBoxesUpdated}
-            additionalImages={this.state.additionalImages}
-            addAdditionalImages={this.addAdditionalImages}
-            handleImageChange={this.handleImageChange}
-            clearImages={this.clearImages}
-            drawPaths={this.state.drawPaths}
-            addPath={this.addPath}
-            handleInputBoxesChange={this.handleInputBoxesChange}
-            clearDrawing={this.clearDrawing}
-            undoDrawing={this.undoDrawing}
-          />
+        <ControlsComponent
+          URL={this.state.URL}
+          generateMeme={this.generateMeme}
+          currentMeme={this.state.currentMeme}
+          handleCanvasChange={this.handleCanvasChange}
+          setCurrentMeme={this.setCurrentMeme}
+          canvasWidth={this.state.canvasWidth}
+          canvasHeight={this.state.canvasHeight} />
+        <ImageComponent
+          generateMeme={this.generateMeme}
+          currentMeme={this.state.currentMeme}
+          inputBoxes={this.state.inputBoxes}
+          inputBoxesUpdated={this.state.inputBoxesUpdated}
+          canvasWidth={this.state.canvasWidth}
+          canvasHeight={this.state.canvasHeight}
+          additionalImages={this.state.additionalImages}
+          addAdditionalImages={this.addAdditionalImages}
+          handleImageChange={this.handleImageChange}
+          clearImages={this.clearImages}
+          drawPaths={this.state.drawPaths}
+          addPath={this.addPath}
+          handleInputBoxesChange={this.handleInputBoxesChange}
+          clearDrawing={this.clearDrawing}
+          undoDrawing={this.undoDrawing}
+        />
+        <TextUIComponent
+          handleInputBoxesChange={this.handleInputBoxesChange}
+          currentInputBoxes={this.state.inputBoxes}
+          setInputBoxes={this.setInputBoxes}
+          addTextBoxes={this.addTextBoxes}
+        />
+
       </div>
     )
   }

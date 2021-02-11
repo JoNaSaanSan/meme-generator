@@ -7,7 +7,6 @@ class IfUploadComponent extends React.Component {
         this.state = {
             filesArray: null,
             isFetching: false,
-            isFetchingDone: false,
             fileData: null,
         }
         this.handleChange = this.handleChange.bind(this)
@@ -22,7 +21,6 @@ class IfUploadComponent extends React.Component {
     handleChange(event) {
         this.setState({
             isFetching: true,
-            isFetchingDone: false,
         })
         var files = event.target.files;
         var dimensions = [];

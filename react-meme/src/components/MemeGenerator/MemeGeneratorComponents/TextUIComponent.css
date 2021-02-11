@@ -1,0 +1,13 @@
+.ui-view {
+  height: 100%;
+  width: 17vw;
+  position: absolute;
+  padding: 20px;
+  right: 0px;
+  top: 100px;
+  background-color: rgb(41, 41, 41);
+}
+
+.text-item {
+  padding: 20px;
+}

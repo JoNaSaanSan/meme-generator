@@ -20,10 +20,8 @@ class ControlsComponent extends React.Component {
     this.searchTemplate = this.searchTemplate.bind(this);
     this.changeTitle = this.changeTitle.bind(this);
     this.updateText = this.updateText.bind(this);
-    this.createUI = this.createUI.bind(this);
     this.generateMemeButton = this.generateMemeButton.bind(this);
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
-    this.addTextBoxes = this.addTextBoxes.bind(this);
   }
 
   /**
@@ -37,6 +35,8 @@ class ControlsComponent extends React.Component {
     this.setState({
       imageMemeArray: memeArray,
       index: 0,
+      width: 400,
+      height: 400,
     }, () => this.resetMemeState())
 
   }
@@ -52,6 +52,8 @@ class ControlsComponent extends React.Component {
     if (this.state.imageMemeArray !== undefined && this.state.imageMemeArray !== null) {
       this.setState({
         index: index,
+        width: this.state.imageMemeArray[index].width,
+        height: this.state.imageMemeArray[index].height,
       }, () => {
         try {
           this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index]);
@@ -131,56 +133,15 @@ class ControlsComponent extends React.Component {
     })
   }
 
-  /**
-   * 
-   * @param {number} i The index number of the text box
-   * @param {Event} event The event which is triggering this function
-   * This function passes the index, event name and event value to the Meme Generator Component, which then handles the change of the input boxes
-   * 
-   */
-  handleChange(i, event) {
-    this.props.handleInputBoxesChange(i, event.target.name, event.target.value);
-  }
-
-  /**
-   *  This function adds input boxes dynamically.
-   *  It adds as many text boxes as defined by the meme object.
-   * 
-   */
-  createUI() {
-    if (this.state.imageMemeArray !== null && this.state.imageMemeArray.length > 0) {
-      return this.props.currentInputBoxes.map((el, i) =>
-        <div key={i} className="ïnput-box-container">
-          <input type="text" placeholder="Text" name="text" value={this.props.currentInputBoxes[i].text} className="input-box" onChange={this.handleChange.bind(this, i)} />
-          <input type="text" placeholder="50" name="fontSize" value={this.props.currentInputBoxes[i].fontSize} className="number-input-box" min="1" max="100" maxLength="2" onChange={this.handleChange.bind(this, i)} />
-          <select name="fontFamily" className="input-box" value={this.props.currentInputBoxes[i].fontFamily} onChange={this.handleChange.bind(this, i)}>
-            <option value="Impact">Impact</option>
-            <option value="Arial">Arial</option>
-            <option value="Comic Sans MS">Comic Sans MS</option>
-            <option value="Courier">Courier</option>
-            <option value="Times New Roman">Times New Roman</option>
-            <option value="Verdana">Verdana</option>
-          </select>
-          <input type="color" name="fontColor" className="color-input-box" value={this.props.currentInputBoxes[i].fontColor} onChange={this.handleChange.bind(this, i)} />
-          <input type="text" placeholder="3" name="outlineWidth" value={this.props.currentInputBoxes[i].outlineWidth} className="number-input-box" min="1" max="20" onChange={this.handleChange.bind(this, i)} />
-          <input type="color" name="outlineColor" value={this.props.currentInputBoxes[i].outlineColor} className="color-input-box" onChange={this.handleChange.bind(this, i)} />
-          <input type="number" placeholder="200" name="textPosX" value={this.props.currentInputBoxes[i].textPosX} className="dimension-input-box" min="1" max={this.state.imageMemeArray[this.state.index].width} maxLength="2" onChange={this.handleChange.bind(this, i)} />
-          <input type="number" placeholder="200" name="textPosY" value={this.props.currentInputBoxes[i].textPosY} className="dimension-input-box" min="1" max={this.state.imageMemeArray[this.state.index].height} maxLength="2" onChange={this.handleChange.bind(this, i)} />
-        </div>)
-    } else {
-      return;
-    }
-  }
-
-  addTextBoxes() {
-    this.props.addTextBoxes();
-  }
-
-
   //Generate Meme Button
   generateMemeButton() {
     this.props.generateMeme();
   }
+
+  handleCanvasChange(event) {
+    this.props.handleCanvasChange(event)
+  }
+
 
   render() {
     return (
@@ -189,8 +150,8 @@ class ControlsComponent extends React.Component {
           <GetImagesComponents setImagesArray={this.setImagesArray} URL={this.props.URL} />
         </div>
         <div className="search-buttons-container">
-          <input type="text" name="searchText" id="search-text-box" class="input-box" onChange={this.updateText} />
-          <button id="search-button" class="button" onClick={this.searchTemplate}> Search </button>
+          <input type="text" name="searchText" id="search-text-box" className="input-box" onChange={this.updateText} />
+          <button id="search-button" className="button" onClick={this.searchTemplate}> Search </button>
         </div>
 
         <div className="image-selection-buttons-container">
@@ -201,11 +162,11 @@ class ControlsComponent extends React.Component {
 
         <div className="image-title-input-container">
           <input type="text" name="titleText" className="input-box" onChange={this.updateText} />
-          <button id="change-title-button" class="button" onClick={this.changeTitle}> Change Meme Title </button>
+          <button id="change-title-button" className="button" onClick={this.changeTitle}> Change Meme Title </button>
         </div>
-        <div className="image-text-boxes-container">
-            <div id="ui-buttons"> {this.createUI()}</div>
-          <button onClick={this.addTextBoxes} id="add-textboxes-button" className="button" > Add Text </button>
+        <div>
+        <input type="text" placeholder="400" name="canvasWidth" className="dimension-input-box" maxLength="3" value={this.props.canvasWidth} onChange={this.handleCanvasChange.bind(this)} />
+          <input type="text" placeholder="400" name="canvasHeight" className="dimension-input-box" maxLength="3" value={this.props.canvasHeight} onChange={this.handleCanvasChange.bind(this)} />
         </div>
       </div>
     )

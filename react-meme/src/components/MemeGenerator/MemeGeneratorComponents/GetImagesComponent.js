@@ -89,16 +89,17 @@ class GetImagesComponents extends React.Component {
                 memeArray.push(tmp)
             }
             this.props.setImagesArray(memeArray)
+            document.getElementById("upload-image-close").click();
         }
     }
 
     render() {
         return (
         <div>
-            <a className="button" href="#open-modal">Open Image Template</a>
-            <div id="open-modal" class="modal-window">
+            <a className="button" href="#upload-image">Open Image Template</a>
+            <div id="upload-image" class="modal-window">
                 <div>
-                    <a href="#" title="Close" class="modal-close">Close</a>
+                    <a href="#" title="Close" id="upload-image-close" class="modal-close">Close</a>
                     <div className="get-images-container">
                         <BlankComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
                         <IfCameraComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />

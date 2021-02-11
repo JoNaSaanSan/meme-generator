@@ -69,15 +69,15 @@ class CanvasComponent extends React.Component {
   // When state is being updated
   componentDidUpdate(prevProps) {
     if (this.props.currentImage.url !== prevProps.currentImage.url) {
-      this.resizeCanvas(this.props.currentImage.width, this.props.currentImage.height, this.props.currentImage.wrh);
+      this.resizeCanvas(this.props.canvasWidth,this.props.canvasHeight, 1);
     }
 
     if (prevProps.downloadImageTrigger !== this.props.downloadImageTrigger) {
       this.downloadImage(this.props.downloadImageState);
     }
 
-    if (prevProps.currentImage.width !== this.props.currentImage.width || prevProps.currentImage.height !== this.props.currentImage.height) {
-      this.resizeCanvas(this.props.currentImage.width, this.props.currentImage.height,  this.props.currentImage.wrh);
+    if ((prevProps.canvasWidth !== this.props.canvasWidth && this.props.canvasWidth > 0) || prevProps.canvasHeight !== this.props.canvasHeight && (this.props.canvasHeight > 0)) {
+      this.resizeCanvas(this.props.canvasWidth, this.props.canvasHeight, 1);
     }
 
     this.drawImages();
@@ -171,7 +171,8 @@ class CanvasComponent extends React.Component {
     canvas.width = this.state.canvasDimensions.width;
     canvas.height = this.state.canvasDimensions.height;
     var context = canvas.getContext('2d');
-    this.drawImage(this.props.currentImage.image, 0, 0, canvas.width, canvas.height, context)
+    if (this.props.currentImage.image !== undefined)
+      this.drawImage(this.props.currentImage.image, 0, 0, canvas.width, canvas.height, context)
   }
 
 
@@ -184,6 +185,7 @@ class CanvasComponent extends React.Component {
     canvas.height = this.state.canvasDimensions.height;
     var context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
+    console.log(this.props.additionalImages)
     for (var i = 0; i < this.props.additionalImages.length; i++) {
       this.drawImage(this.props.additionalImages[i].image, this.props.additionalImages[i].posX, this.props.additionalImages[i].posY, this.props.additionalImages[i].width, this.props.additionalImages[i].height, context);
     }
@@ -341,15 +343,15 @@ class CanvasComponent extends React.Component {
       var mouseY = parseInt(event.clientY - rect.top);
       var fillColor = this.props.drawColor;
       var brushRadius = this.props.drawBrushSize;
-      if(this.state.currentPath.length>0)
-      this.drawPath(this.state.currentPath[this.state.currentPath.length-1].x, this.state.currentPath[this.state.currentPath.length-1].y, mouseX, mouseY, fillColor, brushRadius, context)
+      if (this.state.currentPath.length > 0)
+        this.drawPath(this.state.currentPath[this.state.currentPath.length - 1].x, this.state.currentPath[this.state.currentPath.length - 1].y, mouseX, mouseY, fillColor, brushRadius, context)
       this.state.currentPath.push({
         x: mouseX,
         y: mouseY,
         color: fillColor,
         radius: brushRadius,
       });
-      
+
     }
     // Handle Text Dragging
     if (this.state.selectedText > -1) {
@@ -360,8 +362,10 @@ class CanvasComponent extends React.Component {
       var text = this.props.inputBoxes[this.state.selectedText];
       text.textPosX = parseInt(text.textPosX) + pos.dx;
       text.textPosY = parseInt(text.textPosY) + pos.dy;
-      this.props.handleInputBoxesChange(this.state.selectedText, 'textPosX', text.textPosX)
-      this.props.handleInputBoxesChange(this.state.selectedText, 'textPosY', text.textPosY)
+      var eventX = {target: { name: 'textPosX', value: text.textPosX}}
+      var eventY = {target: { name: 'textPosY', value: text.textPosY}}
+      this.props.handleInputBoxesChange(this.state.selectedText, eventX)
+      this.props.handleInputBoxesChange(this.state.selectedText, eventY)
       this.drawText();
     }
 
@@ -421,7 +425,7 @@ class CanvasComponent extends React.Component {
     context.drawImage(canvasText, 0, 0);
     const canvasdata = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");;
     const a = document.createElement("a");
-    a.download = this.props.currentImage.name + '.png';
+    a.download = this.props.currentName + '.png';
 
     a.href = canvasdata;
     document.body.appendChild(a);
