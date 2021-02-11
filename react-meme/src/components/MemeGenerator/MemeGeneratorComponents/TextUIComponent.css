@@ -1,10 +1,13 @@
 .ui-view {
-  height: 100%;
-  width: 17vw;
-  position: absolute;
+  height: 1800px;
+  width: 560px;
+  display: block;
   padding: 20px;
   right: 0px;
-  top: 100px;
+  top: 170px;
+  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
   background-color: rgb(41, 41, 41);
 }
 

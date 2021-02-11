@@ -69,7 +69,7 @@ class CanvasComponent extends React.Component {
   // When state is being updated
   componentDidUpdate(prevProps) {
     if (this.props.currentImage.url !== prevProps.currentImage.url) {
-      this.resizeCanvas(this.props.canvasWidth,this.props.canvasHeight, 1);
+      this.resizeCanvas(this.props.canvasWidth, this.props.canvasHeight, 1);
     }
 
     if (prevProps.downloadImageTrigger !== this.props.downloadImageTrigger) {
@@ -362,8 +362,8 @@ class CanvasComponent extends React.Component {
       var text = this.props.inputBoxes[this.state.selectedText];
       text.textPosX = parseInt(text.textPosX) + pos.dx;
       text.textPosY = parseInt(text.textPosY) + pos.dy;
-      var eventX = {target: { name: 'textPosX', value: text.textPosX}}
-      var eventY = {target: { name: 'textPosY', value: text.textPosY}}
+      var eventX = { target: { name: 'textPosX', value: text.textPosX } }
+      var eventY = { target: { name: 'textPosY', value: text.textPosY } }
       this.props.handleInputBoxesChange(this.state.selectedText, eventX)
       this.props.handleInputBoxesChange(this.state.selectedText, eventY)
       this.drawText();
@@ -436,7 +436,7 @@ class CanvasComponent extends React.Component {
 
     return (
       <div>
-        <div id="canvas-container">
+        <div id="canvas-container" >
           <canvas id="canvas-background"></canvas>
           <canvas id="canvas-images" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp}> </canvas>
           <canvas id="canvas-draw" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp}> </canvas>

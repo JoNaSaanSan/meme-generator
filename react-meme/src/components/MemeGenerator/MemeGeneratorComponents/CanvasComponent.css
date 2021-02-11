@@ -1,13 +1,18 @@
+#canvas-container {
+  display: inline-block;
+  position: relative;
+  height: 1000px;
+  width: 100px;
+}
 
+#canvas-container>canvas {
+  display: block;
+  position: absolute;
+  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
 
-  #canvas-container {
-    display: block;  
-    justify-content: center;
-    position: relative;
- 
-  }
-  #canvas-container > canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
+  bottom: 0;
+  top: 0;
+  left: 0;
+}

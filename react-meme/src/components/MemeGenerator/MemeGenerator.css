@@ -1,7 +1,9 @@
 .generator-view {
-    display: flex;
-    justify-content: center;
     color: white;
+    display: flex;
+    flex-flow: row;
+    flex-direction: row;
+    flex-wrap: initial;
 }
 
 
