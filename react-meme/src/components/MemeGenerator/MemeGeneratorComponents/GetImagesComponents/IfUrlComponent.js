@@ -1,5 +1,5 @@
 const React = require('react')
-// This component enables the user to upload images from the local s
+// This component enables the user to upload images from the local device
 class IfUrlComponent extends React.Component {
     constructor(props) {
         super(props);
@@ -9,26 +9,20 @@ class IfUrlComponent extends React.Component {
             inputUrl: '',
         }
 
-        this.openModalHandler = this.openModalHandler.bind(this);
-        this.closeModalHandler = this.closeModalHandler.bind(this);
         this.submitUrl = this.submitUrl.bind(this);
         this.updateUrl = this.updateUrl.bind(this);
     }
 
-    openModalHandler() {
-        this.setState({ isModalOpen: true });
-    }
-
-    closeModalHandler() {
-        this.setState({ isModalOpen: false });
-    }
-
-
-    updateUrl(e) {
-
+    /**
+     * 
+     * @param {event} event 
+     * handles URL input change
+     * 
+     */
+    updateUrl(event) {
         try {
             this.setState({
-                inputUrl: e.target.value,
+                inputUrl: event.target.value,
                 isFetching: true
             })
         }
@@ -37,16 +31,17 @@ class IfUrlComponent extends React.Component {
         }
     }
 
+    /**
+     * Creates an image object and pushes that object to an array
+     */
     submitUrl() {
-        console.log(this.state.inputUrl)
-
         let data = []
         for (var i = 0; i < 1; i++) {
             data.push({
                 id: i,
                 name: 'URL',
                 box_count: 2,
-                width: 400,
+                width: 400, //Todo: User width and height from image
                 height: 400,
                 url: this.state.inputUrl,
             });
@@ -58,7 +53,6 @@ class IfUrlComponent extends React.Component {
 
 
     render() {
-
         return (
             <div id="image-url-container" >
                 <input type="text" id="image-url-input" value={this.state.inputValue} className="input-box" onChange={this.updateUrl} />

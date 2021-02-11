@@ -7,10 +7,8 @@ class ControlsComponent extends React.Component {
   constructor(props) {
     super(props);
 
-
     this.state = {
       imageMemeArray: null,
-      prevIndex: 0,
       index: 0,
       searchText: '',
       titleText: '',
@@ -25,15 +23,7 @@ class ControlsComponent extends React.Component {
     this.createUI = this.createUI.bind(this);
     this.generateMemeButton = this.generateMemeButton.bind(this);
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
-  }
-
-  // Initialize
-  componentDidMount() {
-  }
-
-
-  componentDidUpdate(prevProps, prevState) {
-
+    this.addTextBoxes = this.addTextBoxes.bind(this);
   }
 
   /**
@@ -47,7 +37,6 @@ class ControlsComponent extends React.Component {
     this.setState({
       imageMemeArray: memeArray,
       index: 0,
-      prevIndex: 0,
     }, () => this.resetMemeState())
 
   }
@@ -61,21 +50,17 @@ class ControlsComponent extends React.Component {
    */
   setCurrentMemeState(index) {
     if (this.state.imageMemeArray !== undefined && this.state.imageMemeArray !== null) {
-      /* if (this.state.imageMemeArray[index].inputBoxes.length > 0 && this.state.lockText) {
- 
-      
-           console.log(this.state.imageMemeArray[index].inputBoxes[0].text)
-           this.state.imageMemeArray[index].inputBoxes = this.state.imageMemeArray[this.state.prevIndex].inputBoxes;
-         
-       }*/
-      this.props.setCurrentMeme(this.state.imageMemeArray[index])
-      this.props.setInputBoxes(this.state.imageMemeArray[index].inputBoxes);
       this.setState({
-        prevIndex: this.state.index,
         index: index,
+      }, () => {
+        try {
+          this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index]);
+        } catch (e) {
+          console.log(e);
+        }
+        //this.props.setInputBoxes(this.state.imageMemeArray[this.state.index].inputBoxes);
       })
     }
-
   }
 
   /**
@@ -113,7 +98,7 @@ class ControlsComponent extends React.Component {
 
 
   /**
-   * This method is called if the user wants to search for a template
+   * This function is called whenever the user wants to search for a template
    */
   searchTemplate() {
     for (var i = 0; i < this.state.imageMemeArray.length; i++) {
@@ -124,14 +109,16 @@ class ControlsComponent extends React.Component {
     }
   }
 
+  /**
+   * This function is called whenever the user wants to change the title
+   */
   changeTitle() {
-    console.log(this.state.titleText)
     this.state.imageMemeArray[this.state.index].name = this.state.titleText;
     this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index])
   }
 
   /**
-  * 
+  *  Handles text inputs from search & title change
   */
   updateText(event) {
     console.log(event);
@@ -144,16 +131,11 @@ class ControlsComponent extends React.Component {
    * 
    * @param {number} i The index number of the text box
    * @param {Event} event The event which is triggering this function
-   * This function handles events whenever text, color or other settings of the text boxes are changed. 
-   * The input boxes of the meme are updated and the current state is saved as a previous index in order to 
-   * keep the data for future memes that the user might switch to
+   * This function passes the index, event name and event value to the Meme Generator Component, which then handles the change of the input boxes
    * 
    */
   handleChange(i, event) {
-    this.state.imageMemeArray[this.state.index].inputBoxes.map(
-      obj => (obj.textID === i ? Object.assign(obj, { [event.target.name]: event.target.value }) : obj)
-    )
-    this.props.setInputBoxes(this.state.imageMemeArray[this.state.index].inputBoxes);
+    this.props.handleInputBoxesChange(i, event.target.name, event.target.value);
   }
 
   /**
@@ -162,13 +144,12 @@ class ControlsComponent extends React.Component {
    * 
    */
   createUI() {
-    if (this.state.imageMemeArray !== null) {
-      return this.state.imageMemeArray[this.state.index].inputBoxes.map((el, i) =>
+    if (this.state.imageMemeArray !== null && this.state.imageMemeArray.length > 0) {
+      return this.props.currentInputBoxes.map((el, i) =>
         <div key={i}>
-          <input type="text" placeholder="Text" name="text" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].text
-          } className="input-box" onChange={this.handleChange.bind(this, i)} />
-          <input type="text" placeholder="50" name="fontSize" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].fontSize} className="number-input-box" min="1" max="100" maxLength="2" onChange={this.handleChange.bind(this, i)} />
-          <select name="fontFamily" className="input-box" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].fontFamily} onChange={this.handleChange.bind(this, i)}>
+          <input type="text" placeholder="Text" name="text" value={this.props.currentInputBoxes[i].text} className="input-box" onChange={this.handleChange.bind(this, i)} />
+          <input type="text" placeholder="50" name="fontSize" value={this.props.currentInputBoxes[i].fontSize} className="number-input-box" min="1" max="100" maxLength="2" onChange={this.handleChange.bind(this, i)} />
+          <select name="fontFamily" className="input-box" value={this.props.currentInputBoxes[i].fontFamily} onChange={this.handleChange.bind(this, i)}>
             <option value="Impact">Impact</option>
             <option value="Arial">Arial</option>
             <option value="Comic Sans MS">Comic Sans MS</option>
@@ -176,13 +157,19 @@ class ControlsComponent extends React.Component {
             <option value="Times New Roman">Times New Roman</option>
             <option value="Verdana">Verdana</option>
           </select>
-          <input type="color" name="fontColor" className="color-input-box" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].fontColor} onChange={this.handleChange.bind(this, i)} />
-          <input type="number" placeholder="200" name="textPosX" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].textPosX} className="dimension-input-box" min="1" max={this.state.imageMemeArray[this.state.index].width} maxLength="2" onChange={this.handleChange.bind(this, i)} />
-          <input type="number" placeholder="200" name="textPosY" value={this.state.imageMemeArray[this.state.index].inputBoxes[i].textPosY} className="dimension-input-box" min="1" max={this.state.imageMemeArray[this.state.index].height} maxLength="2" onChange={this.handleChange.bind(this, i)} />
+          <input type="color" name="fontColor" className="color-input-box" value={this.props.currentInputBoxes[i].fontColor} onChange={this.handleChange.bind(this, i)} />
+          <input type="text" placeholder="3" name="outlineWidth" value={this.props.currentInputBoxes[i].outlineWidth} className="number-input-box" min="1" max="20" onChange={this.handleChange.bind(this, i)} />
+          <input type="color" name="outlineColor" value={this.props.currentInputBoxes[i].outlineColor} className="color-input-box" onChange={this.handleChange.bind(this, i)} />
+          <input type="number" placeholder="200" name="textPosX" value={this.props.currentInputBoxes[i].textPosX} className="dimension-input-box" min="1" max={this.state.imageMemeArray[this.state.index].width} maxLength="2" onChange={this.handleChange.bind(this, i)} />
+          <input type="number" placeholder="200" name="textPosY" value={this.props.currentInputBoxes[i].textPosY} className="dimension-input-box" min="1" max={this.state.imageMemeArray[this.state.index].height} maxLength="2" onChange={this.handleChange.bind(this, i)} />
         </div>)
     } else {
       return;
     }
+  }
+
+  addTextBoxes() {
+    this.props.addTextBoxes();
   }
 
 
@@ -208,8 +195,9 @@ class ControlsComponent extends React.Component {
         <p>Insert text below </p>
         <input type="text" name="titleText" className="input-box" onChange={this.updateText} />
         <button id="change-title-button" class="button" onClick={this.changeTitle}> Change Meme Title </button>
-        <div id="ui-buttons-description"> <div>Text</div><div>Font Size</div><div>Font Family</div><div>Font Color</div><div>Pos X</div><div>Pos Y</div></div>
+        <div id="ui-buttons-description"> <div>Text</div><div>Font Size</div><div>Font Family</div><div>Font Color</div><div>Outline Width</div><div>Outline Color</div><div>Pos X</div><div>Pos Y</div></div>
         <div id="ui-buttons"> {this.createUI()}</div>
+        <button onClick={this.addTextBoxes} id="add-textboxes-button" className="button" > Add Text </button>
       </div>
     )
   }

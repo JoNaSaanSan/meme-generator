@@ -2,7 +2,9 @@ import IfServerComponent from './GetImagesComponents/IfServerComponent'
 import IfUrlComponent from './GetImagesComponents/IfUrlComponent'
 import IfUploadComponent from './GetImagesComponents/IfUploadComponent'
 import IfCameraComponent from './GetImagesComponents/IfCameraComponent'
+import BlankComponent from './GetImagesComponents/BlankComponent'
 import Meme from '../Meme';
+import TextBoxes from '../TextBoxes';
 
 const React = require('react')
 
@@ -12,29 +14,38 @@ const initializeText = {
     textPosX: 100,
     textPosY: 100,
     fontColor: '#ffffff',
-    fontFamily: '',
-    fontSize: '50px',
+    fontFamily: 'Impact',
+    fontSize: '50',
+    outlineWidth: '3',
+    outlineColor: '#000000',
 }
 
+/**
+ * 
+ * @param {url} url 
+ * @param {*} timeoutT 
+ * function to check whether an image is able to be loaded
+ * 
+ */
 function testImage(url, timeoutT) {
-    return new Promise(function(resolve, reject) {
-      var timeout = timeoutT || 5000;
-      var timer, img = new Image();
-      img.onerror = img.onabort = function() {
-          clearTimeout(timer);
-      	  reject("error");
-      };
-      img.onload = function() {
-           clearTimeout(timer);
-           resolve("success");
-      };
-      timer = setTimeout(function() {
-          // reset .src to invalid URL so it stops previous
-          // loading, but doens't trigger new load
-          img.src = "//!!!!/noexist.jpg";
-          reject("timeout");
-      }, timeout); 
-      img.src = url;
+    return new Promise(function (resolve, reject) {
+        var timeout = timeoutT || 5000;
+        var timer, img = new Image();
+        img.onerror = img.onabort = function () {
+            clearTimeout(timer);
+            reject("error");
+        };
+        img.onload = function () {
+            clearTimeout(timer);
+            resolve("success");
+        };
+        timer = setTimeout(function () {
+            // reset .src to invalid URL so it stops previous
+            // loading, but doens't trigger new load
+            img.src = "//!!!!/noexist.jpg";
+            reject("timeout");
+        }, timeout);
+        img.src = url;
     });
 }
 
@@ -52,18 +63,28 @@ class GetImagesComponents extends React.Component {
      * 
      */
     setImagesArray = (data, isFetching) => {
+
+        console.log(data)
         if (!isFetching) {
             // Creates an array of Meme Objects fetched from server
             let memeArray = [];
             for (var i = 0; i < data.length; i++) {
                 let tmpInputBoxes = [];
                 for (var b = 0; b < data[i].box_count; b++) {
-                    tmpInputBoxes.push(Object.assign({}, initializeText, { textID: b, textPosY: b*initializeText.textPosY + 50 }));
+                    tmpInputBoxes.push(new TextBoxes(
+                        b,
+                        initializeText.text,
+                        initializeText.textPosX,
+                        b * initializeText.textPosY + 50,
+                        initializeText.fontColor,
+                        initializeText.fontFamily,
+                        initializeText.fontSize,
+                        initializeText.outlineWidth,
+                        initializeText.outlineColor)
+                    );
                 }
 
-                
                 var tmp = new Meme(data[i].url, data[i].id, data[i].width, data[i].height, data[i].name, data[i].box_count, tmpInputBoxes);
-
                 memeArray.push(tmp)
             }
             this.props.setImagesArray(memeArray)
@@ -74,6 +95,7 @@ class GetImagesComponents extends React.Component {
         return (
             <div id="get-images-buttons-container">
                 <IfUploadComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
+                <BlankComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
                 <IfUrlComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
                 <IfCameraComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
                 <IfServerComponent setImagesArray={this.setImagesArray} URL={this.props.URL} getImagesButtonName={"ImgFlip"} />
