@@ -8,6 +8,7 @@ class UserAuth extends React.Component {
         {
             isLoginMode: false,
             isRegisterMode: false,
+            URL: 'http://localhost:3000',
         }
 
     }
@@ -47,20 +48,70 @@ class UserAuth extends React.Component {
     /**
      * Handle when user wants to login
      */
-    login(){
+    login() {
         var username = document.getElementById("username").value;
         var password = document.getElementById("password").value;
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username: username, password: password })
+        };
+        fetch(this.state.URL + '/users/login', requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                console.log(data);
+                // check for error response
+                if (!response.ok) {
+                    // get error message from body or default to response status
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
     }
 
-    
+
     /**
      * Handle when user registers
      */
-    register(){
-        var username = document.getElementById("email").value;
+    register() {
+        var email = document.getElementById("email").value;
         var username = document.getElementById("username").value;
         var password = document.getElementById("password").value;
-        var password = document.getElementById("password").value;
+        var password2 = document.getElementById("password2").value;
+
+        if (password !== password2) {
+            alert("passwords dont match")
+        } else {
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: {username: username, password: password }
+            };
+
+            console.log(requestOptions)
+            fetch(this.state.URL + '/users/register', requestOptions)
+                .then(async response => {
+                    const data = await response.json();
+                    console.log(data);
+                    // check for error response
+                    if (!response.ok) {
+                        // get error message from body or default to response status
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    }
+                })
+                .catch(error => {
+                    console.error('There was an error!', error);
+                });
+        }
     }
 
     render() {
@@ -82,13 +133,13 @@ class UserAuth extends React.Component {
                             <div>
                                 <h2> Register </h2>
                                 <div> E-Mail: </div>
-                                <input type="text" id="email"  class="input-box"></input>
+                                <input type="text" id="email" class="input-box"></input>
                                 <div> Username: </div>
-                                <input type="text"id="username" class="input-box"></input>
+                                <input type="text" id="username" class="input-box"></input>
                                 <div> Password: </div>
                                 <input type="password" id="password" class="input-box"></input>
                                 <div> Confirm Password: </div>
-                                <input type="password" id="password2"  class="input-box"></input>
+                                <input type="password" id="password2" class="input-box"></input>
                             </div>
                             <a className="button" name="register" onClick={this.handleOnClick.bind(this)}> Register</a>
                             <a className="button" name="back" onClick={this.handleOnClick.bind(this)}> Back</a>
