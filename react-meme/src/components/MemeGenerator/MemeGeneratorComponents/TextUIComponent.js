@@ -32,7 +32,7 @@ class TextUIComponent extends React.Component {
     if (this.props.currentInputBoxes !== null && this.props.currentInputBoxes !== undefined) {
       return this.props.currentInputBoxes.map((el, i) =>
         <div key={i} className="text-item">
-          <input type="text" id="text-input" placeholder="Text" name="text" value={this.props.currentInputBoxes[i].text} className="input-box" onChange={this.handleChange.bind(this, i)} />
+          <input type="text" id={"text-input_"+i}  placeholder="Text" name="text" value={this.props.currentInputBoxes[i].text} className="input-box" onChange={this.handleChange.bind(this, i)} />
           <div className="hide">
             <input type="text" placeholder="50" name="fontSize" value={this.props.currentInputBoxes[i].fontSize} className="number-input-box" min="1" max="100" maxLength="2" onChange={this.handleChange.bind(this, i)} />
             <select name="fontFamily" className="input-box" value={this.props.currentInputBoxes[i].fontFamily} onChange={this.handleChange.bind(this, i)}>

@@ -1,6 +1,4 @@
 import CanvasComponent from './CanvasComponent';
-import Canvas2Component from './CanvasComponent';
-import Store from '../../../redux/store';
 const React = require('react');
 require('./ImageComponent.css');
 
@@ -14,14 +12,11 @@ class ImageComponent extends React.Component {
         super(props);
 
         this.state = {
-            isSignedIn: Store.getState().user.isSignedIn,
             isDrawMode: false,
-            downloadImageTrigger: false,
             drawColor: '',
             drawBrushSize: 2,
             currentImage: '',
         }
-        this.downloadImage = this.downloadImage.bind(this);
         this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
         this.addPath = this.addPath.bind(this);
         this.addDrawing = this.addDrawing.bind(this);
@@ -41,14 +36,6 @@ class ImageComponent extends React.Component {
                 })
             })
         }
-    }
-
-
-    /**
-     * Handles download image button presses via a boolean that is passed to the child
-     */
-    downloadImage() {
-        this.setState(prevState => ({ downloadImageTrigger: !prevState.downloadImageTrigger }))
     }
 
     handleInputBoxesChange(i, event) {
@@ -135,10 +122,13 @@ class ImageComponent extends React.Component {
         return result;
     }
 
+    imageRetrieved(data){
+        this.props.imageRetrieved(data);
+    }
+
 
     render() {
         //<img src={this.props.currentMeme.url} onError={i => i.target.src = ''} id="image-template" class="meme-template-image" />
-        Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
         return (
             <div className="image-view">
 
@@ -169,7 +159,8 @@ class ImageComponent extends React.Component {
                         currentName={this.props.currentMeme.name}
                         inputBoxes={this.props.inputBoxes}
                         imageDimensions={this.props.imageDimensions}
-                        downloadImageTrigger={this.state.downloadImageTrigger}
+                        retrieveImage={this.props.retrieveImage}
+                        imageRetrieved={this.imageRetrieved}
                         inputBoxesUpdated={this.props.inputBoxesUpdated}
                         additionalImages={this.props.additionalImages}
                         handleImageChange={this.handleImageChange}
@@ -182,13 +173,6 @@ class ImageComponent extends React.Component {
                         canvasWidth={this.props.canvasWidth}
                         canvasHeight={this.props.canvasHeight}
                     />
-                </div>
-
-                <div className="button-view" >
-                    <button onClick={() => this.props.generateMeme()} id="generate-button" className="button" > Generate Meme with Imgflip </button>
-                    {this.state.isSignedIn ?
-                        <button onClick={this.saveMeme} id="save-button" className="button" > Save Meme </button> : <button className="button"> Sign in to save </button>}
-                    <button onClick={() => this.downloadImage()} className="button">Download Meme!</button>
                 </div>
             </div >)
     }

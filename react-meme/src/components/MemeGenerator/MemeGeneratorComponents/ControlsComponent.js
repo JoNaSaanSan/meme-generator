@@ -1,4 +1,5 @@
 import GetImagesComponents from './GetImagesComponent';
+import Store from '../../../redux/store';
 const React = require('react');
 require('./ControlsComponent.css');
 
@@ -8,6 +9,7 @@ class ControlsComponent extends React.Component {
     super(props);
 
     this.state = {
+      isSignedIn: Store.getState().user.isSignedIn,
       imageMemeArray: null,
       index: 0,
       searchText: '',
@@ -20,7 +22,6 @@ class ControlsComponent extends React.Component {
     this.searchTemplate = this.searchTemplate.bind(this);
     this.changeTitle = this.changeTitle.bind(this);
     this.updateText = this.updateText.bind(this);
-    this.generateMemeButton = this.generateMemeButton.bind(this);
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
   }
 
@@ -133,17 +134,13 @@ class ControlsComponent extends React.Component {
     })
   }
 
-  //Generate Meme Button
-  generateMemeButton() {
-    this.props.generateMeme();
-  }
-
   handleCanvasChange(event) {
     this.props.handleCanvasChange(event)
   }
 
 
   render() {
+    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
     return (
       <div className="control-view">
         <div>
@@ -157,7 +154,6 @@ class ControlsComponent extends React.Component {
         <div className="image-selection-buttons-container">
           <button onClick={this.prevButton} id="prev-button" className="button" > Back </button>
           <button onClick={this.nextButton} id="next-button" className="button" > Next </button>
-          <button onClick={this.generateMemeButton} id="generate-button" className="button" > Generate</button>
         </div>
 
         <div className="image-title-input-container">
@@ -165,9 +161,18 @@ class ControlsComponent extends React.Component {
           <button id="change-title-button" className="button" onClick={this.changeTitle}> Change Meme Title </button>
         </div>
         <div>
-        <input type="text" placeholder="400" name="canvasWidth" className="dimension-input-box" maxLength="3" value={this.props.canvasWidth} onChange={this.handleCanvasChange.bind(this)} />
+          <input type="text" placeholder="400" name="canvasWidth" className="dimension-input-box" maxLength="3" value={this.props.canvasWidth} onChange={this.handleCanvasChange.bind(this)} />
           <input type="text" placeholder="400" name="canvasHeight" className="dimension-input-box" maxLength="3" value={this.props.canvasHeight} onChange={this.handleCanvasChange.bind(this)} />
         </div>
+
+
+        <button onClick={() => this.props.generateMemeImageFlip()} id="generate-button" className="button" > Generate Meme with Imgflip </button>
+        {this.state.isSignedIn ?
+          <div> <button onClick={this.props.publishMeme()} id="publish-button" className="button" > Publish Meme </button>
+            <button onClick={this.props.saveDraft()} id="save-button" className="button" > Save as Draft </button> </div> : <button className="button"> Sign in to publish or save! </button>}
+        <button onClick={this.props.shareMeme()} id="share-button" className="button" > Share Meme</button>
+        <button onClick={() => this.props.downloadImage()} id="download-button" className="button">Download Meme!</button>
+
       </div>
     )
   }

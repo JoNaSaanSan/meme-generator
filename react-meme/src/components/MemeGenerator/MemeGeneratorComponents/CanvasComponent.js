@@ -185,7 +185,6 @@ class CanvasComponent extends React.Component {
     canvas.height = this.state.canvasDimensions.height;
     var context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
-    console.log(this.props.additionalImages)
     for (var i = 0; i < this.props.additionalImages.length; i++) {
       this.drawImage(this.props.additionalImages[i].image, this.props.additionalImages[i].posX, this.props.additionalImages[i].posY, this.props.additionalImages[i].width, this.props.additionalImages[i].height, context);
     }
@@ -272,6 +271,7 @@ class CanvasComponent extends React.Component {
         console.log("Mouse Curser Start Position: " + this.state.startX + ':' + this.state.startY)
         for (var i = 0; i < this.props.inputBoxes.length; i++) {
           if (this.textSelected(this.props.inputBoxes[i], this.state.startX, this.state.startY, i)) {
+            this.selectText(i);
             this.setState({
               selectedText: i,
             })
@@ -405,10 +405,19 @@ class CanvasComponent extends React.Component {
     return ({ dx: dx, dy: dy })
   }
 
+
+  selectText(i) {
+    console.log('text-input_' + i)
+    const input = document.getElementById('text-input_' + i);
+    
+    input.focus();
+    input.select();
+  }
+
   /**
    *  Merges the different canvas and then downloads Meme as png
    */
-  downloadImage = () => {
+  retrieveImage = () => {
     const canvas = document.createElement("canvas");
     canvas.setAttribute("id", "canvas");
     canvas.width = this.state.canvasDimensions.width;
