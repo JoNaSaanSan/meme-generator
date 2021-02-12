@@ -11,11 +11,19 @@ var usersRouter = require('./routes/users');
 var memesRouter = require('./routes/memes');
 
 var app = express();
+/*
+var corsOptions = {
+  origin: "http://localhost:3006"
+};
+
+app.use(cors(corsOptions));
+*/
 
 app.use(cors());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+app.use(express.static(__dirname + '/public'));
 
 app.use(logger('dev'));
 app.use(express.json());
