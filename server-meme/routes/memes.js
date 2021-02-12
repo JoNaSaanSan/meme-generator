@@ -19,7 +19,7 @@ const password = "onlinemultimedia2020";
 
 var memes = [];
 /*
-  memes document: _id, title, creatorId, imgstring, upvotes, downvotes, comments, dateCreated, tags(?)
+  memes document: _id, title, creatorId, imgstring, upvotes, downvotes, comments, dateCreated, private,tags(?)
 */
 
 /*
@@ -86,6 +86,7 @@ router.post('/savememe', upload.fields([]), function(req, res, next) {
     creator: "creator",
     upvotes: 0,
     downvotes: 0,
+    private: False,
     dateCreated: new Date().toLocaleString()
   }
   memes.insert(meme);
