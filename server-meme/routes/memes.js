@@ -19,7 +19,7 @@ const password = "onlinemultimedia2020";
 
 var memes = [];
 /*
-  memes document: _id, title, creatorId, imgstring, upvotes, downvotes, comments, dateCreated, private,tags(?)
+  memes document: _id, title, creatorId, imgstring, upvotes, downvotes, comments, private, dateCreated, private,tags(?)
 */
 
 /*
@@ -76,21 +76,60 @@ router.post('/generateMeme', upload.fields([]), (req, res, next) => {
 /*
   Saves a meme url with title, creator to the DB.
 */
-router.post('/savememe', upload.fields([]), function(req, res, next) {
+router.post('/savememe', verifyToken, upload.fields([]), function(req, res) {
   const memes = req.db.get('memes');
-  console.log(req);
+  const users = req.db.get('users');
+
+  let url = req.body.url;
+  let base64_img = req.body.base64_img;
+  let userId = req.userId;
+  let title = req.body.title;
+  if (url == null && base64_img == null) {
+    res.status(400).send({
+      message: "url and base64 is null"
+    });
+  }
 
   meme = {
-    url: req.body.url,
-    title: "title",
-    creator: "creator",
+    url: url,
+    base64_img: base64_img,
+    title: title,
+    creatorId: userId,
     upvotes: 0,
     downvotes: 0,
-    private: False,
+    private: false,
     dateCreated: new Date().toLocaleString()
   }
-  memes.insert(meme);
-  res.send("Meme saved!");
+  memes.insert(meme).then(obj => {
+    if (obj._id == null) {
+      res.status(400).send({
+        message: "Error inserting meme to database"
+      });
+    } else {
+      users.update({
+        _id: userId
+      }, {
+        $push: {
+          memes: obj._id
+        }
+      }).then(writeResult => {
+        if (writeResult.nModified == 1) {
+          res.status(200).send({
+            message: "Meme saved successfully"
+          });
+        } else {
+          res.status(400).send({
+            message: "Error updating user document"
+          })
+        }
+      }).catch(error => {
+        console.log(error);
+        res.status(400).send({
+          message: error
+        });
+      });
+    }
+  });
 });
 
 /*
@@ -251,25 +290,32 @@ router.get('/popularmemes', (req, res, next) => {
 /*
   Uploads a template to the MongoDB
 */
-router.post('/uploadtemplate', upload.fields([]), (req, res) => {
-  console.log(req.body);
+router.post('/uploadtemplate', verifyToken, upload.fields([]), (req, res) => {
   const templates = req.db.get('templates');
-  const creator = req.body.creator;
+  const users = req.db.get('users');
+  const creatorId = req.userId;
   const title = req.body.title;
-  const imgstring = req.body.imgstring;
+  const imgstring = req.body.base64_img;
 
   //var imgBuffer = new Buffer(imgstring, "base64")
   //console.log(imgstring)
   template = {
     title: title,
-    creatorId: creator,
-    imgstring: imgstring,
+    creatorId: creatorId,
+    base64_img: base64_img,
     dateCreated: new Date().toLocaleString()
   }
 
   templates.insert(template).then(newObj => {
-    console.log("done");
-    res.send(`Template saved with id ${newObj._id}!`);
+    if (newObj._id == null) {
+      res.status(400).send({
+        message: "Error inserting template to DB"
+      });
+    } else {
+
+      res.send(`Template saved with id ${newObj._id}!`);
+    }
+
   });
 });
 
@@ -296,7 +342,7 @@ router.get("/templatefromurl", (req, res) => {
       return scrsh;
     })().then(pic => {
       //TODO bild direkt unter templates in der db speichern?
-      res.send({
+      res.status(200).send({
         base64_img: pic
       });
     });

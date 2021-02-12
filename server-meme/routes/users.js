@@ -90,7 +90,7 @@ router.post("/register", upload.fields([]), (req, res) => {
         }).catch(error => {
           console.log(error);
           res.send(400).send({
-            message: "Registration failed"
+            message: "Registration failed!"
           });
         });
     }
@@ -124,7 +124,7 @@ router.post("/login", upload.fields([]), (req, res) => {
           message: "Invalid Password!"
         });
       }
-      console.log(user);
+
       var token = jwt.sign({
         userId: user._id //userid oder username?
       }, config.secret, {
@@ -132,6 +132,7 @@ router.post("/login", upload.fields([]), (req, res) => {
       });
 
       res.status(200).send({
+        message: "Login successful!",
         username: user.username,
         email: user.email,
         upvotes: user.upvotes,
