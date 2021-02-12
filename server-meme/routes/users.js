@@ -17,9 +17,9 @@ user document: _id, googleData, nickname, upvotes(?), downvotes(?), comments(?),
 */
 
 router.post("/setnickname", upload.fields([]), (req, res) => {
-  users = req.db.get("users");
-  nickname = req.body.nickname;
-  googleId = Number(req.body.googleId);
+  var users = req.db.get("users");
+  var nickname = req.body.nickname;
+  var googleId = Number(req.body.googleId);
 
   //Check if nickname is already taken
   users.findOne({
@@ -54,22 +54,29 @@ router.post("/setnickname", upload.fields([]), (req, res) => {
 
 
 router.post("/register", upload.fields([]), (req, res) => {
-  users = req.db.get("users");
-  username = req.body.username;
-  password = req.body.password;
+  var users = req.db.get("users");
+  var username = req.body.username;
+  var password = req.body.password;
+  var email = req.body.email;
 
   users.findOne({
-    username: username
+    $or: [{
+      username: username
+    }, {
+      email: email
+    }]
   }).then(obj => {
     if (obj != null) {
-      res.send("Username already taken, choose another one!");
+      res.status(400).send({
+        message: "Username or Email already taken, choose another one!"
+      });
     } else {
       //User erstellen
-      console.log("Creating new user");
+      console.log("Creating new user " + username);
       users.insert({
           username: username,
           password: bcrypt.hashSync(password, 10),
-          email: "",
+          email: email,
           upvotes: [],
           downvotes: [],
           comments: [],
@@ -77,20 +84,29 @@ router.post("/register", upload.fields([]), (req, res) => {
           memes: []
         })
         .then(obj => {
-          res.send("Registration successful!");
-        }).catch(error => console.log(error));
+          res.status(200).send({
+            message: "Registration successful!"
+          });
+        }).catch(error => {
+          console.log(error);
+          res.send(400).send({
+            message: "Registration failed"
+          });
+        });
     }
   });
 });
 
 
 router.post("/login", upload.fields([]), (req, res) => {
-  users = req.db.get("users");
-  username = req.body.username;
-  password = req.body.password;
+  var users = req.db.get("users");
+  var username = req.body.username;
+  var password = req.body.password;
+  var email = req.body.email;
 
   users.findOne({
-    username: username
+    username: username,
+    email: email
   }).then(user => {
     if (user == null) {
       res.status(404).send({
