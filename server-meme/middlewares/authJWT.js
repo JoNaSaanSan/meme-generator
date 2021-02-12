@@ -1,8 +1,5 @@
 const jwt = require("jsonwebtoken");
 const config = require("../config/authconfig.js");
-//const db = require("../models");
-//const User = db.user;
-//const Role = db.role;
 
 verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
@@ -19,7 +16,14 @@ verifyToken = (req, res, next) => {
         message: "Unauthorized!"
       });
     }
-    req.userId = decoded.id;
+    console.log("User with id " + decoded.userId + " verified.");
+
+    /*const newToken = jwt.sign({
+      userId: decoded.userId
+    }, config.secret, {
+      expiresIn: 3600,
+    })*/
+    req.userId = decoded.userId;
     next();
   });
 };

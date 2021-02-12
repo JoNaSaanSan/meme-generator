@@ -11,6 +11,7 @@ const util = require("util");
 let multer = require("multer");
 //const GridFsStorage = require("multer-gridfs-storage");
 let upload = multer();
+const verifyToken = require("../middlewares/authJWT.js");
 
 
 const username = "SandraOMM";
@@ -111,15 +112,15 @@ router.get('/getmymemes', (req, res, next) => {
   Upvotes a meme existing in the DB. Adds the id of the upvoted meme to the user document,
    and increases the upvote counter of the meme document by 1.
 */
-router.get('/upvote', (req, res, next) => {
+router.get('/upvote', verifyToken, (req, res, next) => {
   const memes = req.db.get('memes');
   const memeId = req.body.memeId;
-  const user = req.body.user;
+  const userId = req.userId;
 
   //update user upvotes
   const users = req.db.get('users');
   users.update({
-    name: user
+    _id: userId
   }, {
     $push: {
       upvotes: memeId

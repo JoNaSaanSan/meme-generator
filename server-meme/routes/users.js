@@ -108,11 +108,11 @@ router.post("/login", upload.fields([]), (req, res) => {
           message: "Invalid Password!"
         });
       }
-
+      console.log(user);
       var token = jwt.sign({
-        id: user.id
+        userId: user._id //userid oder username?
       }, config.secret, {
-        expiresIn: 86400 // 24 hours
+        expiresIn: 3600 // 24 hours
       });
 
       res.status(200).send({
