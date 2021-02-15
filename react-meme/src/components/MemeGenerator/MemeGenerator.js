@@ -439,7 +439,7 @@ class MemeGenerator extends React.Component {
           setInputBoxes={this.setInputBoxes}
           addTextBoxes={this.addTextBoxes}
         />
-
+        
       </div>
     )
   }
