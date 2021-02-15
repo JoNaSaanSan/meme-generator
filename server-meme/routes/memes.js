@@ -87,6 +87,8 @@ router.post('/savememe', verifyToken, upload.fields([]), function(req, res) {
   let base64_img = req.body.base64_img;
   let userId = req.userId;
   let title = req.body.title;
+  let access;
+
   if (url == null && base64_img == null) {
     res.status(400).send({
       message: "url and base64 is null"
@@ -103,6 +105,7 @@ router.post('/savememe', verifyToken, upload.fields([]), function(req, res) {
     private: false,
     dateCreated: new Date().toLocaleString()
   }
+
   memes.insert(meme).then(obj => {
     if (obj._id == null) {
       res.status(400).send({
@@ -316,7 +319,5 @@ router.get("/templatefromurl", (req, res) => {
     });
   }
 });
-
-router.post("")
 
 module.exports = router;
