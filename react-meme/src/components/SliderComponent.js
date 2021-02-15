@@ -40,11 +40,21 @@ class SliderComponent extends React.Component {
    */
   createImageContainers() {
     console.log("image Containers")
-    return (
-      this.state.imageContainerArray.map((element, i) =>
-        <div className="imageAndOptions"><img src={element} className="images" onClick= {this.handleClick.bind(this, i)}/><ImageAndOptions /></div>
-        
-      ))
+    if(this.props.optionsComponent== true){
+      return (
+        this.state.imageContainerArray.map((element, i) =>
+          <div className="imageAndOptions"><img src={element} className="images" onClick= {this.handleClick.bind(this, i)}/><ImageAndOptions /></div>
+          
+        ))
+    }
+    else{
+      return (
+        this.state.imageContainerArray.map((element, i) =>
+          <div className="imageAndOptions"><img src={element} className="images" onClick= {this.handleClick.bind(this, i)}/></div>
+          
+        ))
+    }
+
 
   }
 

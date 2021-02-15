@@ -9,7 +9,7 @@ class ImageAndOptions extends React.Component {
     render() { 
         return (  
             <div>
-                <div>Points:</div>
+                <div className= "voting-points">Points:</div>
                 <div className="options_container">
                     <button className="voting-button"><img src= {upvote} className="icon"/></button>
                     <button className="voting-button"><img src= {downvote} className="icon"/></button>

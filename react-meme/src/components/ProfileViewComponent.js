@@ -37,17 +37,18 @@ class ProfileViewComponent extends React.Component {
           <p className="input-label">Nickname</p>
           <input className="input-nickname"/>
         </div>
+        <div className="email">email: </div>
       </div>
 
       <div className= "container_right">
         <div className= "container_memes">
           <h2 className="title">Generated Images</h2>
-          <SliderComponent memesArray = {this.state.memesArray} selectedImage = {this.selectedImage}/>
+          <SliderComponent memesArray = {this.state.memesArray} selectedImage = {this.selectedImage} optionsComponent = {true}/>
         </div>
 
         <div className= "container_memes">
           <h2 className="title">Favourite Images</h2>
-          <SliderComponent memesArray = {this.state.memesArray} selectedImage = {this.selectedImage}/>
+          <SliderComponent memesArray = {this.state.memesArray} selectedImage = {this.selectedImage} optionsComponent = {true}/>
         </div>
       </div>
 

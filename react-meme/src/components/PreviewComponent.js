@@ -45,7 +45,7 @@ class PreviewComponent extends React.Component {
       <div className="preview-box">
 
         {this.getUrls}
-        <SliderComponent memesArray = {this.getUrls()} selectedImage = {this.selectedImage}/>
+        <SliderComponent memesArray = {this.getUrls()} selectedImage = {this.selectedImage} optionsComponent = {false}/>
       </div>
       
     )

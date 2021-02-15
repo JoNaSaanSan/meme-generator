@@ -1,5 +1,10 @@
-.options_container{
+.voting-points{
+    margin-left: 5%;
+}
 
+.options_container{
+    width: 90%;
+    margin-left: 5%;
 }
 
 .voting-button{
