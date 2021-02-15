@@ -1,4 +1,6 @@
+import ImageAndOptions from './ImageAndOptions';
 const React = require('react');
+//const { default: ImageAndOptions } = require('./ImageAndOptions');
 require('./SliderComponent.css');
 
 class SliderComponent extends React.Component {
@@ -40,7 +42,8 @@ class SliderComponent extends React.Component {
     console.log("image Containers")
     return (
       this.state.imageContainerArray.map((element, i) =>
-        <img src={element} className="images" onClick= {this.handleClick.bind(this, i)}/>
+        <div className="imageAndOptions"><img src={element} className="images" onClick= {this.handleClick.bind(this, i)}/><ImageAndOptions /></div>
+        
       ))
 
   }
@@ -62,7 +65,6 @@ class SliderComponent extends React.Component {
 
           <button className="button" onClick={() => this.createImages(this.state.imageContainerArray.length)}>&rsaquo;</button>
         </div>
-
 
       </div>
 

@@ -1,0 +1,17 @@
+.options_container{
+
+}
+
+.voting-button{
+    height: 30px;
+    width: 30px;
+    background-color: white;
+    border-radius: 5px;
+    border:none;
+    margin: 5px;
+}
+
+.icon{
+    height: 90%;
+    margin-left: -10%;
+}
