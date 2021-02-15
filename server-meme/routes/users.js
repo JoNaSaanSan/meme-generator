@@ -105,12 +105,17 @@ router.post("/login", upload.fields([]), (req, res) => {
   var email = req.body.email;
 
   users.findOne({
-    username: username,
-    email: email
+    $or: [{
+        username: username
+      },
+      {
+        email: email
+      }
+    ]
   }).then(user => {
     if (user == null) {
       res.status(404).send({
-        message: "Username not found."
+        message: "Username or Email not found."
       });
     } else {
       var passwordIsValid = bcrypt.compareSync(
@@ -143,6 +148,46 @@ router.post("/login", upload.fields([]), (req, res) => {
         accessToken: token
       });
     }
+  });
+});
+
+router.get("/getprofile", verifyToken, (req, res) => {
+  let userId = req.userId;
+  let users = req.db.get("users");
+  let memes = req.db.get("memes");
+
+  users.findOne({
+    _id: userId
+  }).then(user => {
+    memes.find({
+      _id: {
+        $in: user.memes
+      }
+    }).then(userMemes => {
+      memes.find({
+        _id: {
+          $in: user.upvotes
+        }
+      }).then(userUpvotes => {
+        memes.find({
+          _id: {
+            $in: user.downvotes
+          }
+        }).then(userDownvotes => {
+
+          userTemplates = []; //TODO
+
+          res.status(200).send({
+            username: user.username,
+            email: user.email,
+            memes: userMemes,
+            upvotes: userUpvotes,
+            downvotes: userDownvotes,
+            templates: userTemplates
+          });
+        });
+      });
+    });
   });
 });
 
