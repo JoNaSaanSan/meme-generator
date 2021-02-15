@@ -249,12 +249,34 @@ router.get('/newmemes', (req, res, next) => {
 */
 router.get('/popularmemes', (req, res, next) => {
   const memes = req.db.get('memes');
-  //TODO
   memes.find({
     private: false
-  }).then(memes => {
-    conosole.log(memes);
-    res.send(memes);
+  }, {
+    sort: {
+      upvotes: -1
+    }
+  }).then(docs => {
+    res.status(200).send(docs);
+  }).catch(error => {
+    console.log(error);
+    res.status(400).send({
+      message: error
+    });
+  });;
+});
+
+
+router.get("/browsememes", (req, res) => {
+  const memes = req.db.get('memes');
+  memes.find({
+    private: false
+  }).then(docs => {
+    res.status(200).send(docs);
+  }).catch(error => {
+    console.log(error);
+    res.status(400).send({
+      message: error
+    });
   });
 });
 
@@ -298,7 +320,9 @@ router.get("/templatefromurl", (req, res) => {
 
   //catch if url is empty or not a png/jpeg
   if (url == "") {
-    res.status(404).send("Empty url");
+    res.status(404).send({
+      message: "Empty url"
+    });
   } else {
     (async () => {
       const browser = await puppeteer.launch();
@@ -318,6 +342,51 @@ router.get("/templatefromurl", (req, res) => {
       });
     });
   }
+});
+
+router.post("/comment", verifyToken, upload.fields([]), (req, res) => {
+  let users = req.db.get("users");
+  let memes = req.db.get("memes");
+  let memeId = req.body.memeId;
+  let userId = req.userId;
+  let commentText = req.body.comment;
+  let date = new Date().toLocaleString();
+
+  comment = {
+    userId: userId,
+    text: commentText,
+    date: date
+  };
+
+  memes.update({
+    _id: memeId
+  }, {
+    $push: {
+      comments: comment
+    }
+  }).then(() => {
+    users.update({
+      _id: userId
+    }, {
+      $push: {
+        comments: {
+          memeId: memeId,
+          text: commentText,
+          date: date
+        }
+      }
+    }).then(() => {
+      res.status(200).send({
+        message: "Comment saved"
+      });
+    })
+
+  }).catch(error => {
+    console.log(error);
+    res.status(400).send({
+      message: error
+    });
+  });
 });
 
 module.exports = router;
