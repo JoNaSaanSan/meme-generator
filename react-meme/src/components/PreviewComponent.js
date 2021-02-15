@@ -1,3 +1,5 @@
+import SliderComponent from './SliderComponent';
+
 const React = require('react');
 require('./PreviewComponent.css');
 
@@ -5,7 +7,10 @@ class PreviewComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    this.previewSelected = this.previewSelected.bind(this)
+    this.state = {
+      index: 0
+    }
+    this.selectedImage = this.selectedImage.bind(this)
   }
 
 
@@ -17,19 +22,32 @@ class PreviewComponent extends React.Component {
     return this.props.samplesMemeArray[previewElement].url;
   }
 
-  previewSelected(x) {
-    this.props.setCurrentMemeState(this.props.indexPos + x)
+
+  getUrls(){
+    var urlArray = [];
+    console.log ("urlArray   :" + urlArray)
+    for(var i= 0; i<this.props.samplesMemeArray.length; i++){
+      urlArray.push(this.props.samplesMemeArray[i].url)
+    }
+    console.log ("urlArray   :" + urlArray)
+    return urlArray;
   }
+
+  selectedImage(index){
+    this.setState({index: index})
+    this.props.setCurrentMemeState(index)
+  }
+
 
   render() {
     return (
 
       <div className="preview-box">
-        <img src={this.loadPreviewItem(1)} className="images" onClick={() => this.previewSelected(1)} />
-        <img src={this.loadPreviewItem(2)} className="images" onClick={() => this.previewSelected(2)} />
-        <img src={this.loadPreviewItem(3)} className="images" onClick={() => this.previewSelected(3)} />
-        <img src={this.loadPreviewItem(4)} className="images" onClick={() => this.previewSelected(4)} />
+
+        {this.getUrls}
+        <SliderComponent memesArray = {this.getUrls()} selectedImage = {this.selectedImage}/>
       </div>
+      
     )
   }
 }

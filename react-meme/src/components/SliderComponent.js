@@ -11,6 +11,7 @@ class SliderComponent extends React.Component {
     }
     this.createImages = this.createImages.bind(this)
     this.createImageContainers = this.createImageContainers.bind(this)
+    //this.handleClick = this.handleClick.bind(this)
 
   }
 
@@ -27,9 +28,9 @@ class SliderComponent extends React.Component {
       memesArray2[i] = this.props.memesArray[(this.state.indexArray + i + x + (this.props.memesArray.length)) % this.props.memesArray.length]
 
     }
-    console.log(this.state.indexArray)
+    console.log("IndexArray: " + this.state.indexArray)
     //update sichtbares Array, IndexPosition Bild ganz links
-    this.setState({ imageContainerArray: memesArray2, indexArray: this.state.indexArray + x })
+    this.setState({ imageContainerArray: memesArray2, indexArray: (this.state.indexArray + x + (this.props.memesArray.length)) % this.props.memesArray.length })
   }
 
   /**
@@ -38,12 +39,17 @@ class SliderComponent extends React.Component {
   createImageContainers() {
     console.log("image Containers")
     return (
-      this.state.imageContainerArray.map((element) =>
-        <img src={element} className="images" />
+      this.state.imageContainerArray.map((element, i) =>
+        <img src={element} className="images" onClick= {this.handleClick.bind(this, i)}/>
       ))
 
   }
 
+  handleClick(i){
+    console.log(i)
+    this.props.selectedImage((this.state.indexArray + i + (this.props.memesArray.length)) % this.props.memesArray.length)
+    
+  }
 
 
   render() {

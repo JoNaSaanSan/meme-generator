@@ -1,6 +1,7 @@
 import ControlsComponent from './ImageViewComponents/ControlsComponent';
 import PreviewComponent from './PreviewComponent';
 import Store from '../redux/store';
+import SliderComponent from './SliderComponent';
 const React = require('react');
 require('./ImageViewComponent.css');
 
@@ -17,8 +18,8 @@ class ImageViewComponent extends React.Component {
       // Index of array
       index: 0,
 
-      isSignedIn: Store.getState().user.isSignedIn ,
-    
+      isSignedIn: Store.getState().user.isSignedIn,
+
       //Handle inputTextBoxes
       inputBoxes: [
         {
@@ -161,14 +162,14 @@ class ImageViewComponent extends React.Component {
             <div className="image-display" >
               <img src={this.state.generatedMeme.url} onError={i => i.target.src = ''} alt="Generated" id="image-template" /></div>
             <div className="button-view" >
-            {this.state.isSignedIn ?
-            <button onClick={this.saveMeme} id="save-button" class="button" > Save Meme </button> : <button class="button"> Sign in to save! </button>}
+              {this.state.isSignedIn ?
+                <button onClick={this.saveMeme} id="save-button" class="button" > Save Meme </button> : <button class="button"> Sign in to save! </button>}
 
             </div>
           </div >
         </div>
 
-        <PreviewComponent samplesMemeArray = {this.props.samplesMemeArray} indexPos = {this.state.index} setCurrentMemeState = {this.setCurrentMemeState} />
+        <PreviewComponent samplesMemeArray={this.props.samplesMemeArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />
       </div>
     )
   }
