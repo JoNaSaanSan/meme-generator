@@ -90,7 +90,7 @@ router.post("/register", upload.fields([]), (req, res) => {
         }).catch(error => {
           console.log(error);
           res.send(400).send({
-            message: "Registration failed"
+            message: "Registration failed!"
           });
         });
     }
@@ -105,12 +105,17 @@ router.post("/login", upload.fields([]), (req, res) => {
   var email = req.body.email;
 
   users.findOne({
-    username: username,
-    email: email
+    $or: [{
+        username: username
+      },
+      {
+        email: email
+      }
+    ]
   }).then(user => {
     if (user == null) {
       res.status(404).send({
-        message: "Username not found."
+        message: "Username or Email not found."
       });
     } else {
       var passwordIsValid = bcrypt.compareSync(
@@ -124,14 +129,15 @@ router.post("/login", upload.fields([]), (req, res) => {
           message: "Invalid Password!"
         });
       }
-      console.log(user);
+
       var token = jwt.sign({
         userId: user._id //userid oder username?
       }, config.secret, {
-        expiresIn: 3600 // 24 hours
+        expiresIn: 86400 // 24 stunden
       });
 
       res.status(200).send({
+        message: "Login successful!",
         username: user.username,
         email: user.email,
         upvotes: user.upvotes,
@@ -142,6 +148,46 @@ router.post("/login", upload.fields([]), (req, res) => {
         accessToken: token
       });
     }
+  });
+});
+
+router.get("/getprofile", verifyToken, (req, res) => {
+  let userId = req.userId;
+  let users = req.db.get("users");
+  let memes = req.db.get("memes");
+
+  users.findOne({
+    _id: userId
+  }).then(user => {
+    memes.find({
+      _id: {
+        $in: user.memes
+      }
+    }).then(userMemes => {
+      memes.find({
+        _id: {
+          $in: user.upvotes
+        }
+      }).then(userUpvotes => {
+        memes.find({
+          _id: {
+            $in: user.downvotes
+          }
+        }).then(userDownvotes => {
+
+          userTemplates = []; //TODO
+
+          res.status(200).send({
+            username: user.username,
+            email: user.email,
+            memes: userMemes,
+            upvotes: userUpvotes,
+            downvotes: userDownvotes,
+            templates: userTemplates
+          });
+        });
+      });
+    });
   });
 });
 

@@ -12,6 +12,9 @@ let multer = require("multer");
 //const GridFsStorage = require("multer-gridfs-storage");
 let upload = multer();
 const verifyToken = require("../middlewares/authJWT.js");
+const {
+  ObjectId
+} = require("mongodb");
 
 
 const username = "SandraOMM";
@@ -19,7 +22,7 @@ const password = "onlinemultimedia2020";
 
 var memes = [];
 /*
-  memes document: _id, title, creatorId, imgstring, upvotes, downvotes, comments, dateCreated, private,tags(?)
+  memes document: _id, title, creatorId, imgstring, upvotes, downvotes, comments, private, dateCreated, private,tags(?)
 */
 
 /*
@@ -76,21 +79,63 @@ router.post('/generateMeme', upload.fields([]), (req, res, next) => {
 /*
   Saves a meme url with title, creator to the DB.
 */
-router.post('/savememe', upload.fields([]), function(req, res, next) {
+router.post('/savememe', verifyToken, upload.fields([]), function(req, res) {
   const memes = req.db.get('memes');
-  console.log(req);
+  const users = req.db.get('users');
+
+  let url = req.body.url;
+  let base64_img = req.body.base64_img;
+  let userId = req.userId;
+  let title = req.body.title;
+  let access;
+
+  if (url == null && base64_img == null) {
+    res.status(400).send({
+      message: "url and base64 is null"
+    });
+  }
 
   meme = {
-    url: req.body.url,
-    title: "title",
-    creator: "creator",
+    url: url,
+    base64_img: base64_img,
+    title: title,
+    creatorId: ObjectId(userId),
     upvotes: 0,
     downvotes: 0,
-    private: False,
+    private: false,
     dateCreated: new Date().toLocaleString()
   }
-  memes.insert(meme);
-  res.send("Meme saved!");
+
+  memes.insert(meme).then(obj => {
+    if (obj._id == null) {
+      res.status(400).send({
+        message: "Error inserting meme to database"
+      });
+    } else {
+      users.update({
+        _id: userId
+      }, {
+        $push: {
+          memes: obj._id
+        }
+      }).then(writeResult => {
+        if (writeResult.nModified == 1) {
+          res.status(200).send({
+            message: "Meme saved successfully"
+          });
+        } else {
+          res.status(400).send({
+            message: "Error updating user document"
+          })
+        }
+      });
+    }
+  }).catch(error => {
+    console.log(error);
+    res.status(400).send({
+      message: error
+    });
+  });
 });
 
 /*
@@ -113,9 +158,9 @@ router.get('/getmymemes', (req, res, next) => {
   Upvotes a meme existing in the DB. Adds the id of the upvoted meme to the user document,
    and increases the upvote counter of the meme document by 1.
 */
-router.get('/upvote', verifyToken, (req, res, next) => {
+router.get('/upvote', verifyToken, upload.fields([]), (req, res, next) => {
   const memes = req.db.get('memes');
-  const memeId = req.body.memeId;
+  const memeId = req.query.memeId;
   const userId = req.userId;
 
   //update user upvotes
@@ -124,23 +169,32 @@ router.get('/upvote', verifyToken, (req, res, next) => {
     _id: userId
   }, {
     $push: {
-      upvotes: memeId
+      upvotes: ObjectId(memeId)
     }
-  }).then(response => {
+  }).then(() => {
     console.log("User upvotes updated!");
-  });
-
-  //increase meme updates by 1
-  memes.update({
-    _id: memeId
-  }, {
-    $inc: {
-      upvotes: 1
-    }
-  }).then(response => {
-    console.log("Meme " + memeId + " upvoted!")
+    memes.update({
+      _id: memeId
+    }, {
+      $inc: {
+        upvotes: 1
+      }
+    }).then(response => {
+      console.log("Meme " + memeId + " upvoted!");
+      res.status(200).send({
+        messsage: "Meme " + memeId + " upvoted!"
+      })
+    });
+  }).catch(error => {
+    console.log(error);
+    res.status(400).send({
+      message: error
+    });
   });
 });
+
+//increase meme updates by 1
+
 
 /*
   Downvotes a meme existing in the DB. Adds the id of the downvoted meme to the user document,
@@ -148,29 +202,34 @@ router.get('/upvote', verifyToken, (req, res, next) => {
 */
 router.get('/downvote', (req, res, next) => {
   const memes = req.db.get('memes');
-  const memeId = req.body.memeId;
-  const user = req.body.user;
-  //update user downvotes
-  const users = req.db.get('users');
+  const memeId = req.query.memeId;
+  const userId = req.userId;
+
   users.update({
-    name: user
+    _id: userId
   }, {
     $push: {
-      downvotes: memeId
+      downvotes: ObjectId(memeId)
     }
-  }).then(response => {
-    console.log("User downvotes updated!");
-  });
-
-  //decrease meme updates by 1
-  memes.update({
-    _id: memeId
-  }, {
-    $inc: {
-      downvotes: 1
-    }
-  }).then(response => {
-    console.log("Meme " + memeId + " downvoted!")
+  }).then(() => {
+    console.log("User upvotes updated!");
+    memes.update({
+      _id: memeId
+    }, {
+      $inc: {
+        downvotes: 1
+      }
+    }).then(response => {
+      console.log("Meme " + memeId + " downvoted!");
+      res.status(200).send({
+        messsage: "Meme " + memeId + " downvoted!"
+      })
+    });
+  }).catch(error => {
+    console.log(error);
+    res.status(400).send({
+      message: error
+    });
   });
 });
 
@@ -191,85 +250,43 @@ router.get('/newmemes', (req, res, next) => {
 router.get('/popularmemes', (req, res, next) => {
   const memes = req.db.get('memes');
   //TODO
-  memes.find({}).then(memes => {
+  memes.find({
+    private: false
+  }).then(memes => {
+    conosole.log(memes);
     res.send(memes);
   });
 });
 
-/*router.post('/uploadtemplate2', upload.single("upload"), async (req, res) => {
-
-  console.log("Upload!");
-  const memes = req.db.get('memes');
-  console.log(req.file);
-
-
-});*/
-
-/*router.post("/uploadtemplate", async (req, res) => {
-  console.log(req.db)
-  var storage = new GridFsStorage({
-    url: "mongodb+srv://memeAdmin:memeAdmin@memescluster.0vfqo.mongodb.net/templates",
-    options: {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    },
-    file: (req, file) => {
-      const match = ["image/png", "image/jpeg"];
-
-      if (match.indexOf(file.mimetype) === -1) {
-        const filename = `${Date.now()}-memes-${file.originalname}`;
-        return filename;
-      }
-
-      return {
-        bucketName: "uploads",
-        filename: `${Date.now()}-memes-${file.originalname}`
-      };
-    }
-  });
-
-  var uploadFile = multer({
-    storage: storage
-  }).single("template");
-  var uploadFilesPromise = util.promisify(uploadFile);
-
-  try {
-    await uploadFilesPromise(req, res);
-
-    if (req.file == undefined) {
-      return res.send(`You must select a file.`);
-    }
-
-    return res.send(`File has been uploaded with id ${req.file.id}.`);
-
-  } catch (error) {
-    console.log(error);
-    return res.send(`Error when trying upload image: ${error}`);
-  }
-});*/
-
 /*
   Uploads a template to the MongoDB
 */
-router.post('/uploadtemplate', upload.fields([]), (req, res) => {
-  console.log(req.body);
+router.post('/uploadtemplate', verifyToken, upload.fields([]), (req, res) => {
   const templates = req.db.get('templates');
-  const creator = req.body.creator;
+  const users = req.db.get('users');
+  const creatorId = req.userId;
   const title = req.body.title;
-  const imgstring = req.body.imgstring;
+  const imgstring = req.body.base64_img;
 
   //var imgBuffer = new Buffer(imgstring, "base64")
   //console.log(imgstring)
   template = {
     title: title,
-    creatorId: creator,
-    imgstring: imgstring,
+    creatorId: creatorId,
+    base64_img: base64_img,
     dateCreated: new Date().toLocaleString()
   }
 
   templates.insert(template).then(newObj => {
-    console.log("done");
-    res.send(`Template saved with id ${newObj._id}!`);
+    if (newObj._id == null) {
+      res.status(400).send({
+        message: "Error inserting template to DB"
+      });
+    } else {
+
+      res.send(`Template saved with id ${newObj._id}!`);
+    }
+
   });
 });
 
@@ -296,7 +313,7 @@ router.get("/templatefromurl", (req, res) => {
       return scrsh;
     })().then(pic => {
       //TODO bild direkt unter templates in der db speichern?
-      res.send({
+      res.status(200).send({
         base64_img: pic
       });
     });

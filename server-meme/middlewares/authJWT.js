@@ -1,6 +1,10 @@
 const jwt = require("jsonwebtoken");
 const config = require("../config/authconfig.js");
 
+/*
+  Verifies a given JWT token and attaches the userId to the request.
+*/
+
 verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
 
