@@ -17,15 +17,15 @@ class BlankComponent extends React.Component {
         const context = canvas.getContext("2d");
         context.fillStyle = "white";
         context.fillRect(0, 0, canvas.width, canvas.height);
-       
+
         let data = []
         for (var i = 0; i < 1; i++) {
             data.push({
                 id: i,
                 name: 'Blank',
                 box_count: 2,
-                width: 400, //Todo: User width and height from image
-                height: 400,
+                width: 1200, //Todo: User width and height from image
+                height: 1200,
                 url: canvas.toDataURL("image/png"),
             });
         }
@@ -37,7 +37,7 @@ class BlankComponent extends React.Component {
 
     render() {
         return (
-            <div id="get-blank-image-container" >
+            <div>
                 <button id="blank-image-input-button" className="button" onClick={this.getBlankImage}> Blank Image </button>
             </div>
         );

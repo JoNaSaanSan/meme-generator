@@ -1,4 +1,5 @@
 import GetImagesComponents from './GetImagesComponent';
+import Store from '../../../redux/store';
 const React = require('react');
 require('./ControlsComponent.css');
 
@@ -8,6 +9,7 @@ class ControlsComponent extends React.Component {
     super(props);
 
     this.state = {
+      isSignedIn: Store.getState().user.isSignedIn,
       imageMemeArray: null,
       index: 0,
       searchText: '',
@@ -20,10 +22,7 @@ class ControlsComponent extends React.Component {
     this.searchTemplate = this.searchTemplate.bind(this);
     this.changeTitle = this.changeTitle.bind(this);
     this.updateText = this.updateText.bind(this);
-    this.createUI = this.createUI.bind(this);
-    this.generateMemeButton = this.generateMemeButton.bind(this);
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
-    this.addTextBoxes = this.addTextBoxes.bind(this);
   }
 
   /**
@@ -37,6 +36,8 @@ class ControlsComponent extends React.Component {
     this.setState({
       imageMemeArray: memeArray,
       index: 0,
+      width: 400,
+      height: 400,
     }, () => this.resetMemeState())
 
   }
@@ -52,6 +53,8 @@ class ControlsComponent extends React.Component {
     if (this.state.imageMemeArray !== undefined && this.state.imageMemeArray !== null) {
       this.setState({
         index: index,
+        width: this.state.imageMemeArray[index].width,
+        height: this.state.imageMemeArray[index].height,
       }, () => {
         try {
           this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index]);
@@ -101,10 +104,12 @@ class ControlsComponent extends React.Component {
    * This function is called whenever the user wants to search for a template
    */
   searchTemplate() {
-    for (var i = 0; i < this.state.imageMemeArray.length; i++) {
-      if (this.state.imageMemeArray[i].name.toLowerCase().includes(this.state.searchText.toLowerCase())) {
-        console.log("found " + i)
-        this.setCurrentMemeState(i)
+    if (this.state.imageMemeArray !== null) {
+      for (var i = 0; i < this.state.imageMemeArray.length; i++) {
+        if (this.state.imageMemeArray[i].name.toLowerCase().includes(this.state.searchText.toLowerCase())) {
+          console.log("found " + i)
+          this.setCurrentMemeState(i)
+        }
       }
     }
   }
@@ -113,8 +118,14 @@ class ControlsComponent extends React.Component {
    * This function is called whenever the user wants to change the title
    */
   changeTitle() {
-    this.state.imageMemeArray[this.state.index].name = this.state.titleText;
-    this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index])
+    if (this.state.titleText !== '' && this.state.imageMemeArray !== null) {
+      let imageMemeArray = [...this.state.imageMemeArray]
+      imageMemeArray[this.state.index].name = this.state.titleText;
+      this.setState({
+        imageMemeArray,
+      })
+      this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index])
+    }
   }
 
   /**
@@ -127,77 +138,45 @@ class ControlsComponent extends React.Component {
     })
   }
 
-  /**
-   * 
-   * @param {number} i The index number of the text box
-   * @param {Event} event The event which is triggering this function
-   * This function passes the index, event name and event value to the Meme Generator Component, which then handles the change of the input boxes
-   * 
-   */
-  handleChange(i, event) {
-    this.props.handleInputBoxesChange(i, event.target.name, event.target.value);
+  handleCanvasChange(event) {
+    this.props.handleCanvasChange(event)
   }
 
-  /**
-   *  This function adds input boxes dynamically.
-   *  It adds as many text boxes as defined by the meme object.
-   * 
-   */
-  createUI() {
-    if (this.state.imageMemeArray !== null && this.state.imageMemeArray.length > 0) {
-      return this.props.currentInputBoxes.map((el, i) =>
-        <div key={i}>
-          <input type="text" placeholder="Text" name="text" value={this.props.currentInputBoxes[i].text} className="input-box" onChange={this.handleChange.bind(this, i)} />
-          <input type="text" placeholder="50" name="fontSize" value={this.props.currentInputBoxes[i].fontSize} className="number-input-box" min="1" max="100" maxLength="2" onChange={this.handleChange.bind(this, i)} />
-          <select name="fontFamily" className="input-box" value={this.props.currentInputBoxes[i].fontFamily} onChange={this.handleChange.bind(this, i)}>
-            <option value="Impact">Impact</option>
-            <option value="Arial">Arial</option>
-            <option value="Comic Sans MS">Comic Sans MS</option>
-            <option value="Courier">Courier</option>
-            <option value="Times New Roman">Times New Roman</option>
-            <option value="Verdana">Verdana</option>
-          </select>
-          <input type="color" name="fontColor" className="color-input-box" value={this.props.currentInputBoxes[i].fontColor} onChange={this.handleChange.bind(this, i)} />
-          <input type="text" placeholder="3" name="outlineWidth" value={this.props.currentInputBoxes[i].outlineWidth} className="number-input-box" min="1" max="20" onChange={this.handleChange.bind(this, i)} />
-          <input type="color" name="outlineColor" value={this.props.currentInputBoxes[i].outlineColor} className="color-input-box" onChange={this.handleChange.bind(this, i)} />
-          <input type="number" placeholder="200" name="textPosX" value={this.props.currentInputBoxes[i].textPosX} className="dimension-input-box" min="1" max={this.state.imageMemeArray[this.state.index].width} maxLength="2" onChange={this.handleChange.bind(this, i)} />
-          <input type="number" placeholder="200" name="textPosY" value={this.props.currentInputBoxes[i].textPosY} className="dimension-input-box" min="1" max={this.state.imageMemeArray[this.state.index].height} maxLength="2" onChange={this.handleChange.bind(this, i)} />
-        </div>)
-    } else {
-      return;
-    }
-  }
-
-  addTextBoxes() {
-    this.props.addTextBoxes();
-  }
-
-
-  //Generate Meme Button
-  generateMemeButton() {
-    this.props.generateMeme();
-  }
 
   render() {
+    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
     return (
-      <div id="control-view">
-        <div className="inner-grid" id="left-container">
-          <h1 id="header-text"> Meme Generator </h1>
-          <div id="select-img-buttons">
-            <GetImagesComponents setImagesArray={this.setImagesArray} URL={this.props.URL} />
-          </div>
-          <input type="text" name="searchText" id="search-text-box" class="input-box" onChange={this.updateText} />
-          <button id="search-button" class="button" onClick={this.searchTemplate}> Search </button>
+      <div className="control-view">
+        <div>
+          <GetImagesComponents setImagesArray={this.setImagesArray} URL={this.props.URL} />
+        </div>
+        <div className="search-buttons-container">
+          <input type="text" name="searchText" id="search-text-box" className="input-box" onChange={this.updateText} />
+          <button id="search-button" className="button" onClick={this.searchTemplate}> Search </button>
+        </div>
+
+        <div className="image-selection-buttons-container">
           <button onClick={this.prevButton} id="prev-button" className="button" > Back </button>
           <button onClick={this.nextButton} id="next-button" className="button" > Next </button>
-          <button onClick={this.generateMemeButton} id="generate-button" className="button" > Generate</button>
         </div>
-        <p>Insert text below </p>
-        <input type="text" name="titleText" className="input-box" onChange={this.updateText} />
-        <button id="change-title-button" class="button" onClick={this.changeTitle}> Change Meme Title </button>
-        <div id="ui-buttons-description"> <div>Text</div><div>Font Size</div><div>Font Family</div><div>Font Color</div><div>Outline Width</div><div>Outline Color</div><div>Pos X</div><div>Pos Y</div></div>
-        <div id="ui-buttons"> {this.createUI()}</div>
-        <button onClick={this.addTextBoxes} id="add-textboxes-button" className="button" > Add Text </button>
+
+        <div className="image-title-input-container">
+          <input type="text" name="titleText" className="input-box" onChange={this.updateText} />
+          <button id="change-title-button" className="button" onClick={this.changeTitle}> Change Meme Title </button>
+        </div>
+        <div>
+          <input type="text" placeholder="400" name="canvasWidth" className="dimension-input-box" maxLength="3" value={this.props.canvasWidth} onChange={this.handleCanvasChange.bind(this)} />
+          <input type="text" placeholder="400" name="canvasHeight" className="dimension-input-box" maxLength="3" value={this.props.canvasHeight} onChange={this.handleCanvasChange.bind(this)} />
+        </div>
+
+
+        <button onClick={() => this.props.generateMemeImageFlip()} id="generate-button" className="button" > Generate Meme with Imgflip </button>
+        {this.state.isSignedIn ?
+          <div> <button onClick={this.props.publishMeme()} id="publish-button" className="button" > Publish Meme </button>
+            <button onClick={this.props.saveDraft()} id="save-button" className="button" > Save as Draft </button> </div> : <button className="button"> Sign in to publish or save! </button>}
+        <button onClick={this.props.shareMeme()} id="share-button" className="button" > Share Meme</button>
+        <button onClick={() => this.props.downloadImage()} id="download-button" className="button">Download Meme!</button>
+
       </div>
     )
   }

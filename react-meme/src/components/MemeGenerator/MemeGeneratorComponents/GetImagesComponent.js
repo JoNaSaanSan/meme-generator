@@ -7,6 +7,7 @@ import Meme from '../Meme';
 import TextBoxes from '../TextBoxes';
 
 const React = require('react')
+require('./GetImagesComponent.css');
 
 const initializeText = {
     textID: 0,
@@ -51,9 +52,6 @@ function testImage(url, timeoutT) {
 
 
 class GetImagesComponents extends React.Component {
-    constructor(props) {
-        super(props)
-    }
 
     /**
      * 
@@ -88,17 +86,26 @@ class GetImagesComponents extends React.Component {
                 memeArray.push(tmp)
             }
             this.props.setImagesArray(memeArray)
+            document.getElementById("upload-image-close").click();
         }
     }
 
     render() {
         return (
-            <div id="get-images-buttons-container">
-                <IfUploadComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
-                <BlankComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
-                <IfUrlComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
-                <IfCameraComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
-                <IfServerComponent setImagesArray={this.setImagesArray} URL={this.props.URL} getImagesButtonName={"ImgFlip"} />
+        <div>
+            <a className="button" href="#upload-image">Open Image Template</a>
+            <div id="upload-image" className="modal-window">
+                <div>
+                    <a href="/#" title="Close" id="upload-image-close" className="modal-close">Close</a>
+                    <div className="get-images-container">
+                        <BlankComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
+                        <IfCameraComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
+                        <IfServerComponent setImagesArray={this.setImagesArray} URL={this.props.URL} getImagesButtonName={"ImgFlip"} />
+                        <IfUploadComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
+                        <IfUrlComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
+                    </div>
+                    </div>
+                </div>
             </div>
         );
     }

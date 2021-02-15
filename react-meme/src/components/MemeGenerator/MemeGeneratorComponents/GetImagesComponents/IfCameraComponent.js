@@ -64,16 +64,13 @@ class IfUrlComponent extends React.Component {
     render() {
 
         return (
-            <div id="make-photo-container" >
-                { (this.state.dataUri || !this.state.isCamera) ?
-                    <div className="camera-container">
-                        <img src={this.state.dataUri} className="sample-images" />
-                    </div> :
-                    <div className="camera-container">
-                        <Camera
-                            onTakePhoto={(dataUri) => { this.handleTakePhoto(dataUri); }}
-                        />
-                    </div>
+
+            <div className="camera-container">
+                {(this.state.dataUri || !this.state.isCamera) ?
+                    <img alt="" src={this.state.dataUri} className="sample-images" />
+                    : <Camera
+                        onTakePhoto={(dataUri) => { this.handleTakePhoto(dataUri); }}
+                    />
                 }
                 {(this.state.isCamera) ?
                     <button id="open-camera-button" className="button" onClick={this.closeCamera}> Close Camera </button> :

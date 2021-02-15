@@ -1,9 +1,24 @@
 .image-view {
-    background-color: rgb(41, 41, 41);
-    padding: 20px;
-    margin: 20px;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
 }
 
-.image-container {
-    display: inline-grid;
+.canvas-view {
+    height: 100vw;
+    width: 100%;
+    position: relative;
+}
+
+.canvas-controls {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: rgb(41, 41, 41);
+}
+
+.canvas-controls>* {
+    display: flex;
+    justify-content: center;
 }

@@ -54,7 +54,7 @@ class IfUrlComponent extends React.Component {
 
     render() {
         return (
-            <div id="image-url-container" >
+            <div>
                 <input type="text" id="image-url-input" value={this.state.inputValue} className="input-box" onChange={this.updateUrl} />
                 <button id="image-url-input-button" className="button" onClick={this.submitUrl}> Get Image from URL </button>
             </div>

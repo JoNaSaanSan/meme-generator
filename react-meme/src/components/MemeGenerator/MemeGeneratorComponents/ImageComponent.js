@@ -1,6 +1,4 @@
 import CanvasComponent from './CanvasComponent';
-import Canvas2Component from './CanvasComponent';
-import Store from '../../../redux/store';
 const React = require('react');
 require('./ImageComponent.css');
 
@@ -14,19 +12,17 @@ class ImageComponent extends React.Component {
         super(props);
 
         this.state = {
-            isSignedIn: Store.getState().user.isSignedIn,
             isDrawMode: false,
-            downloadImageTrigger: false,
             drawColor: '',
             drawBrushSize: 2,
             currentImage: '',
         }
-        this.downloadImage = this.downloadImage.bind(this);
         this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
         this.addPath = this.addPath.bind(this);
         this.addDrawing = this.addDrawing.bind(this);
         this.addImage = this.addImage.bind(this);
         this.handleImageChange = this.handleImageChange.bind(this);
+        this.imageRetrieved = this.imageRetrieved.bind(this)
         this.undoDrawing = this.undoDrawing.bind(this);
         this.clearDrawing = this.clearDrawing.bind(this);
         this.clearImages = this.clearImages.bind(this);
@@ -35,42 +31,16 @@ class ImageComponent extends React.Component {
     // When state is being updated
     componentDidUpdate(prevProps) {
         if (this.props.currentMeme.url !== prevProps.currentMeme.url) {
-
-
-            var wrh = this.props.currentMeme.width / this.props.currentMeme.height;
-            var newWidth = this.props.currentMeme.width;
-            var newHeight = this.props.currentMeme.height;
-            var maxWidth = 400;
-            var maxHeight = 400;
-            if (newWidth > maxWidth) {
-                newWidth = maxWidth;
-                newHeight = newWidth / wrh;
-            }
-
-            if (newHeight > maxHeight) {
-                newHeight = maxHeight;
-                newWidth = newHeight * wrh;
-            }
-
             this.loadImage(this.props.currentMeme.url).then(result => {
                 this.setState({
-                    currentImage: { ...this.props.currentMeme, image: result, width: newWidth, height: newHeight, wrh: wrh },
-                    //  canvasSize: { width: this.props.currentMeme.width, height: this.props.currentMeme.height }
+                    currentImage: { ...this.props.currentMeme, image: result },
                 })
             })
         }
     }
 
-
-    /**
-     * Handles download image button presses via a boolean that is passed to the child
-     */
-    downloadImage() {
-        this.setState(prevState => ({ downloadImageTrigger: !prevState.downloadImageTrigger }))
-    }
-
-    handleInputBoxesChange(i, eventName, eventValue) {
-        this.props.handleInputBoxesChange(i, eventName, eventValue);
+    handleInputBoxesChange(i, event) {
+        this.props.handleInputBoxesChange(i, event);
     }
 
     addPath(path) {
@@ -141,12 +111,6 @@ class ImageComponent extends React.Component {
         })
     }
 
-    handleCanvasChange(event) {
-        this.setState({
-            currentImage: { ...this.state.currentImage, [event.target.name]: event.target.value }
-        })
-    }
-
     loadImage(url) {
         var result = new Promise((resolve, reject) => {
             var img = new Image();
@@ -159,39 +123,43 @@ class ImageComponent extends React.Component {
         return result;
     }
 
-
+    imageRetrieved(data){
+        console.log(data)
+        this.props.imageRetrieved(data);
+    }
 
 
     render() {
-        //<img src={this.props.currentMeme.url} onError={i => i.target.src = ''} id="image-template" class="meme-template-image" />
-        Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
         return (
-            <div className="image-view" id="center-container">
-                <div className="image-container">
+            <div className="image-view">
+                <div className="canvas-controls">
+                    <div className="draw-controls">
+                        {!this.state.isDrawMode ? <button onClick={() => this.addDrawing(true)} id="draw-button" className="button" > Draw </button> :
+                            <div>
+                                <input type="color" name="drawColor" className="color-input-box" onChange={this.handleDrawToolChange.bind(this)} />
+                                <input type="text" placeholder="2" name="drawBrushSize" className="number-input-box" maxLength="1" value={this.state.drawBrushSize} onChange={this.handleDrawToolChange.bind(this)} />
+                                <button onClick={() => this.undoDrawing()} id="undo-button" className="button" > Undo </button>
+                                <button onClick={() => this.clearDrawing()} id="clear-button" className="button" > Clear </button>
+                                <button onClick={() => this.addDrawing()} id="draw-button" className="button" > Stop Draw </button>
+                            </div>}
+                    </div>
                     <h2 > {this.props.currentMeme.name} </h2>
-                    {!this.state.isDrawMode ? <button onClick={() => this.addDrawing(true)} id="draw-button" className="button" > Draw </button> :
-                        <div>
-                            <input type="color" name="drawColor" className="color-input-box" onChange={this.handleDrawToolChange.bind(this)} />
-                            <input type="text" placeholder="2" name="drawBrushSize" className="number-input-box" maxLength="1" value={this.state.drawBrushSize} onChange={this.handleDrawToolChange.bind(this)} />
-                            <button onClick={() => this.undoDrawing()} id="undo-button" className="button" > Undo </button>
-                            <button onClick={() => this.clearDrawing()} id="clear-button" className="button" > Clear </button>
-                            <button onClick={() => this.addDrawing()} id="draw-button" className="button" > Stop Draw </button>
-                        </div>}
-                    <div>
+                    <div className="image-controls">
                         <div id="upload-button" className="button" >
-                            <label for="additional-image-upload">
+                            <label htmlFor="additional-image-upload">
                                 Add Image</label></div>
                         <input type="file" id="additional-image-upload" onChange={this.addImage} multiple />
                         <button onClick={() => this.clearImages()} id="clear-button" className="button" > Clear Images </button>
                     </div>
-                    <input type="text" placeholder="400" name="width" className="dimension-input-box" maxLength="3" value={this.state.currentImage.width} onChange={this.handleCanvasChange.bind(this)} />
-                    <input type="text" placeholder="400" name="height" className="dimension-input-box" maxLength="3" value={this.state.currentImage.height} onChange={this.handleCanvasChange.bind(this)} />
-
-
+                </div>
+                <div className="canvas-view">
                     <CanvasComponent
                         currentImage={this.state.currentImage}
+                        currentName={this.props.currentMeme.name}
                         inputBoxes={this.props.inputBoxes}
-                        downloadImageTrigger={this.state.downloadImageTrigger}
+                        imageDimensions={this.props.imageDimensions}
+                        retrieveImageTrigger={this.props.retrieveImageTrigger}
+                        imageRetrieved={this.imageRetrieved}
                         inputBoxesUpdated={this.props.inputBoxesUpdated}
                         additionalImages={this.props.additionalImages}
                         handleImageChange={this.handleImageChange}
@@ -201,15 +169,9 @@ class ImageComponent extends React.Component {
                         isDrawMode={this.state.isDrawMode}
                         drawBrushSize={this.state.drawBrushSize}
                         drawColor={this.state.drawColor}
-                        canvasSize={this.state.canvasSize}
+                        canvasWidth={this.props.canvasWidth}
+                        canvasHeight={this.props.canvasHeight}
                     />
-
-                    <div className="button-view" >
-                        <button onClick={() => this.props.generateMeme()} id="generate-button" className="button" > Generate Meme with Imgflip </button>
-                        {this.state.isSignedIn ?
-                            <button onClick={this.saveMeme} id="save-button" className="button" > Save Meme </button> : <button className="button"> Sign in to save </button>}
-                        <button onClick={() => this.downloadImage()} className="button">Download Meme!</button>
-                    </div>
                 </div>
             </div >)
     }

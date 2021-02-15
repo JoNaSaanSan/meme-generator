@@ -10,7 +10,7 @@ class IfServerComponent extends React.Component {
         }
 
         //ssss
-     //   this.fetchImages = this.fetchImages.bind(this);
+        //   this.fetchImages = this.fetchImages.bind(this);
     }
 
     // Fetch all images from /samplememes and store them into a state array
@@ -41,9 +41,10 @@ class IfServerComponent extends React.Component {
     }
 
     render() {
-        return (<div id="fetch-container">
-            <button onClick={() => this.fetchImages(this.props.URL)} id="fetch-button" className="button" > {this.props.getImagesButtonName} </button>
-        </div>
+        return (
+            <div>
+                <button onClick={() => this.fetchImages(this.props.URL)} id="fetch-button" className="button" > {this.props.getImagesButtonName} </button>
+            </div>
         )
     }
 }

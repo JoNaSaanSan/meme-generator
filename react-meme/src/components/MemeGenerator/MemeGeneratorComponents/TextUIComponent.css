@@ -1,0 +1,16 @@
+.ui-view {
+  height: 1800px;
+  width: 560px;
+  display: block;
+  padding: 20px;
+  right: 0px;
+  top: 170px;
+  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  background-color: rgb(41, 41, 41);
+}
+
+.text-item {
+  padding: 20px;
+}

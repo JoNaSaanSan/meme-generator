@@ -24,13 +24,12 @@ class PreviewComponent extends React.Component {
 
   render() {
     return (
-
       <div className="preview-box">
-        <img src={this.loadPreviewItem(-2)} className="images" onClick={() => this.previewSelected(-2)} />
-        <img src={this.loadPreviewItem(-1)} className="images" onClick={() => this.previewSelected(-1)} />
-        <img src={this.loadPreviewItem(0)} className="images" onClick={() => this.previewSelected(0)} />
-        <img src={this.loadPreviewItem(1)} className="images" onClick={() => this.previewSelected(1)} />
-        <img src={this.loadPreviewItem(2)} className="images" onClick={() => this.previewSelected(2)} />
+        <img src={this.loadPreviewItem(-2)} alt="" className="images" onClick={() => this.previewSelected(-2)} />
+        <img src={this.loadPreviewItem(-1)} alt="" className="images" onClick={() => this.previewSelected(-1)} />
+        <img src={this.loadPreviewItem(0)} alt="" className="images" onClick={() => this.previewSelected(0)} />
+        <img src={this.loadPreviewItem(1)} alt="" className="images" onClick={() => this.previewSelected(1)} />
+        <img src={this.loadPreviewItem(2)} alt="" className="images" onClick={() => this.previewSelected(2)} />
       </div>
     )
   }
