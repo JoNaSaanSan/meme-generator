@@ -128,7 +128,7 @@ router.post("/login", upload.fields([]), (req, res) => {
       var token = jwt.sign({
         userId: user._id //userid oder username?
       }, config.secret, {
-        expiresIn: 3600 // 24 hours
+        expiresIn: 86400 // 24 stunden
       });
 
       res.status(200).send({

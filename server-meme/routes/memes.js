@@ -122,13 +122,13 @@ router.post('/savememe', verifyToken, upload.fields([]), function(req, res) {
             message: "Error updating user document"
           })
         }
-      }).catch(error => {
-        console.log(error);
-        res.status(400).send({
-          message: error
-        });
       });
     }
+  }).catch(error => {
+    console.log(error);
+    res.status(400).send({
+      message: error
+    });
   });
 });
 
@@ -230,7 +230,10 @@ router.get('/newmemes', (req, res, next) => {
 router.get('/popularmemes', (req, res, next) => {
   const memes = req.db.get('memes');
   //TODO
-  memes.find({}).then(memes => {
+  memes.find({
+    private: false
+  }).then(memes => {
+    conosole.log(memes);
     res.send(memes);
   });
 });
