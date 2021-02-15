@@ -48,6 +48,15 @@
     width: 15px;
 }
 
+.toggle-button {
+    background-color: #363636;
+    cursor: pointer;
+    padding: 16px 16px;
+    width: 20px;
+    border: none;
+    height: 20px;
+  }
+
 .dimension-input-box {
     background-color: #363636;
     border: none;

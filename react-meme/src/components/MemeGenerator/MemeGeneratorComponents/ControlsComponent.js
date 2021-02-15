@@ -14,6 +14,7 @@ class ControlsComponent extends React.Component {
       index: 0,
       searchText: '',
       titleText: '',
+      memeVisibility: 0,
     };
 
     // Binds
@@ -23,6 +24,7 @@ class ControlsComponent extends React.Component {
     this.changeTitle = this.changeTitle.bind(this);
     this.updateText = this.updateText.bind(this);
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
+    this.createMeme = this.createMeme.bind(this);
   }
 
   /**
@@ -142,6 +144,18 @@ class ControlsComponent extends React.Component {
     this.props.handleCanvasChange(event)
   }
 
+  handleVisibilityChange(event) {
+    this.setState({ [event.target.name]: event.target.value });
+  }
+
+  createMeme(event) {
+    if (event.target.name === 'publish') {
+      this.props.createMeme(event, this.state.memeVisibility);
+    } else {
+      this.props.createMeme(event, -1);
+    }
+  }
+
 
   render() {
     Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
@@ -170,13 +184,18 @@ class ControlsComponent extends React.Component {
         </div>
 
 
-        <button onClick={() => this.props.generateMemeImageFlip()} id="generate-button" className="button" > Generate Meme with Imgflip </button>
+        <button name="imgFlipGenerate" onClick={this.createMeme} id="generate-button" className="button" > Generate Meme with Imgflip </button>
         {this.state.isSignedIn ?
-          <div> <button onClick={this.props.publishMeme()} id="publish-button" className="button" > Publish Meme </button>
-            <button onClick={this.props.saveDraft()} id="save-button" className="button" > Save as Draft </button> </div> : <button className="button"> Sign in to publish or save! </button>}
-        <button onClick={this.props.shareMeme()} id="share-button" className="button" > Share Meme</button>
-        <button onClick={() => this.props.downloadImage()} id="download-button" className="button">Download Meme!</button>
-
+          <div>
+            <select name="memeVisibility" className="input-box" onChange={this.handleVisibilityChange.bind(this)} value={this.state.memeVisibility}>
+              <option value="0">Unlisted</option>
+              <option value="1">Private</option>
+              <option value="2">Public</option>
+            </select>
+            <button name="publish" onClick={this.createMeme} id="publish-button" className="button" > Publish Meme </button>
+            <button name="save" onClick={this.createMeme} id="save-button" className="button" > Save as Draft </button> </div> : <button className="button"> Sign in to publish or save! </button>}
+        <button name="share" onClick={this.createMeme} id="share-button" className="button" > Share Meme</button>
+        <button name="download" onClick={this.createMeme} id="download-button" className="button">Download Meme!</button>
       </div>
     )
   }

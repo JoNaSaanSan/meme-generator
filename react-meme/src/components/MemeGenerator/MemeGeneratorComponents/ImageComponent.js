@@ -124,7 +124,6 @@ class ImageComponent extends React.Component {
     }
 
     imageRetrieved(data){
-        console.log(data)
         this.props.imageRetrieved(data);
     }
 

@@ -1,6 +1,6 @@
 // TextBoxes Class
 class TextBoxes {
-    constructor(textID, text, textPosX, textPosY, fontColor, fontFamily, fontSize, outlineWidth, outlineColor) {
+    constructor(textID, text, textPosX, textPosY, fontColor, fontFamily, fontSize, outlineWidth, outlineColor, isItalic, isBold) {
       this.textID = textID;
       this.text = text;
       this.textPosX =  textPosX;
@@ -10,6 +10,8 @@ class TextBoxes {
       this.fontSize =  fontSize;
       this.outlineWidth =  outlineWidth;
       this.outlineColor =  outlineColor;
+      this.isItalic = isItalic;
+      this.isBold = isBold;
     }
   }
 

@@ -19,6 +19,8 @@ const initializeText = {
     fontSize: '50',
     outlineWidth: '3',
     outlineColor: '#000000',
+    isItalic: false,
+    isBold: false
 }
 
 /**
@@ -78,7 +80,9 @@ class GetImagesComponents extends React.Component {
                         initializeText.fontFamily,
                         initializeText.fontSize,
                         initializeText.outlineWidth,
-                        initializeText.outlineColor)
+                        initializeText.outlineColor,
+                        initializeText.isBold,
+                        initializeText.isItalics,)
                     );
                 }
 
