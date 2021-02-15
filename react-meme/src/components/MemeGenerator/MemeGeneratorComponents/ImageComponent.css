@@ -1,22 +1,21 @@
 .image-view {
-    display: block;
-     top: 0;
-     height: 100%;
-     width: 100%;
-     overflow: hidden;
-     overflow-x: hidden;
-     overflow-y: hidden;
-     position: relative;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
 }
+
 .canvas-view {
-    display: block;
+    height: 100vw;
+    width: 100%;
+    position: relative;
 }
 
 .canvas-controls {
     display: flex;
-justify-content: space-evenly;
-align-items: center;
-background-color: rgb(41, 41, 41);
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: rgb(41, 41, 41);
 }
 
 .canvas-controls>* {

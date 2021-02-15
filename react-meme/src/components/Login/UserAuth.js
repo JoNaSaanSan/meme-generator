@@ -93,7 +93,7 @@ class UserAuth extends React.Component {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: {username: username, password: password }
+                body: JSON.stringify({ email: email, username: username, password: password })
             };
 
             console.log(requestOptions)
@@ -122,31 +122,31 @@ class UserAuth extends React.Component {
                         <div>
                             <h2> Login </h2>
                             <div> E-Mail/Username: </div>
-                            <input type="text" id="username" class="input-box"></input>
+                            <input type="text" id="username" className="input-box"></input>
                             <div> Password: </div>
-                            <input type="password" id="password" class="input-box"></input>
+                            <input type="password" id="password" className="input-box"></input>
                         </div>
-                        <a className="button" name="login" onClick={this.handleOnClick.bind(this)}> Login</a>
-                        <a className="button" name="back" onClick={this.handleOnClick.bind(this)}> Back</a>
+                        <button className="button" name="login" onClick={this.handleOnClick.bind(this)}> Login</button>
+                        <button className="button" name="back" onClick={this.handleOnClick.bind(this)}> Back</button>
                     </div> : (this.state.isRegisterMode) ?
                         <div className="register-container">
                             <div>
                                 <h2> Register </h2>
                                 <div> E-Mail: </div>
-                                <input type="text" id="email" class="input-box"></input>
+                                <input type="text" id="email" className="input-box"></input>
                                 <div> Username: </div>
-                                <input type="text" id="username" class="input-box"></input>
+                                <input type="text" id="username" className="input-box"></input>
                                 <div> Password: </div>
-                                <input type="password" id="password" class="input-box"></input>
+                                <input type="password" id="password" className="input-box"></input>
                                 <div> Confirm Password: </div>
-                                <input type="password" id="password2" class="input-box"></input>
+                                <input type="password" id="password2" className="input-box"></input>
                             </div>
-                            <a className="button" name="register" onClick={this.handleOnClick.bind(this)}> Register</a>
-                            <a className="button" name="back" onClick={this.handleOnClick.bind(this)}> Back</a>
+                            <button className="button" name="register" onClick={this.handleOnClick.bind(this)}> Register</button>
+                            <button className="button" name="back" onClick={this.handleOnClick.bind(this)}> Back</button>
                         </div> :
                         <div>
-                            <a className="button" name="loginMode" onClick={this.handleOnClick.bind(this)}> Login</a>
-                            <a className="button" name="registerMode" onClick={this.handleOnClick.bind(this)}> Register</a>
+                            <button className="button" name="loginMode" onClick={this.handleOnClick.bind(this)}> Login</button>
+                            <button className="button" name="registerMode" onClick={this.handleOnClick.bind(this)}> Register</button>
                         </div>
                 }
 

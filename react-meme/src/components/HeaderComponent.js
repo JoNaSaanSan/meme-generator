@@ -5,10 +5,6 @@ require('./HeaderComponent.css');
 
 
 class HeaderComponent extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
 
     render() {
         return (
@@ -22,9 +18,9 @@ class HeaderComponent extends React.Component {
 
                     <Link to="/profile" className="menu-item"> Profile </Link>
                     <a className="button" href="#login">Login</a>
-                    <div id="login" class="modal-window">
+                    <div id="login" className="modal-window">
                         <div>
-                            <a href="#" title="Close" id="login-close" class="modal-close">Close</a>
+                            <a href="/#" title="Close" id="login-close" className="modal-close">Close</a>
                             <LoginComponent />
                         </div>
                     </div>

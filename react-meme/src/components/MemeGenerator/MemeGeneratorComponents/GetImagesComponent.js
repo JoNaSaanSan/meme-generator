@@ -52,9 +52,6 @@ function testImage(url, timeoutT) {
 
 
 class GetImagesComponents extends React.Component {
-    constructor(props) {
-        super(props)
-    }
 
     /**
      * 
@@ -97,9 +94,9 @@ class GetImagesComponents extends React.Component {
         return (
         <div>
             <a className="button" href="#upload-image">Open Image Template</a>
-            <div id="upload-image" class="modal-window">
+            <div id="upload-image" className="modal-window">
                 <div>
-                    <a href="#" title="Close" id="upload-image-close" class="modal-close">Close</a>
+                    <a href="/#" title="Close" id="upload-image-close" className="modal-close">Close</a>
                     <div className="get-images-container">
                         <BlankComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />
                         <IfCameraComponent setImagesArray={this.setImagesArray} URL={this.props.URL} />

@@ -43,7 +43,7 @@ class IfServerComponent extends React.Component {
     render() {
         return (
             <div>
-                <a onClick={() => this.fetchImages(this.props.URL)} id="fetch-button" className="button" > {this.props.getImagesButtonName} </a>
+                <button onClick={() => this.fetchImages(this.props.URL)} id="fetch-button" className="button" > {this.props.getImagesButtonName} </button>
             </div>
         )
     }

@@ -22,6 +22,7 @@ class ImageComponent extends React.Component {
         this.addDrawing = this.addDrawing.bind(this);
         this.addImage = this.addImage.bind(this);
         this.handleImageChange = this.handleImageChange.bind(this);
+        this.imageRetrieved = this.imageRetrieved.bind(this)
         this.undoDrawing = this.undoDrawing.bind(this);
         this.clearDrawing = this.clearDrawing.bind(this);
         this.clearImages = this.clearImages.bind(this);
@@ -123,43 +124,41 @@ class ImageComponent extends React.Component {
     }
 
     imageRetrieved(data){
+        console.log(data)
         this.props.imageRetrieved(data);
     }
 
 
     render() {
-        //<img src={this.props.currentMeme.url} onError={i => i.target.src = ''} id="image-template" class="meme-template-image" />
         return (
             <div className="image-view">
-
                 <div className="canvas-controls">
                     <div className="draw-controls">
                         {!this.state.isDrawMode ? <button onClick={() => this.addDrawing(true)} id="draw-button" className="button" > Draw </button> :
                             <div>
                                 <input type="color" name="drawColor" className="color-input-box" onChange={this.handleDrawToolChange.bind(this)} />
                                 <input type="text" placeholder="2" name="drawBrushSize" className="number-input-box" maxLength="1" value={this.state.drawBrushSize} onChange={this.handleDrawToolChange.bind(this)} />
-                                <a onClick={() => this.undoDrawing()} id="undo-button" className="button" > Undo </a>
-                                <a onClick={() => this.clearDrawing()} id="clear-button" className="button" > Clear </a>
-                                <a onClick={() => this.addDrawing()} id="draw-button" className="button" > Stop Draw </a>
+                                <button onClick={() => this.undoDrawing()} id="undo-button" className="button" > Undo </button>
+                                <button onClick={() => this.clearDrawing()} id="clear-button" className="button" > Clear </button>
+                                <button onClick={() => this.addDrawing()} id="draw-button" className="button" > Stop Draw </button>
                             </div>}
                     </div>
-
+                    <h2 > {this.props.currentMeme.name} </h2>
                     <div className="image-controls">
                         <div id="upload-button" className="button" >
-                            <label for="additional-image-upload">
+                            <label htmlFor="additional-image-upload">
                                 Add Image</label></div>
                         <input type="file" id="additional-image-upload" onChange={this.addImage} multiple />
-                        <a onClick={() => this.clearImages()} id="clear-button" className="button" > Clear Images </a>
+                        <button onClick={() => this.clearImages()} id="clear-button" className="button" > Clear Images </button>
                     </div>
                 </div>
-                <h2 > {this.props.currentMeme.name} </h2>
                 <div className="canvas-view">
                     <CanvasComponent
                         currentImage={this.state.currentImage}
                         currentName={this.props.currentMeme.name}
                         inputBoxes={this.props.inputBoxes}
                         imageDimensions={this.props.imageDimensions}
-                        retrieveImage={this.props.retrieveImage}
+                        retrieveImageTrigger={this.props.retrieveImageTrigger}
                         imageRetrieved={this.imageRetrieved}
                         inputBoxesUpdated={this.props.inputBoxesUpdated}
                         additionalImages={this.props.additionalImages}

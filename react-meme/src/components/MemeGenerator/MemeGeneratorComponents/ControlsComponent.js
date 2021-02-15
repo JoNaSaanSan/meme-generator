@@ -119,7 +119,11 @@ class ControlsComponent extends React.Component {
    */
   changeTitle() {
     if (this.state.titleText !== '' && this.state.imageMemeArray !== null) {
-      this.state.imageMemeArray[this.state.index].name = this.state.titleText;
+      let imageMemeArray = [...this.state.imageMemeArray]
+      imageMemeArray[this.state.index].name = this.state.titleText;
+      this.setState({
+        imageMemeArray,
+      })
       this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index])
     }
   }

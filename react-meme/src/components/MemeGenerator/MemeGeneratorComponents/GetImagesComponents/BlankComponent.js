@@ -38,7 +38,7 @@ class BlankComponent extends React.Component {
     render() {
         return (
             <div>
-                <a id="blank-image-input-button" className="button" onClick={this.getBlankImage}> Blank Image </a>
+                <button id="blank-image-input-button" className="button" onClick={this.getBlankImage}> Blank Image </button>
             </div>
         );
     }

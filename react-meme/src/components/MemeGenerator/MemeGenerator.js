@@ -39,7 +39,7 @@ class MemeGenerator extends React.Component {
       tmpInputTextBoxesArray: [],
       canvasWidth: 0,
       canvasHeight: 0,
-      downloadImageTrigger: false,
+      retrieveImageTrigger: false,
       imageData: null
     }
 
@@ -55,30 +55,50 @@ class MemeGenerator extends React.Component {
     this.shareMeme = this.shareMeme.bind(this);
     this.downloadImage = this.downloadImage.bind(this);
     this.generateMemeImageFlip = this.generateMemeImageFlip.bind(this);
+    this.imageRetrieved = this.imageRetrieved.bind(this)
   }
 
 
   imageRetrieved(data) {
     this.setState({
       imageData: data
+    }, () => {
+      let canvasdata = this.state.imageData.replace("image/png", "image/octet-stream");
+
+      const a = document.createElement("a");
+      a.download = this.state.currentMeme.name + '.png';
+
+      a.href = canvasdata;
+      document.body.appendChild(a);
+      a.click();
     })
+  }
+
+
+  retrieveImage() {
+    this.setState(
+      prevState => ({
+        retrieveImageTrigger: !prevState.retrieveImageTrigger
+      }))
   }
 
   /**
    * Handles download image button presses via a boolean that is passed to the child
    */
   downloadImage() {
-    this.setState(prevState => ({ downloadImageTrigger: !prevState.downloadImageTrigger }))
+    this.retrieveImage();
+
   }
 
   publishMeme() {
-    this.setState(prevState => ({ downloadImageTrigger: !prevState.downloadImageTrigger }))
+
   }
 
   saveDraft() {
-    this.setState(prevState => ({ downloadImageTrigger: !prevState.downloadImageTrigger }))
+
+
     // POST request using fetch with error handling
-    console.log(this.state.generatedMeme + "access Token: " + this.props.accessToken)
+    /*
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -102,7 +122,7 @@ class MemeGenerator extends React.Component {
           errorMessage: error.toString()
         });
         console.error('There was an error!', error);
-      });
+      });*/
 
   }
 
@@ -147,17 +167,19 @@ class MemeGenerator extends React.Component {
   }
 
   /**
- * 
- * @param {array} textBoxesArray 
- * This function assigns input textboxes with values from an array which consists of input text box objects that were stored previously
- *  
- */
+  * 
+  * @param {array} textBoxesArray 
+  * This function assigns input textboxes with values from an array which consists of input text box objects that were stored previously
+  *  
+  */
   assignNewText2Textboxes(textBoxesArray) {
     let inputBoxes = [...this.state.inputBoxes]
     inputBoxes.map(
       obj => {
         if (obj.text === '' && textBoxesArray[obj.textID] !== undefined) {
-          (Object.assign(obj, textBoxesArray[obj.textID]))
+          return (Object.assign(obj, textBoxesArray[obj.textID]))
+        } else {
+          return obj;
         }
       }
     )
@@ -234,14 +256,17 @@ class MemeGenerator extends React.Component {
   * 
   */
   handleInputBoxesChange(i, event) {
-    this.state.inputBoxes[i] = Object.assign(this.state.inputBoxes[i], { [event.target.name]: event.target.value })
+    let inputBoxes = [...this.state.inputBoxes]
+    let tmpInputTextBoxesArray = [...this.state.tmpInputTextBoxesArray]
+    Object.assign(inputBoxes[i], { [event.target.name]: event.target.value })
     if (this.state.tmpInputTextBoxesArray[i] !== undefined) {
-      Object.assign(this.state.tmpInputTextBoxesArray[i], { [event.target.name]: event.target.value })
+      Object.assign(tmpInputTextBoxesArray[i], { [event.target.name]: event.target.value })
     } else {
-      this.state.tmpInputTextBoxesArray[i] = { [event.target.name]: event.target.value }
+      tmpInputTextBoxesArray[i] = { [event.target.name]: event.target.value }
     }
     this.setState({
-      ...this.state.inputBoxes,
+      inputBoxes,
+      tmpInputTextBoxesArray,
       inputBoxesUpdated: !this.state.inputBoxesUpdated,
     })
   }
@@ -269,7 +294,7 @@ class MemeGenerator extends React.Component {
     Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
 
     return (
-      <div class="generator-view">
+      <div className="generator-view">
         <ControlsComponent
           URL={this.state.URL}
           generateMeme={this.generateMeme}
@@ -299,7 +324,8 @@ class MemeGenerator extends React.Component {
           handleInputBoxesChange={this.handleInputBoxesChange}
           clearDrawing={this.clearDrawing}
           undoDrawing={this.undoDrawing}
-          downloadImageTrigger={this.state.downloadImageTrigger}
+          retrieveImageTrigger={this.state.retrieveImageTrigger}
+          imageRetrieved={this.imageRetrieved}
         />
         <TextUIComponent
           handleInputBoxesChange={this.handleInputBoxesChange}

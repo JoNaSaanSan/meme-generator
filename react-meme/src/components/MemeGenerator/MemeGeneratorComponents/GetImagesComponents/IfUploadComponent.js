@@ -25,12 +25,12 @@ class IfUploadComponent extends React.Component {
         var files = event.target.files;
         var dimensions = [];
         for (var i = 0; i < files.length; ++i) {
-            var file = files[i];
+            const file = files[i];
             if (!file.type.match('image'))
                 continue;
             dimensions.push(new Promise(function (resolve, reject) {
                 var src = URL.createObjectURL(file);
-                var img = new Image;
+                var img = new Image();
                 img.onload = function () {
                     resolve({ width: img.width, height: img.height });
                     URL.revokeObjectURL(src);
@@ -68,11 +68,11 @@ class IfUploadComponent extends React.Component {
         return (
             <div>
                 <div id="upload-button" className="button" >
-                    <label for="file-upload">
+                    <label htmlFor="file-upload">
                         Upload Image</label></div>
                 <input type="file" id="file-upload" onChange={this.handleChange} multiple />
                 <div className="sample-image-container">
-                    <img src={this.state.filesArray} id="previewImage" className="sample-images" />
+                    <img src={this.state.filesArray} id="previewImage" alt="" className="sample-images" />
                 </div>
             </div>
         );

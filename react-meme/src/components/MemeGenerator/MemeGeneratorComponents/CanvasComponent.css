@@ -1,18 +1,10 @@
 #canvas-container {
-  display: inline-block;
-  position: relative;
-  height: 1000px;
-  width: 100px;
+  padding: 50px;
+  display: flex;
 }
 
 #canvas-container>canvas {
   display: block;
   position: absolute;
   overflow: hidden;
-  overflow-x: hidden;
-  overflow-y: hidden;
-
-  bottom: 0;
-  top: 0;
-  left: 0;
 }

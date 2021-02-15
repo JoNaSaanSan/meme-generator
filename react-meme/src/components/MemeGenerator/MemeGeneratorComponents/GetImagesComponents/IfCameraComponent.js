@@ -67,14 +67,14 @@ class IfUrlComponent extends React.Component {
 
             <div className="camera-container">
                 {(this.state.dataUri || !this.state.isCamera) ?
-                    <img src={this.state.dataUri} className="sample-images" />
+                    <img alt="" src={this.state.dataUri} className="sample-images" />
                     : <Camera
                         onTakePhoto={(dataUri) => { this.handleTakePhoto(dataUri); }}
                     />
                 }
                 {(this.state.isCamera) ?
-                    <a id="open-camera-button" className="button" onClick={this.closeCamera}> Close Camera </a> :
-                    <a id="open-camera-button" className="button" onClick={this.openCamera}> Open Camera </a>}
+                    <button id="open-camera-button" className="button" onClick={this.closeCamera}> Close Camera </button> :
+                    <button id="open-camera-button" className="button" onClick={this.openCamera}> Open Camera </button>}
             </div>
         );
     }

@@ -5,9 +5,7 @@ require('./LoginComponent.css');
 
 
 class LoginComponent extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+
 
 
     render() {
