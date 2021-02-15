@@ -44,6 +44,7 @@ class MemeGenerator extends React.Component {
       retrieveImageTrigger: false,
       memeCreationEvent: 0,
       memeVisibility: -1,
+      accessToken: null,
     }
 
 
@@ -92,10 +93,10 @@ class MemeGenerator extends React.Component {
       memeCreationEvent: event.target.name,
       memeVisibility: memeVisibility
     }, () => {
-      if(event.target.name === "imgFlipGenerate"){
+      if (event.target.name === "imgFlipGenerate") {
         this.generateMemeImageFlip();
       }
-      
+
       if (event.target.name === "download") {
         this.retrieveImage();
       }
@@ -129,7 +130,7 @@ class MemeGenerator extends React.Component {
 
   publishMeme(data, memeVisibility) {
     var object2Publish = {};
-    object2Publish.accessToken = '';
+    object2Publish.accessToken = this.state.accessToken;
     object2Publish.name = this.state.currentMeme.name;
     object2Publish.data = data
     object2Publish.visibility = memeVisibility
@@ -157,7 +158,7 @@ class MemeGenerator extends React.Component {
           const error = (data && data.message) || response.status;
           return Promise.reject(error);
         }
-    
+
       })
       .catch(error => {
         this.setState({
@@ -231,7 +232,7 @@ class MemeGenerator extends React.Component {
         tmp.url = data.data.url;
         window.open(tmp.url, "_blank")
 
-    
+
       })
       .catch(error => {
         this.setState({
@@ -395,18 +396,18 @@ class MemeGenerator extends React.Component {
         initializeText.outlineColor,
         initializeText.isBold,
         initializeText.isItalics,
-        )]
+      )]
     }))
   }
 
   render() {
     // Redux: Update Signed in State
-    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
+    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
 
     return (
       <div className="generator-view">
         <ControlsComponent
-          URL={this.state.URL + '/memes/sampleMemes'}
+          URL={this.state.URL}
           generateMeme={this.generateMeme}
           currentMeme={this.state.currentMeme}
           handleCanvasChange={this.handleCanvasChange}

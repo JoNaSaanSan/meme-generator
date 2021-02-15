@@ -35,20 +35,33 @@ class IfUrlComponent extends React.Component {
      * Creates an image object and pushes that object to an array
      */
     submitUrl() {
-        let data = []
-        for (var i = 0; i < 1; i++) {
-            data.push({
-                id: i,
-                name: 'URL',
+        var that = this;
+        const dimensions = new Promise(function (resolve, reject) {
+            var src = that.state.inputUrl;
+            var img = new Image();
+            img.onload = function () {
+                resolve({ width: img.width, height: img.height });
+            };
+            img.src = src;
+        });
+
+        dimensions.then(function (dims) {
+            console.log(dimensions.width)
+            var tmpArr = [];
+            tmpArr.push({
+                id: 1,
+                name:'URL',
                 box_count: 2,
-                width: 400, //Todo: User width and height from image
-                height: 400,
-                url: this.state.inputUrl,
-            });
-        }
-        this.setState({
-            isFetching: false
-        }, () => this.props.setImagesArray(data, this.state.isFetching))
+                width: dims.width,
+                height: dims.height,
+                url: that.state.inputUrl,
+            })
+            that.setState({
+                isFetching: false
+            }, () =>
+                that.props.setImagesArray(tmpArr, that.state.isFetching))
+        })
+
     }
 
 

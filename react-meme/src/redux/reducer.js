@@ -2,7 +2,7 @@ import { LOGIN_USER } from './action';
 
 // Redux reducer to get state of signed in user
 const initialState = {
-    user: {name: '', email: '', id: '', usertoken: '', isSignedIn: false }
+    user: {username: '', email: '', usertoken: '', isSignedIn: false }
 };
 
 function rootReducer(state = initialState, action) {

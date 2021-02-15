@@ -10,6 +10,7 @@ class ControlsComponent extends React.Component {
 
     this.state = {
       isSignedIn: Store.getState().user.isSignedIn,
+      accessToken: Store.getState().user.accessToken, 
       imageMemeArray: null,
       index: 0,
       searchText: '',
@@ -158,7 +159,7 @@ class ControlsComponent extends React.Component {
 
 
   render() {
-    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
+    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken  }))
     return (
       <div className="control-view">
         <div>
@@ -183,9 +184,8 @@ class ControlsComponent extends React.Component {
           <input type="text" placeholder="400" name="canvasHeight" className="dimension-input-box" maxLength="3" value={this.props.canvasHeight} onChange={this.handleCanvasChange.bind(this)} />
         </div>
 
-
         <button name="imgFlipGenerate" onClick={this.createMeme} id="generate-button" className="button" > Generate Meme with Imgflip </button>
-        {this.state.isSignedIn ?
+        {(this.state.accessToken !== '') ?
           <div>
             <select name="memeVisibility" className="input-box" onChange={this.handleVisibilityChange.bind(this)} value={this.state.memeVisibility}>
               <option value="0">Unlisted</option>

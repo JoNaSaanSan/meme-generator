@@ -43,16 +43,34 @@ class IfUrlComponent extends React.Component {
         fetch(uri)
             .then(res => res.blob()).then(
                 res => {
-                    var tmpArr = [];
-                    tmpArr.push({
-                        id: 1,
-                        name: 'Camera',
-                        box_count: 2,
-                        width: 400,
-                        height: 400,
-                        url: URL.createObjectURL(res),
+
+                    const dimensions = new Promise(function (resolve, reject) {
+                        var src = URL.createObjectURL(res);
+                        var img = new Image();
+                        img.onload = function () {
+                            resolve({ width: img.width, height: img.height });
+                            URL.revokeObjectURL(src);
+                        };
+                        img.src = src;
+                    });
+
+                    var that = this;
+                    dimensions.then(function (dims) {
+                        console.log(dimensions.width)
+                        var tmpArr = [];
+                        tmpArr.push({
+                            id: 1,
+                            name:'Camera',
+                            box_count: 2,
+                            width: dims.width,
+                            height: dims.height,
+                            url: URL.createObjectURL(res),
+                        })
+                        that.setState({
+                            isFetching: false
+                        }, () =>
+                            that.props.setImagesArray(tmpArr, that.state.isFetching))
                     })
-                    this.props.setImagesArray(tmpArr, this.state.isFetching)
                 })
 
         this.setState({
