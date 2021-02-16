@@ -75,8 +75,8 @@ class UserAuth extends React.Component {
             .then(async response => {
                 const data = await response.json();
                 this.props.authenticateUser({ username: data.username, email: data.email, accessToken: data.accessToken, isSignedIn: true })
-
                 console.log(data);
+                document.getElementById("login-close").click();
                 // check for error response
                 if (!response.ok) {
                     // get error message from body or default to response status

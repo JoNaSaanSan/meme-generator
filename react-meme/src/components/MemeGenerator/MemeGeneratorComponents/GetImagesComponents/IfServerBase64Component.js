@@ -41,33 +41,33 @@ class IfServerBase64Component extends React.Component {
                 fetch(image)
                     .then(res => res.blob()).then(res => {
 
-                        const dimensions = new Promise(function (resolve, reject) {
+                        const dimensions = new Promise((resolve, reject) => {
                             var src = URL.createObjectURL(res);
                             var img = new Image();
-                            img.onload = function () {
+                            img.onload = () => {
                                 resolve({ width: img.width, height: img.height });
                                 URL.revokeObjectURL(src);
                             };
                             img.src = src;
                         });
 
-                        var that = this;
-                        dimensions.then(function (dims) {
+ 
+                        dimensions.then((dims) => {
                             console.log(dimensions.width)
                             var tmpArr = [];
                             tmpArr.push({
                                 id: 1,
-                                name: that.props.getImagesButtonName,
+                                name: this.props.getImagesButtonName,
                                 box_count: 2,
                                 width: dims.width,
                                 height: dims.height,
                                 url: URL.createObjectURL(res),
                                 inputBoxes: inputBoxes,
                             })
-                            that.setState({
+                            this.setState({
                                 isFetching: false
                             }, () =>
-                                that.props.setImagesArray(tmpArr, that.state.isFetching))
+                            this.props.setImagesArray(tmpArr, this.state.isFetching))
                         })
                     })
 

@@ -1,5 +1,5 @@
 import GetImagesComponents from './GetImagesComponent';
-import PreviewComponent from '../../Slider/PreviewComponent'
+import PreviewComponent from './PreviewComponent'
 import Store from '../../../redux/store';
 const React = require('react');
 require('./ControlsComponent.css');
@@ -198,7 +198,7 @@ class ControlsComponent extends React.Component {
         <button name="share" onClick={this.createMeme} id="share-button" className="button" > Share Meme</button>
         <button name="download" onClick={this.createMeme} id="download-button" className="button">Download Meme!</button>
 
-        <PreviewComponent samplesMemeArray={this.state.imageViewArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />
+        <PreviewComponent samplesMemeArray={this.state.imageMemeArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />
        
       </div>
     )

@@ -17,8 +17,11 @@ class SliderComponent extends React.Component {
 
   }
 
-  // befülle beim Laden der Seite leere Container mit Bildern nach indexposition 0
-  componentDidMount() { this.createImages(this.state.indexArray); console.log("did mount") }
+  // befülle beim Updaten des Memes Arrays leere Container mit Bildern nach indexposition 0
+  componentDidUpdate(prevProps) {
+    if(this.props.memesArray !== prevProps.memesArray)
+    this.createImages(this.state.indexArray); console.log("did mount") 
+  }
 
   createImages(x) {
     if(this.props.memesArray === undefined){

@@ -211,7 +211,6 @@ class CanvasComponent extends React.Component {
   addTextBoxes(textBoxes, context) {
     for (var i = 0; i < textBoxes.length; i++) {
       var text = textBoxes[i];
-      console.log(text.isBold)
       var style = '';
       if(text.isBold){
         style += 'bold '
@@ -219,8 +218,6 @@ class CanvasComponent extends React.Component {
       if(text.isItalic){
         style += 'italic '
       }
-
-      console.log(style)
       context.font = style + text.fontSize + 'px ' + text.fontFamily;
       context.strokeStyle = text.outlineColor;
       context.lineWidth = text.outlineWidth;

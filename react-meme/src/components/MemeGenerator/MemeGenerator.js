@@ -1,6 +1,5 @@
 import ControlsComponent from './MemeGeneratorComponents/ControlsComponent';
 import ImageComponent from './MemeGeneratorComponents/ImageComponent';
-import PreviewComponent from './MemeGeneratorComponents/PreviewComponent';
 import TextUIComponent from './MemeGeneratorComponents/TextUIComponent';
 import Store from '../../redux/store';
 import TextBoxes from './TextBoxes';

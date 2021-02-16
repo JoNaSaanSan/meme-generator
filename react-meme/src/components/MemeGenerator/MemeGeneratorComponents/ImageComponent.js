@@ -77,11 +77,10 @@ class ImageComponent extends React.Component {
             images.push(this.loadImage(URL.createObjectURL(file)));
         }
 
-        var that = this;
-        Promise.all(images).then(function (result) {
+        Promise.all(images).then((result) => {
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
-                that.props.addAdditionalImages({
+                this.props.addAdditionalImages({
                     id: i,
                     name: file.name,
                     posX: 100,
@@ -94,7 +93,7 @@ class ImageComponent extends React.Component {
 
                 console.log(file)
             }
-        }).catch(function (errdims) {
+        }).catch((errdims) => {
             console.log(errdims)
         })
 
@@ -115,7 +114,7 @@ class ImageComponent extends React.Component {
         var result = new Promise((resolve, reject) => {
             var img = new Image();
             img.setAttribute('crossOrigin', 'anonymous');
-            img.onload = function () {
+            img.onload = () => {
                 return resolve(img);
             }
             img.src = url;
