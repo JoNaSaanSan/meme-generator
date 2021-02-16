@@ -8,13 +8,12 @@ class IfServerComponent extends React.Component {
         this.state = {
             isFetching: false,
         }
-
-        //ssss
-        //   this.fetchImages = this.fetchImages.bind(this);
     }
 
-    // Fetch all images from /samplememes and store them into a state array
-    fetchImages(url) {
+    /**
+     *  Fetch all images from /samplememes and store them into a state array
+    */
+     fetchImages(url) {
         this.setState({
             isFetching: true
         });

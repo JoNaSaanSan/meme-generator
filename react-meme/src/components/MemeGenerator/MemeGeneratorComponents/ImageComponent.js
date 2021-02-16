@@ -23,6 +23,7 @@ class ImageComponent extends React.Component {
         this.addImage = this.addImage.bind(this);
         this.handleImageChange = this.handleImageChange.bind(this);
         this.imageRetrieved = this.imageRetrieved.bind(this)
+        this.templateRetrieved = this.templateRetrieved.bind(this)
         this.undoDrawing = this.undoDrawing.bind(this);
         this.clearDrawing = this.clearDrawing.bind(this);
         this.clearImages = this.clearImages.bind(this);
@@ -65,8 +66,13 @@ class ImageComponent extends React.Component {
         this.props.clearImages();
     }
 
+    /**
+     * 
+     * @param {*} event 
+     * Load added image
+     * 
+     */
     addImage(event) {
-
         console.log(event)
         var files = event.target.files;
         var images = [];
@@ -96,14 +102,24 @@ class ImageComponent extends React.Component {
         }).catch((errdims) => {
             console.log(errdims)
         })
-
-
     }
 
+    /**
+     * 
+     * @param {*} image
+     * passes image change handling to parent
+     *  
+     */
     handleImageChange(image) {
         this.props.handleImageChange(image);
     }
 
+    /**
+     * 
+     * @param {*} event 
+     * passes draw tool change handling to parent
+     * 
+     */
     handleDrawToolChange(event) {
         this.setState({
             [event.target.name]: event.target.value
@@ -124,6 +140,10 @@ class ImageComponent extends React.Component {
 
     imageRetrieved(data){
         this.props.imageRetrieved(data);
+    }
+
+    templateRetrieved(data){
+        this.props.templateRetrieved(data);
     }
 
 
@@ -158,6 +178,8 @@ class ImageComponent extends React.Component {
                         imageDimensions={this.props.imageDimensions}
                         retrieveImageTrigger={this.props.retrieveImageTrigger}
                         imageRetrieved={this.imageRetrieved}
+                        retrieveTemplateTrigger={this.props.retrieveTemplateTrigger}
+                        templateRetrieved={this.templateRetrieved}
                         inputBoxesUpdated={this.props.inputBoxesUpdated}
                         additionalImages={this.props.additionalImages}
                         handleImageChange={this.handleImageChange}

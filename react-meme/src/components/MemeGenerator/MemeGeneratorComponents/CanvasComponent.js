@@ -1,30 +1,6 @@
+import { getTextWidth } from '../../../utils/canvasUtils'
 const React = require('react');
 require('./CanvasComponent.css');
-
-/**
- * Uses canvas.measureText to compute and return the width of the given text of given font in pixels.
- * 
- * @param {String} text The text to be rendered.
- * @param {String} font The css font descriptor that text is to be rendered with (e.g. "bold 14px verdana").
- * 
- * @see https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
- */
-function getTextWidth(inputText, isBold, isItalic, fontSize, fontFamily) {
-  // re-use canvas object for better performance
-  var canvas = document.createElement("canvas");
-  var context = canvas.getContext("2d");
-  var style = '';
-  if(isBold){
-    style += 'bold '
-  }
-  if(isItalic){
-    style += 'italic '
-  }
-  var font = style + fontSize + "px " + fontFamily;
-  context.font = font;
-  var textWidth = context.measureText(inputText).width;
-  return Math.ceil(textWidth)
-}
 
 class CanvasComponent extends React.Component {
 
@@ -74,6 +50,10 @@ class CanvasComponent extends React.Component {
 
     if (prevProps.retrieveImageTrigger !== this.props.retrieveImageTrigger) {
       this.retrieveImage();
+    }
+
+    if (prevProps.retrieveTemplateTrigger !== this.props.retrieveTemplateTrigger) {
+      this.retrieveTemplate();
     }
   }
 
@@ -425,7 +405,7 @@ class CanvasComponent extends React.Component {
   }
 
   /**
-   *  Merges the different canvas and then downloads Meme as png
+   *  Merges the different canvas and then passes base64 string of it to parent function image retrieved
    */
   retrieveImage = () => {
     const canvas = document.createElement("canvas");
@@ -446,6 +426,26 @@ class CanvasComponent extends React.Component {
 
       const canvasdata = canvas.toDataURL("image/png");
       this.props.imageRetrieved(canvasdata)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  /**
+   * Retrieve base64 string of background image and call parent function template retrieved
+   */
+  retrieveTemplate = () => {
+    const canvas = document.createElement("canvas");
+    canvas.setAttribute("id", "canvas");
+    canvas.width = this.state.canvasDimensions.width;
+    canvas.height = this.state.canvasDimensions.height;
+    const context = canvas.getContext("2d");
+    
+    const canvasBackground = document.getElementById("canvas-background");
+    try {
+      context.drawImage(canvasBackground, 0, 0);
+      const canvasdata = canvas.toDataURL("image/png");
+      this.props.templateRetrieved(canvasdata)
     } catch (e) {
       console.log(e)
     }

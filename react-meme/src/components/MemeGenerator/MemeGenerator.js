@@ -44,6 +44,9 @@ class MemeGenerator extends React.Component {
       memeCreationEvent: 0,
       memeVisibility: -1,
       accessToken: null,
+      maxImageSize: '',
+      imageData: null,
+      templateData: null,
     }
 
 
@@ -60,28 +63,50 @@ class MemeGenerator extends React.Component {
     this.downloadImage = this.downloadImage.bind(this);
     this.generateMemeImageFlip = this.generateMemeImageFlip.bind(this);
     this.imageRetrieved = this.imageRetrieved.bind(this)
+    this.templateRetrieved = this.templateRetrieved.bind(this)
     this.createMeme = this.createMeme.bind(this);
 
   }
 
 
-  imageRetrieved(data) {
-    switch (this.state.memeCreationEvent) {
-      case 'download':
-        //download
-        this.downloadImage(data);
-        break;
-      case 'publish':
-        this.publishMeme(data, this.state.memeVisibility)
-        break;
-      case 2:
-        //public
-        break;
-      default:
+  componentDidUpdate(prevPros, prevState) {
+    if (this.state.imageData !== prevState.imageData) {
+      switch (this.state.memeCreationEvent) {
+        case 'download':
+          //download
+          this.downloadImage();
+          break;
+        case 'publish':
+          this.publishMeme()
+          break;
+        case 2:
+          //public
+          break;
+        default:
+      }
+    }
+
+    if (this.state.templateData !== prevState.templateData) {
+      console.log("template")
+      if (this.state.memeCreationEvent === 'save') {
+        this.saveDraft();
+      }
     }
   }
 
-  createMeme(event, memeVisibility) {
+  imageRetrieved(data) {
+    this.setState({
+      imageData: data,
+    })
+  }
+
+  templateRetrieved(data) {
+    this.setState({
+      templateData: data,
+    })
+  }
+
+  createMeme(event, memeVisibility, maxImageSize) {
     if (event === undefined)
       return;
     console.log(event)
@@ -90,7 +115,8 @@ class MemeGenerator extends React.Component {
 
     this.setState({
       memeCreationEvent: event.target.name,
-      memeVisibility: memeVisibility
+      memeVisibility: memeVisibility,
+      maxImageSize: maxImageSize,
     }, () => {
       if (event.target.name === "imgFlipGenerate") {
         this.generateMemeImageFlip();
@@ -101,6 +127,9 @@ class MemeGenerator extends React.Component {
       }
       if (event.target.name === "publish") {
         this.retrieveImage();
+      }
+      if (event.target.name === "save") {
+        this.retrieveTemplate();
       }
     }
     )
@@ -114,12 +143,20 @@ class MemeGenerator extends React.Component {
       }))
   }
 
+  retrieveTemplate() {
+    this.setState(
+      prevState => ({
+        retrieveTemplateTrigger: !prevState.retrieveTemplateTrigger
+      }))
+  }
+
+
   /**
    * Handles download image button presses via a boolean that is passed to the child
    */
-  downloadImage(data) {
+  downloadImage() {
 
-    let canvasdata = data.replace("image/png", "image/octet-stream");
+    let canvasdata = this.state.imageData.replace("image/png", "image/octet-stream");
     const a = document.createElement("a");
     a.download = this.state.currentMeme.name + '.png';
     a.href = canvasdata;
@@ -127,12 +164,12 @@ class MemeGenerator extends React.Component {
     a.click();
   }
 
-  publishMeme(data, memeVisibility) {
+  publishMeme() {
     var object2Publish = {};
     object2Publish.accessToken = this.state.accessToken;
     object2Publish.name = this.state.currentMeme.name;
-    object2Publish.data = data
-    object2Publish.visibility = memeVisibility
+    object2Publish.base_64 = this.state.imageData;
+    object2Publish.visibility = this.state.memeVisibility;
 
     // Title
     // Token
@@ -168,10 +205,20 @@ class MemeGenerator extends React.Component {
   }
 
   saveDraft() {
+    var object2Save = {};
+    object2Save.accessToken = this.state.accessToken;
+    object2Save.name = this.state.currentMeme.name;
+    object2Save.currentMeme = this.state.currentMeme;
+    object2Save.base_64 = this.state.templateData;
+    object2Save.inputBoxes = this.state.inputBoxes;
+    object2Save.drawPaths = this.state.drawPaths;
+    object2Save.additionalImages = this.state.additionalImages;
+    object2Save.currentMeme = this.state.currentMeme;
 
+    console.log(object2Save)
 
     // POST request using fetch with error handling
-    /*
+
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -179,7 +226,7 @@ class MemeGenerator extends React.Component {
       },
       body: JSON.stringify(this.state.generatedMeme)
     };
-    fetch(this.props.URL + '/memes/saveMeme', requestOptions)
+    fetch(this.props.URL + '/memes/saveDraft', requestOptions)
       .then(async response => {
         const data = await response.json();
         console.log(data);
@@ -195,7 +242,7 @@ class MemeGenerator extends React.Component {
           errorMessage: error.toString()
         });
         console.error('There was an error!', error);
-      });*/
+      });
 
   }
 
@@ -315,28 +362,35 @@ class MemeGenerator extends React.Component {
   }
 
 
+  /**
+   * 
+   * @param {*} image
+   * Add additional images
+   *  
+   */
   addAdditionalImages(image) {
     this.setState(prevState => ({
       additionalImages: [...prevState.additionalImages, image]
     }))
   }
 
-
-  imageAdded(image) {
-    this.loadImage(image.url).then(result => {
-      this.setState(prevState => ({
-        currentImages: [...prevState.currentImages, result]
-      }))
-    })
-  }
-
-
+  /**
+   * Clear Additional Images
+   */
   clearImages() {
     this.setState({
       additionalImages: [],
     })
   }
 
+
+  /**
+   * 
+   * @param {*} event 
+   * Handle changes in canvas setting such as height and width of canvas
+   * 
+   * 
+   */
   handleCanvasChange(event) {
     console.log(parseInt(event.target.value))
     if (event.target.value !== '') {
@@ -345,6 +399,10 @@ class MemeGenerator extends React.Component {
       this.setState({ [event.target.name]: 0 })
     }
   }
+
+  /**
+   *  Handle changes of additional Images 
+   * */
   handleImageChange(image) {
     let additionalImages = [...this.state.additionalImages]
     Object.assign(this.state.additionalImages[image.id], image)
@@ -431,7 +489,9 @@ class MemeGenerator extends React.Component {
           clearDrawing={this.clearDrawing}
           undoDrawing={this.undoDrawing}
           retrieveImageTrigger={this.state.retrieveImageTrigger}
+          retrieveTemplateTrigger={this.state.retrieveTemplateTrigger}
           imageRetrieved={this.imageRetrieved}
+          templateRetrieved={this.templateRetrieved}
         />
         <TextUIComponent
           handleInputBoxesChange={this.handleInputBoxesChange}
@@ -439,7 +499,7 @@ class MemeGenerator extends React.Component {
           setInputBoxes={this.setInputBoxes}
           addTextBoxes={this.addTextBoxes}
         />
-        
+
       </div>
     )
   }

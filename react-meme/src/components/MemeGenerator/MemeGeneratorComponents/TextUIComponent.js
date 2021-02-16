@@ -82,6 +82,9 @@ class TextUIComponent extends React.Component {
     }
   }
 
+  /**
+   * calls add textboxes in parent
+   */
   addTextBoxes() {
     this.props.addTextBoxes();
   }

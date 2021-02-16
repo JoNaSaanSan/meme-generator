@@ -11,12 +11,13 @@ class ControlsComponent extends React.Component {
 
     this.state = {
       isSignedIn: Store.getState().user.isSignedIn,
-      accessToken: Store.getState().user.accessToken, 
+      accessToken: Store.getState().user.accessToken,
       imageMemeArray: null,
       index: 0,
       searchText: '',
       titleText: '',
       memeVisibility: 0,
+      maxImageSize: '',
     };
 
     // Binds
@@ -146,21 +147,21 @@ class ControlsComponent extends React.Component {
     this.props.handleCanvasChange(event)
   }
 
-  handleVisibilityChange(event) {
+  handleImageOutputChange(event) {
     this.setState({ [event.target.name]: event.target.value });
   }
 
   createMeme(event) {
     if (event.target.name === 'publish') {
-      this.props.createMeme(event, this.state.memeVisibility);
+      this.props.createMeme(event, this.state.memeVisibility, this.state.maxImageSize);
     } else {
-      this.props.createMeme(event, -1);
+      this.props.createMeme(event, -1, this.state.maxImageSize);
     }
   }
 
 
   render() {
-    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken  }))
+    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
     return (
       <div className="control-view">
         <div>
@@ -184,11 +185,13 @@ class ControlsComponent extends React.Component {
           <input type="text" placeholder="400" name="canvasWidth" className="dimension-input-box" maxLength="3" value={this.props.canvasWidth} onChange={this.handleCanvasChange.bind(this)} />
           <input type="text" placeholder="400" name="canvasHeight" className="dimension-input-box" maxLength="3" value={this.props.canvasHeight} onChange={this.handleCanvasChange.bind(this)} />
         </div>
-
+        <div> <div> Max Image File Size</div>
+          <input type="text" name="maxImageSize" onChange={this.handleImageOutputChange.bind(this)} id="max-image-size-input-box" className="input-box" />
+        </div>
         <button name="imgFlipGenerate" onClick={this.createMeme} id="generate-button" className="button" > Generate Meme with Imgflip </button>
         {(this.state.accessToken !== '') ?
           <div>
-            <select name="memeVisibility" className="input-box" onChange={this.handleVisibilityChange.bind(this)} value={this.state.memeVisibility}>
+            <select name="memeVisibility" className="input-box" onChange={this.handleImageOutputChange.bind(this)} value={this.state.memeVisibility}>
               <option value="0">Unlisted</option>
               <option value="1">Private</option>
               <option value="2">Public</option>
@@ -199,7 +202,7 @@ class ControlsComponent extends React.Component {
         <button name="download" onClick={this.createMeme} id="download-button" className="button">Download Meme!</button>
 
         <PreviewComponent samplesMemeArray={this.state.imageMemeArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />
-       
+
       </div>
     )
   }
