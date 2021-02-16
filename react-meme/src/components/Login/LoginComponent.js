@@ -12,7 +12,6 @@ class LoginComponent extends React.Component {
         return (
             <div className="login-view">
                 <UserAuth />
-                <GoogleAuth />
             </div>
         );
     }

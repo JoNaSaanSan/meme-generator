@@ -6,9 +6,6 @@
     flex-wrap: initial;
 }
 
-
-
-
 .button {
     background-color: #363636;
     border: none;
@@ -48,6 +45,47 @@
     width: 15px;
 }
 
+.toggle-button {
+    background-color: #363636;
+    cursor: pointer;
+    padding: 16px 16px;
+    margin: 6px 6px;
+    border-radius: 5px;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-style: normal;
+}
+
+.toggle-button-pressed {
+    background-color: #252525;
+    cursor: pointer;
+    padding: 16px 16px;
+    border-radius: 5px;
+    margin: 6px 6px;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.italic-button {
+    font-style: italic;
+}
+
+.bold-button {
+    font-weight: bold;
+}
+
 .dimension-input-box {
     background-color: #363636;
     border: none;
@@ -59,7 +97,12 @@
     width: 55px;
 }
 
+.text-styling-container {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
 input[type="file"] {
     display: none;
 }
-

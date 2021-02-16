@@ -9,11 +9,18 @@ require('./CanvasComponent.css');
  * 
  * @see https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
  */
-function getTextWidth(inputText, fontSize, fontFamily) {
+function getTextWidth(inputText, isBold, isItalic, fontSize, fontFamily) {
   // re-use canvas object for better performance
   var canvas = document.createElement("canvas");
   var context = canvas.getContext("2d");
-  var font = fontSize + "px " + fontFamily;
+  var style = '';
+  if(isBold){
+    style += 'bold '
+  }
+  if(isItalic){
+    style += 'italic '
+  }
+  var font = style + fontSize + "px " + fontFamily;
   context.font = font;
   var textWidth = context.measureText(inputText).width;
   return Math.ceil(textWidth)
@@ -204,7 +211,14 @@ class CanvasComponent extends React.Component {
   addTextBoxes(textBoxes, context) {
     for (var i = 0; i < textBoxes.length; i++) {
       var text = textBoxes[i];
-      context.font = text.fontSize + 'px ' + text.fontFamily;
+      var style = '';
+      if(text.isBold){
+        style += 'bold '
+      }
+      if(text.isItalic){
+        style += 'italic '
+      }
+      context.font = style + text.fontSize + 'px ' + text.fontFamily;
       context.strokeStyle = text.outlineColor;
       context.lineWidth = text.outlineWidth;
       context.strokeText(text.text, parseInt(text.textPosX), parseInt(text.textPosY));
@@ -222,7 +236,7 @@ class CanvasComponent extends React.Component {
    * 
    */
   textSelected(text, x, y) {
-    return (x >= parseInt(text.textPosX) && x <= (parseInt(text.textPosX) + getTextWidth(text.text, text.fontSize, text.fontFamily)) && y >= (parseInt(text.textPosY) - text.fontSize) && y <= parseInt(text.textPosY));
+    return (x >= parseInt(text.textPosX) && x <= (parseInt(text.textPosX) + getTextWidth(text.text, text.isBold, text.isItalic, text.fontSize, text.fontFamily)) && y >= (parseInt(text.textPosY) - text.fontSize) && y <= parseInt(text.textPosY));
   }
 
   imageSelected(image, x, y) {
@@ -396,7 +410,12 @@ class CanvasComponent extends React.Component {
     return ({ dx: dx, dy: dy })
   }
 
-
+/**
+ * 
+ * @param {index} i index of text
+ * Select text according to the index
+ *  
+ */
   selectText(i) {
     console.log('text-input_' + i)
     const input = document.getElementById('text-input_' + i);
