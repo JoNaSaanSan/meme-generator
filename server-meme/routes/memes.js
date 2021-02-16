@@ -389,4 +389,9 @@ router.post("/comment", verifyToken, upload.fields([]), (req, res) => {
   });
 });
 
+router.post("/creatememefromurl", upload.fields([]), (res, req) => {
+  let memes = req.db.get('memes');
+  //TODO
+});
+
 module.exports = router;
