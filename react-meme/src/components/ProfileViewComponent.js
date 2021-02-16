@@ -85,6 +85,8 @@ class ProfileViewComponent extends React.Component {
         </div>
       </div>
 
+        
+
     </div>
     )
   }

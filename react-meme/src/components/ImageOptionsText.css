@@ -1,0 +1,68 @@
+.container{
+    width: 100%;
+}
+
+.above-image_container{
+    display: block;
+    background-color: pink;
+    width: 700px;
+    height: 40px;
+}
+
+.image-titel{
+    float: left;
+    height: 40px;
+    margin-top: -4%;
+    background-color: chartreuse;
+}
+
+.options-top_container{
+    float: right;
+    background-color: red;
+}
+
+.share-download{
+    display: flex;
+    float: left;
+}
+
+.image_container{
+    width : 700px;
+    height: 700px;    
+    display: flex;
+    justify-content: center;
+    background-color: red;
+}
+
+.image{
+    height: 100%;
+}
+
+.points-commits{
+    display: flex;
+    float: left;
+}
+
+.voting-point{
+    margin-top: 10px;
+    margin-right: 20px;
+}
+
+.option_container{
+
+}
+
+.option-button{
+    height: 30px;
+    width: 30px;
+    background-color: white;
+    border-radius: 5px;
+    border: none;
+    margin-right: 0.5%;
+}
+
+.icon{
+    height: 90%;
+    margin-left: -20%;
+    margin-top: 5%;
+}

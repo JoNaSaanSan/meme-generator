@@ -1,4 +1,4 @@
-
+import ImageOptionsText from './ImageOptionsText';
 const React = require('react');
 require('./BrowseViewComponent.css');
 
@@ -9,8 +9,10 @@ class BrowseViewComponent extends React.Component {
 
     return (
 
-      <div>
-     
+      <div className="imageOptions_container">
+        <div>
+          <ImageOptionsText/>
+        </div>
       </div>
     )
   }
