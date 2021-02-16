@@ -1,4 +1,15 @@
+import { connect } from 'react-redux';
+import { authenticateUser } from './../../redux/action'
+import Store from './../../redux/store';
 const React = require('react');
+
+// Redux: AUTHENTICATE USER
+function mapDispatchToProps(dispatch) {
+    return {
+        authenticateUser: user => dispatch(authenticateUser(user))
+    };
+}
+
 
 class UserAuth extends React.Component {
     constructor(props) {
@@ -8,6 +19,7 @@ class UserAuth extends React.Component {
         {
             isLoginMode: false,
             isRegisterMode: false,
+            isSignedIn: false,
             URL: 'http://localhost:3000',
         }
 
@@ -62,7 +74,9 @@ class UserAuth extends React.Component {
         fetch(this.state.URL + '/users/login', requestOptions)
             .then(async response => {
                 const data = await response.json();
+                this.props.authenticateUser({ username: data.username, email: data.email, accessToken: data.accessToken, isSignedIn: true })
                 console.log(data);
+                document.getElementById("login-close").click();
                 // check for error response
                 if (!response.ok) {
                     // get error message from body or default to response status
@@ -115,6 +129,9 @@ class UserAuth extends React.Component {
     }
 
     render() {
+
+        Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
+
         return (
             <div className="user-login">
                 {(this.state.isLoginMode) ?
@@ -155,4 +172,4 @@ class UserAuth extends React.Component {
     }
 }
 
-export default UserAuth;
+export default connect(null, mapDispatchToProps)(UserAuth);

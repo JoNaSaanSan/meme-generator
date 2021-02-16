@@ -1,4 +1,5 @@
 import LoginComponent from './Login/LoginComponent';
+import Store from '../redux/store';
 import { Link } from 'react-router-dom'
 const React = require('react');
 require('./HeaderComponent.css');
@@ -7,6 +8,7 @@ require('./HeaderComponent.css');
 class HeaderComponent extends React.Component {
 
     render() {
+
         return (
             <div className="header-view">
                 <div id="menu-view">

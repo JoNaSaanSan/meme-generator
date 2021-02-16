@@ -24,13 +24,20 @@ class SliderComponent extends React.Component {
 
   }
 
+
   // befülle beim Laden der Seite leere Container mit Bildern nach indexposition 0
   componentDidMount() { 
     this.createImages(this.state.indexArray);
-    this.getAllProfileData();
+    //this.getAllProfileData();
     // Redux: Update Signed in State
     //Store.subscribe(() => this.setState({userToken: Store.getState().user.userToken }), () => console.log("acessToken: " + this.state.userToken))
     
+  }
+
+  // befülle beim Updaten des Memes Arrays leere Container mit Bildern nach indexposition 0
+  componentDidUpdate(prevProps) {
+    if(this.props.memesArray !== prevProps.memesArray)
+    this.createImages(this.state.indexArray); console.log("did mount") 
   }
 
   //get all profiles [{username, email, memes, upvotes, downvotes}]
@@ -57,6 +64,8 @@ class SliderComponent extends React.Component {
       }
     }*/
   }
+
+
 
 
   createImages(x) {

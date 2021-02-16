@@ -14,12 +14,12 @@ class IfServerComponent extends React.Component {
     }
 
     // Fetch all images from /samplememes and store them into a state array
-    fetchImages(URL) {
+    fetchImages(url) {
         this.setState({
             isFetching: true
         });
 
-        fetch(URL)
+        fetch(url)
             .then(response => {
                 return response.json();
             })
@@ -43,7 +43,7 @@ class IfServerComponent extends React.Component {
     render() {
         return (
             <div>
-                <button onClick={() => this.fetchImages(this.props.URL)} id="fetch-button" className="button" > {this.props.getImagesButtonName} </button>
+                <button onClick={() => this.fetchImages(this.props.URL  + '/memes/sampleMemes')} id="fetch-button" className="button" > {this.props.getImagesButtonName} </button>
             </div>
         )
     }

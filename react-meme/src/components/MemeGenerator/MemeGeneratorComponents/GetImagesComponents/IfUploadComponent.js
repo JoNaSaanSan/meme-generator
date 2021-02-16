@@ -28,10 +28,10 @@ class IfUploadComponent extends React.Component {
             const file = files[i];
             if (!file.type.match('image'))
                 continue;
-            dimensions.push(new Promise(function (resolve, reject) {
+            dimensions.push(new Promise((resolve, reject) => {
                 var src = URL.createObjectURL(file);
                 var img = new Image();
-                img.onload = function () {
+                img.onload = () => {
                     resolve({ width: img.width, height: img.height });
                     URL.revokeObjectURL(src);
                 };
@@ -39,8 +39,7 @@ class IfUploadComponent extends React.Component {
             }));
         }
 
-        var that = this;
-        Promise.all(dimensions).then(function (dims) {
+        Promise.all(dimensions).then((dims) => {
             let data = []
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
@@ -53,9 +52,9 @@ class IfUploadComponent extends React.Component {
                     url: URL.createObjectURL(file),
                 });
             }
-            that.setState({
+            this.setState({
                 isFetching: false,
-            }, () => that.props.setImagesArray(data, that.state.isFetching))
+            }, () => this.props.setImagesArray(data, this.state.isFetching))
         }).catch(function (errdims) {
             console.log(errdims)
         })

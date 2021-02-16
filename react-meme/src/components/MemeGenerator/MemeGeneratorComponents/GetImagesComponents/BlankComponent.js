@@ -24,7 +24,7 @@ class BlankComponent extends React.Component {
                 id: i,
                 name: 'Blank',
                 box_count: 2,
-                width: 1200, //Todo: User width and height from image
+                width: 1200, 
                 height: 1200,
                 url: canvas.toDataURL("image/png"),
             });

@@ -1,5 +1,5 @@
 import GetImagesComponents from './GetImagesComponent';
-import PreviewComponent from '../../Slider/PreviewComponent'
+import PreviewComponent from './PreviewComponent'
 import Store from '../../../redux/store';
 const React = require('react');
 require('./ControlsComponent.css');
@@ -11,6 +11,7 @@ class ControlsComponent extends React.Component {
 
     this.state = {
       isSignedIn: Store.getState().user.isSignedIn,
+      accessToken: Store.getState().user.accessToken, 
       imageMemeArray: null,
       index: 0,
       searchText: '',
@@ -159,7 +160,7 @@ class ControlsComponent extends React.Component {
 
 
   render() {
-    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
+    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken  }))
     return (
       <div className="control-view">
         <div>
@@ -184,9 +185,8 @@ class ControlsComponent extends React.Component {
           <input type="text" placeholder="400" name="canvasHeight" className="dimension-input-box" maxLength="3" value={this.props.canvasHeight} onChange={this.handleCanvasChange.bind(this)} />
         </div>
 
-
         <button name="imgFlipGenerate" onClick={this.createMeme} id="generate-button" className="button" > Generate Meme with Imgflip </button>
-        {this.state.isSignedIn ?
+        {(this.state.accessToken !== '') ?
           <div>
             <select name="memeVisibility" className="input-box" onChange={this.handleVisibilityChange.bind(this)} value={this.state.memeVisibility}>
               <option value="0">Unlisted</option>
@@ -198,7 +198,7 @@ class ControlsComponent extends React.Component {
         <button name="share" onClick={this.createMeme} id="share-button" className="button" > Share Meme</button>
         <button name="download" onClick={this.createMeme} id="download-button" className="button">Download Meme!</button>
 
-        <PreviewComponent samplesMemeArray={this.state.imageViewArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />
+        <PreviewComponent samplesMemeArray={this.state.imageMemeArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />
        
       </div>
     )
