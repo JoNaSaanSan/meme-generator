@@ -1,4 +1,6 @@
 import ImageAndOptions from './ImageAndOptions';
+import Store from '../../redux/store';
+
 const React = require('react');
 //const { default: ImageAndOptions } = require('./ImageAndOptions');
 require('./SliderComponent.css');
@@ -9,7 +11,12 @@ class SliderComponent extends React.Component {
     super(props);
     this.state = {
       imageContainerArray: new Array(4), // sichtbare Bilder in Array
-      indexArray: 0
+      indexArray: 0,
+      allUserInfos: [],
+      //email: store.getState().user.email,
+      userToken: Store.getState().user.userToken,
+      userGenMemes: [],
+      userUpvotes: [] //?
     }
     this.createImages = this.createImages.bind(this)
     this.createImageContainers = this.createImageContainers.bind(this)
@@ -18,7 +25,39 @@ class SliderComponent extends React.Component {
   }
 
   // befülle beim Laden der Seite leere Container mit Bildern nach indexposition 0
-  componentDidMount() { this.createImages(this.state.indexArray); console.log("did mount") }
+  componentDidMount() { 
+    this.createImages(this.state.indexArray);
+    this.getAllProfileData();
+    // Redux: Update Signed in State
+    //Store.subscribe(() => this.setState({userToken: Store.getState().user.userToken }), () => console.log("acessToken: " + this.state.userToken))
+    
+  }
+
+  //get all profiles [{username, email, memes, upvotes, downvotes}]
+  getAllProfileData(){
+    var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MDJhZTM1OTc5OWQ4MDJkYjA4YTRjOGQiLCJpYXQiOjE2MTM0Nzg0MjEsImV4cCI6MTYxMzU2NDgyMX0.UCmL0JPFKC8QY5-cInYNDxmLDe7Qh0GpFMwcwOSVqes"
+    // GET request
+    fetch('localhost:3000/users/getprofile', token).then(response => {
+      return response.json();
+    })
+    .then(data => {
+     // console.log("DATA: "+ data.email)
+      this.setState({allUserInfos: data}, () => this.getProfileData(data))
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+
+  getProfileData(data){
+    console.log("AllUserInfos" + this.state.allUserInfos)
+    /*
+    for(var i=0; i< data.length; i++){
+      if(data[i].email === this.state.email){
+          this.setState({userGenMemes: data[i].memes, userUpvotes: data[i].upvotes})
+      }
+    }*/
+  }
+
 
   createImages(x) {
     if(this.props.memesArray === undefined){
