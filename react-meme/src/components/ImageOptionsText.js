@@ -9,17 +9,27 @@ require('./ImageOptionsText.css');
 
 class ImageOptionsText extends React.Component {
     state = {  }
+
+    upvote(){
+        console.log("upvote");
+    }
+
+    downvote(){
+        console.log("downvote");
+    }
+
     render() { 
         return (
             <div className= "container">
+                <p className="username">Username</p>
                 <div className= "above-image_container">
-                    <div className="image-titel">
-                        <h1 >Ein wunderschöner Löwe</h1>
-                    </div>
+                    
+                        <h1 className="image-titel">{this.props.title}</h1>
+                    
                     <div className="options-top_container">
                         <div className="share-download">
-                            <button className="option-button"><img src= {download} className="icon"/></button>
-                            <button className="option-button"><img src= {share} className="icon"/></button>
+                            <button className="option-button"> <img src= {download} className="icon"/> </button>
+                            <button className="option-button"> <img src= {share} className="icon"/> </button>
                         </div>
                     </div>
                 </div>
@@ -31,11 +41,13 @@ class ImageOptionsText extends React.Component {
                     <p className= "voting-point">Comments: 10</p>
                 </div>
                 <div className="option_container">
-                    <button className="option-button"><img src= {upvote} className="icon"/></button>
-                    <button className="option-button"><img src= {downvote} className="icon"/></button>
+                    <button className="option-button"><img src= {upvote} className="icon" onClick={() => this.upvote()}/></button>
+                    <button className="option-button"><img src= {downvote} className="icon" onClick={() => this.downvote()}/></button>
                     <button className="option-button"><img src= {comments} className="icon"/></button>
                     
                 </div>
+                
+                
             </div>
         );
     }
