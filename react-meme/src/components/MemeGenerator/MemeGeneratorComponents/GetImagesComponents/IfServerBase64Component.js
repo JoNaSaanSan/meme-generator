@@ -29,13 +29,23 @@ class IfServerBase64Component extends React.Component {
             tmpUrl = 'https://' + this.state.inputUrl
         }
 
-        fetch(url + '?url=' + tmpUrl + '?token=' + this.state.accessToken)
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-access-token': this.state.accessToken,
+            },
+        };
+
+        fetch(url, requestOptions)
             .then(async response => {
 
                 const data = await response.json();
                 const image = 'data:image/png;base64,' + data.base64_img;
                 const inputBoxes = data.inputBoxes;
-                const boxCount = data.boxCount;
+                const drawPaths = data.drawPaths;
+                const additionalImages = data.additionalImages;
+                const currentMeme = data.currentMeme;
                 console.log(image)
                 fetch(image)
                     .then(res => res.blob()).then(res => {
@@ -49,11 +59,13 @@ class IfServerBase64Component extends React.Component {
                             tmpArr.push({
                                 id: 1,
                                 name: this.props.getImagesButtonName,
-                                box_count: boxCount,
+                                box_count: currentMeme.box_count,
                                 width: dims.width,
                                 height: dims.height,
                                 url: URL.createObjectURL(res),
                                 inputBoxes: inputBoxes,
+                                drawPaths: drawPaths,
+                                additionalImages: additionalImages,
                             })
                             this.setState({
                                 isFetching: false

@@ -40,14 +40,7 @@ class IfUrlComponent extends React.Component {
         console.log(this.state.inputUrl)
        // console.log( URL.createObjectURL(this.state.inputUrl))
       const dimensions = getImageDimensions(this.state.inputUrl);
-      /*  const dimensions = new Promise((resolve, reject) => {
-            var src = this.state.inputUrl;
-            var img = new Image();
-            img.onload = () => {
-                resolve({ width: img.width, height: img.height });
-            };
-            img.src = src;
-        });*/
+
 
         dimensions.then((dims) => {
             console.log(dimensions.width)

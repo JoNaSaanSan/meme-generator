@@ -30,7 +30,7 @@ class MemeGenerator extends React.Component {
     super(props)
     this.state = {
       URL: 'http://localhost:3000',
-      currentMeme: '',
+      currentTemplate: '',
       generatedMeme: '',
       inputBoxes: [],
       drawPaths: [],
@@ -79,8 +79,8 @@ class MemeGenerator extends React.Component {
         case 'publish':
           this.publishMeme()
           break;
-        case 2:
-          //public
+        case 'share':
+   
           break;
         default:
       }
@@ -135,7 +135,9 @@ class MemeGenerator extends React.Component {
     )
   }
 
-
+/**
+ * function to trigger the canvas2base64 function in child to get the entire canvas as a base64 string which is returned in the imageretrieved function
+ */
   retrieveImage() {
     this.setState(
       prevState => ({
@@ -143,6 +145,9 @@ class MemeGenerator extends React.Component {
       }))
   }
 
+  /**
+ * function to trigger the canvas2base64 function in child to get the background as base64 string which is return in the template retrieved function
+ */
   retrieveTemplate() {
     this.setState(
       prevState => ({
@@ -158,7 +163,7 @@ class MemeGenerator extends React.Component {
 
     let canvasdata = this.state.imageData.replace("image/png", "image/octet-stream");
     const a = document.createElement("a");
-    a.download = this.state.currentMeme.name + '.png';
+    a.download = this.state.currentTemplate.name + '.png';
     a.href = canvasdata;
     document.body.appendChild(a);
     a.click();
@@ -166,21 +171,21 @@ class MemeGenerator extends React.Component {
 
   publishMeme() {
     var object2Publish = {};
-    object2Publish.accessToken = this.state.accessToken;
-    object2Publish.name = this.state.currentMeme.name;
+    object2Publish.title = this.state.currentTemplate.name;
     object2Publish.base_64 = this.state.imageData;
     object2Publish.visibility = this.state.memeVisibility;
 
     // Title
     // Token
     // Base64
-    // private Unlisted Public
+    // unlisted private Public
 
     console.log(object2Publish)
     const requestOptions = {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-access-token': this.state.accessToken
       },
       body: JSON.stringify(object2Publish)
     };
@@ -204,16 +209,17 @@ class MemeGenerator extends React.Component {
       });
   }
 
+  /**
+   * Sends a Post request to the server with the current meme state and etc
+   */
   saveDraft() {
     var object2Save = {};
-    object2Save.accessToken = this.state.accessToken;
-    object2Save.name = this.state.currentMeme.name;
-    object2Save.currentMeme = this.state.currentMeme;
+    object2Save.title = this.state.currentTemplate.name;
+    object2Save.currentMeme = this.state.currentTemplate;
     object2Save.base_64 = this.state.templateData;
     object2Save.inputBoxes = this.state.inputBoxes;
     object2Save.drawPaths = this.state.drawPaths;
     object2Save.additionalImages = this.state.additionalImages;
-    object2Save.currentMeme = this.state.currentMeme;
 
     console.log(object2Save)
 
@@ -222,7 +228,8 @@ class MemeGenerator extends React.Component {
     const requestOptions = {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-access-token': this.state.accessToken
       },
       body: JSON.stringify(this.state.generatedMeme)
     };
@@ -250,9 +257,14 @@ class MemeGenerator extends React.Component {
     //this.setState(prevState => ({ downloadImageTrigger: !prevState.downloadImageTrigger }))
   }
 
+  /**
+   * 
+   * Sends Post request to server with enough data to generate a meme via image flip and open another tab which displays the meme
+   * 
+   */
   generateMemeImageFlip() {
     var object2Generate = {};
-    object2Generate.id = this.state.currentMeme.id;
+    object2Generate.id = this.state.currentTemplate.id;
     object2Generate.inputBoxes = this.state.inputBoxes
 
     console.log(object2Generate)
@@ -311,13 +323,15 @@ class MemeGenerator extends React.Component {
       newWidth = newHeight * wrh;
     }
     this.setState({
-      currentMeme: currentMemeFromChild,
+      currentTemplate: currentMemeFromChild,
       inputBoxes: currentMemeFromChild.inputBoxes,
       canvasWidth: newWidth,
       canvasHeight: newHeight,
+      drawPaths: currentMemeFromChild.drawPaths,
+      additionalImages: currentMemeFromChild.additionalImages,
     }, () => this.assignNewText2Textboxes(this.state.tmpInputTextBoxesArray))
 
-    console.log(this.state.currentMeme)
+  
   }
 
   /**
@@ -341,6 +355,12 @@ class MemeGenerator extends React.Component {
   }
 
 
+  /**
+   * 
+   * @param {*} path Array of position objects with x and y coordinates
+   * Adds a new array of positions to the draw path arrau
+   * 
+   */
   addPath(path) {
     if (path.length > 0) {
       this.setState(prevState => ({
@@ -349,12 +369,18 @@ class MemeGenerator extends React.Component {
     }
   }
 
+  /**
+   *  Removes last added path
+   */
   undoDrawing() {
     let drawPaths = [...this.state.drawPaths];
     drawPaths.pop();
     this.setState({ drawPaths });
   }
 
+  /**
+   * Removes all paths
+   */
   clearDrawing() {
     this.setState({
       drawPaths: [],
@@ -466,7 +492,6 @@ class MemeGenerator extends React.Component {
         <ControlsComponent
           URL={this.state.URL}
           generateMeme={this.generateMeme}
-          currentMeme={this.state.currentMeme}
           handleCanvasChange={this.handleCanvasChange}
           setCurrentMeme={this.setCurrentMeme}
           createMeme={this.createMeme}
@@ -474,7 +499,7 @@ class MemeGenerator extends React.Component {
           canvasHeight={this.state.canvasHeight} />
         <ImageComponent
           generateMeme={this.generateMeme}
-          currentMeme={this.state.currentMeme}
+          currentTemplate={this.state.currentTemplate}
           inputBoxes={this.state.inputBoxes}
           inputBoxesUpdated={this.state.inputBoxesUpdated}
           canvasWidth={this.state.canvasWidth}

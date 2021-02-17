@@ -79,7 +79,7 @@ class IfUploadComponent extends React.Component {
 
             var object2Publish = {};
             //object2Publish.accessToken = this.state.accessToken;
-            object2Publish.filename = file.name
+            object2Publish.title = file.name
             object2Publish.base_64 = reader.result
 
 
@@ -93,6 +93,7 @@ class IfUploadComponent extends React.Component {
                 },
                 body: JSON.stringify(object2Publish)
             };
+            //   /memes/uploadtemplate
             fetch(this.props.URL, requestOptions)
                 .then(async response => {
                     const data = await response.json();

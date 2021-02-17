@@ -20,13 +20,14 @@ class SliderComponent extends React.Component {
   // befülle beim Updaten des Memes Arrays leere Container mit Bildern nach indexposition 0
   componentDidUpdate(prevProps) {
     if(this.props.memesArray !== prevProps.memesArray)
-    this.createImages(this.state.indexArray); console.log("did mount") 
+    this.createImages(this.state.indexArray); 
   }
 
   createImages(x) {
     if(this.props.memesArray === undefined){
       return
     }
+
     // erstelle neues Array welches dann Ausgangsstatus für onClick ist
     var memesArray2 = [];
     // 0 - Anzahl angezeigter Bilder
@@ -37,8 +38,9 @@ class SliderComponent extends React.Component {
 
     }
     console.log("IndexArray: " + this.state.indexArray)
+    const indexArray = (this.state.indexArray + x + this.props.memesArray.length) % this.props.memesArray.length
     //update sichtbares Array, IndexPosition Bild ganz links
-    this.setState({ imageContainerArray: memesArray2, indexArray: (this.state.indexArray + x + (this.props.memesArray.length)) % this.props.memesArray.length })
+    this.setState({ imageContainerArray: memesArray2, indexArray })
   }
 
   /**
@@ -65,7 +67,9 @@ class SliderComponent extends React.Component {
   }
 
   handleClick(i){
-    console.log(i)
+    this.createImages(i)
+
+    console.log((this.state.indexArray + i + (this.props.memesArray.length)) % this.props.memesArray.length)
     this.props.selectedImage((this.state.indexArray + i + (this.props.memesArray.length)) % this.props.memesArray.length)
     
   }

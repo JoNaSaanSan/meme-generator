@@ -141,7 +141,6 @@ class CanvasComponent extends React.Component {
     var container = document.getElementById('canvas-container');
     container.style.width = this.state.canvasDimensions.width;
     container.height = this.state.canvasDimensions.height;
-    console.log(container)
     var canvas = document.getElementById('canvas-background');
     canvas.width = this.state.canvasDimensions.width;
     canvas.height = this.state.canvasDimensions.height;

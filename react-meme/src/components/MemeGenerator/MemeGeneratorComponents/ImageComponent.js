@@ -31,10 +31,10 @@ class ImageComponent extends React.Component {
 
     // When state is being updated
     componentDidUpdate(prevProps) {
-        if (this.props.currentMeme.url !== prevProps.currentMeme.url) {
-            this.loadImage(this.props.currentMeme.url).then(result => {
+        if (this.props.currentTemplate.url !== prevProps.currentTemplate.url) {
+            this.loadImage(this.props.currentTemplate.url).then(result => {
                 this.setState({
-                    currentImage: { ...this.props.currentMeme, image: result },
+                    currentImage: { ...this.props.currentTemplate, image: result },
                 })
             })
         }
@@ -161,7 +161,7 @@ class ImageComponent extends React.Component {
                                 <button onClick={() => this.addDrawing()} id="draw-button" className="button" > Stop Draw </button>
                             </div>}
                     </div>
-                    <h2 > {this.props.currentMeme.name} </h2>
+                    <h2 > {this.props.currentTemplate.name} </h2>
                     <div className="image-controls">
                         <div id="upload-button" className="button" >
                             <label htmlFor="additional-image-upload">
@@ -173,7 +173,7 @@ class ImageComponent extends React.Component {
                 <div className="canvas-view">
                     <CanvasComponent
                         currentImage={this.state.currentImage}
-                        currentName={this.props.currentMeme.name}
+                        currentName={this.props.currentTemplate.name}
                         inputBoxes={this.props.inputBoxes}
                         imageDimensions={this.props.imageDimensions}
                         retrieveImageTrigger={this.props.retrieveImageTrigger}

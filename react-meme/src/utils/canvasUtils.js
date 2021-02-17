@@ -22,3 +22,5 @@ export const getTextWidth = (inputText, isBold, isItalic, fontSize, fontFamily) 
     var textWidth = context.measureText(inputText).width;
     return Math.ceil(textWidth)
   }
+
+

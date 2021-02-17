@@ -70,27 +70,44 @@ class GetImagesComponents extends React.Component {
             let memeArray = [];
             for (var i = 0; i < data.length; i++) {
                 let tmpInputBoxes = [];
-                for (var b = 0; b < data[i].box_count; b++) {
-                    if (data[i].inputBoxes === undefined) {
-                        tmpInputBoxes.push(new TextBoxes(
-                            b,
-                            initializeText.text,
-                            initializeText.textPosX,
-                            b * initializeText.textPosY + 50,
-                            initializeText.fontColor,
-                            initializeText.fontFamily,
-                            initializeText.fontSize,
-                            initializeText.outlineWidth,
-                            initializeText.outlineColor,
-                            initializeText.isBold,
-                            initializeText.isItalics)
-                        );
-                    } else {
-                        tmpInputBoxes.push(data[i].inputBoxes[b])
+                let tmpDrawPaths = [];
+                let tmpAdditionalImages = [];
+
+
+                    for (var b = 0; b < data[i].box_count; b++) {
+                        if (data[i].inputBoxes === undefined) {
+                            tmpInputBoxes.push(new TextBoxes(
+                                b,
+                                initializeText.text,
+                                initializeText.textPosX,
+                                b * initializeText.textPosY + 50,
+                                initializeText.fontColor,
+                                initializeText.fontFamily,
+                                initializeText.fontSize,
+                                initializeText.outlineWidth,
+                                initializeText.outlineColor,
+                                initializeText.isBold,
+                                initializeText.isItalics)
+                            );
+                        } else {
+                            tmpInputBoxes.push(data[i].inputBoxes[b])
+                        }
+                    }
+                
+
+                if (data[i].drawPaths !== undefined) {
+                    for (var b = 0; b < data[i].drawPaths.length; b++) {
+                        tmpDrawPaths.push(data[i].drawPaths[b])
                     }
                 }
 
-                var tmp = new Meme(data[i].url, data[i].id, data[i].width, data[i].height, data[i].name, data[i].box_count, tmpInputBoxes);
+                if (data[i].tmpAdditionalImages !== undefined) {
+                    for (var b = 0; b < data[i].tmpAdditionalImages.length; b++) {
+                        tmpAdditionalImages.push(data[i].tmpAdditionalImages[b])
+                    }
+                }
+
+                var tmp = new Meme(data[i].url, data[i].id, data[i].width, data[i].height, data[i].name, data[i].box_count, tmpInputBoxes, tmpDrawPaths, tmpAdditionalImages);
                 memeArray.push(tmp)
             }
             this.props.setImagesArray(memeArray)
@@ -111,7 +128,7 @@ class GetImagesComponents extends React.Component {
                             <IfServerBase64Component setImagesArray={this.setImagesArray} URL={this.props.URL + '/memes/loadsavedTemplates'} getImagesButtonName={"Load Saved Templates"} />
                             <IfServerComponent setImagesArray={this.setImagesArray} URL={this.props.URL} getImagesButtonName={"ImgFlip"} />
                             <IfScreenshotFromUrlComponent setImagesArray={this.setImagesArray} URL={this.props.URL + '/memes/templatefromurl'} getImagesButtonName={"Get Screenshot from URL "} />
-                            <IfServerBase64Component setImagesArray={this.setImagesArray} URL={this.props.URL + '/memes/loaddraft'} getImagesButtonName={"Load Drafts"} />
+                            <IfServerBase64Component setImagesArray={this.setImagesArray} URL={this.props.URL + '/memes/loadDrafts'} getImagesButtonName={"Load Drafts"} />
                             <IfUploadComponent setImagesArray={this.setImagesArray} URL={this.props.URL + '/memes/uploadtemplate'} />
                             <IfUrlComponent setImagesArray={this.setImagesArray} />
                         </div>
