@@ -1,7 +1,7 @@
 import ControlsComponent from './MemeGeneratorComponents/ControlsComponent';
 import ImageComponent from './MemeGeneratorComponents/ImageComponent';
 import TextUIComponent from './MemeGeneratorComponents/TextUIComponent';
-import Store from '../../redux/store';
+import GenerateMemeComponent from './MemeGeneratorComponents/GenerateMemeComponent';
 import TextBoxes from './TextBoxes';
 require('./MemeGenerator.css');
 const React = require('react');
@@ -35,7 +35,6 @@ class MemeGenerator extends React.Component {
       inputBoxes: [],
       drawPaths: [],
       additionalImages: [],
-      isSignedIn: Store.getState().user.isSignedIn,
       inputBoxesUpdated: false,
       tmpInputTextBoxesArray: [],
       canvasWidth: 0,
@@ -43,12 +42,10 @@ class MemeGenerator extends React.Component {
       retrieveImageTrigger: false,
       memeCreationEvent: 0,
       memeVisibility: -1,
-      accessToken: null,
       maxImageSize: '',
       imageData: null,
       templateData: null,
     }
-
 
     this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
     this.handleCanvasChange = this.handleCanvasChange.bind(this);
@@ -59,39 +56,26 @@ class MemeGenerator extends React.Component {
     this.undoDrawing = this.undoDrawing.bind(this);
     this.clearDrawing = this.clearDrawing.bind(this);
     this.clearImages = this.clearImages.bind(this);
-    this.shareMeme = this.shareMeme.bind(this);
-    this.downloadImage = this.downloadImage.bind(this);
-    this.generateMemeImageFlip = this.generateMemeImageFlip.bind(this);
-    this.imageRetrieved = this.imageRetrieved.bind(this)
-    this.templateRetrieved = this.templateRetrieved.bind(this)
-    this.createMeme = this.createMeme.bind(this);
+    this.imageRetrieved = this.imageRetrieved.bind(this);
+    this.templateRetrieved = this.templateRetrieved.bind(this);
+    this.retrieveTemplate = this.retrieveTemplate.bind(this);
+    this.retrieveImage = this.retrieveImage.bind(this);
+    this.createMeme = this.createMeme.bind(this);;
 
   }
 
+  createMeme(event, memeVisibility, maxImageSize) {
+    if (event === undefined)
+        return;
+    console.log(event)
+    console.log("Creation Event: " + event.target.name + memeVisibility)
+    //this.retrieveImage();
 
-  componentDidUpdate(prevPros, prevState) {
-    if (this.state.imageData !== prevState.imageData) {
-      switch (this.state.memeCreationEvent) {
-        case 'download':
-          //download
-          this.downloadImage();
-          break;
-        case 'publish':
-          this.publishMeme()
-          break;
-        case 'share':
-   
-          break;
-        default:
-      }
-    }
-
-    if (this.state.templateData !== prevState.templateData) {
-      console.log("template")
-      if (this.state.memeCreationEvent === 'save') {
-        this.saveDraft();
-      }
-    }
+    this.setState({
+        memeCreationEvent: event,
+        memeVisibility: memeVisibility,
+        maxImageSize: maxImageSize,
+    })
   }
 
   imageRetrieved(data) {
@@ -106,38 +90,10 @@ class MemeGenerator extends React.Component {
     })
   }
 
-  createMeme(event, memeVisibility, maxImageSize) {
-    if (event === undefined)
-      return;
-    console.log(event)
-    console.log("Creation Event: " + event.target.name + memeVisibility)
-    //this.retrieveImage();
-
-    this.setState({
-      memeCreationEvent: event.target.name,
-      memeVisibility: memeVisibility,
-      maxImageSize: maxImageSize,
-    }, () => {
-      if (event.target.name === "imgFlipGenerate") {
-        this.generateMemeImageFlip();
-      }
-
-      if (event.target.name === "download") {
-        this.retrieveImage();
-      }
-      if (event.target.name === "publish") {
-        this.retrieveImage();
-      }
-      if (event.target.name === "save") {
-        this.retrieveTemplate();
-      }
-    }
-    )
-  }
-
-/**
- * function to trigger the canvas2base64 function in child to get the entire canvas as a base64 string which is returned in the imageretrieved function
- */
+  
+  /**
+   * function to trigger the canvas2base64 function in child to get the entire canvas as a base64 string which is returned in the imageretrieved function
+   */
   retrieveImage() {
     this.setState(
       prevState => ({
@@ -154,152 +110,6 @@ class MemeGenerator extends React.Component {
         retrieveTemplateTrigger: !prevState.retrieveTemplateTrigger
       }))
   }
-
-
-  /**
-   * Handles download image button presses via a boolean that is passed to the child
-   */
-  downloadImage() {
-
-    let canvasdata = this.state.imageData.replace("image/png", "image/octet-stream");
-    const a = document.createElement("a");
-    a.download = this.state.currentTemplate.name + '.png';
-    a.href = canvasdata;
-    document.body.appendChild(a);
-    a.click();
-  }
-
-  publishMeme() {
-    var object2Publish = {};
-    object2Publish.title = this.state.currentTemplate.name;
-    object2Publish.base_64 = this.state.imageData;
-    object2Publish.visibility = this.state.memeVisibility;
-
-    // Title
-    // Token
-    // Base64
-    // unlisted private Public
-
-    console.log(object2Publish)
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': this.state.accessToken
-      },
-      body: JSON.stringify(object2Publish)
-    };
-    fetch(this.state.URL + '/memes/publishMeme', requestOptions)
-      .then(async response => {
-        const data = await response.json();
-        console.log(data);
-        // check for error response
-        if (!response.ok) {
-          // get error message from body or default to response status
-          const error = (data && data.message) || response.status;
-          return Promise.reject(error);
-        }
-
-      })
-      .catch(error => {
-        this.setState({
-          errorMessage: error.toString()
-        });
-        console.error('There was an error!', error);
-      });
-  }
-
-  /**
-   * Sends a Post request to the server with the current meme state and etc
-   */
-  saveDraft() {
-    var object2Save = {};
-    object2Save.title = this.state.currentTemplate.name;
-    object2Save.currentMeme = this.state.currentTemplate;
-    object2Save.base_64 = this.state.templateData;
-    object2Save.inputBoxes = this.state.inputBoxes;
-    object2Save.drawPaths = this.state.drawPaths;
-    object2Save.additionalImages = this.state.additionalImages;
-
-    console.log(object2Save)
-
-    // POST request using fetch with error handling
-
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': this.state.accessToken
-      },
-      body: JSON.stringify(this.state.generatedMeme)
-    };
-    fetch(this.props.URL + '/memes/saveDraft', requestOptions)
-      .then(async response => {
-        const data = await response.json();
-        console.log(data);
-        // check for error response
-        if (!response.ok) {
-          // get error message from body or default to response status
-          const error = (data && data.message) || response.status;
-          return Promise.reject(error);
-        }
-      })
-      .catch(error => {
-        this.setState({
-          errorMessage: error.toString()
-        });
-        console.error('There was an error!', error);
-      });
-
-  }
-
-  shareMeme() {
-    //this.setState(prevState => ({ downloadImageTrigger: !prevState.downloadImageTrigger }))
-  }
-
-  /**
-   * 
-   * Sends Post request to server with enough data to generate a meme via image flip and open another tab which displays the meme
-   * 
-   */
-  generateMemeImageFlip() {
-    var object2Generate = {};
-    object2Generate.id = this.state.currentTemplate.id;
-    object2Generate.inputBoxes = this.state.inputBoxes
-
-    console.log(object2Generate)
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(object2Generate)
-    };
-    fetch(this.state.URL + '/memes/generateMeme', requestOptions)
-      .then(async response => {
-        const data = await response.json();
-        console.log(data);
-        // check for error response
-        if (!response.ok) {
-          // get error message from body or default to response status
-          const error = (data && data.message) || response.status;
-          return Promise.reject(error);
-        }
-
-        var tmp = {};
-        tmp.url = data.data.url;
-        window.open(tmp.url, "_blank")
-
-
-      })
-      .catch(error => {
-        this.setState({
-          errorMessage: error.toString()
-        });
-        console.error('There was an error!', error);
-      });
-  }
-
 
   /**
    * 
@@ -331,7 +141,7 @@ class MemeGenerator extends React.Component {
       additionalImages: currentMemeFromChild.additionalImages,
     }, () => this.assignNewText2Textboxes(this.state.tmpInputTextBoxesArray))
 
-  
+
   }
 
   /**
@@ -485,8 +295,6 @@ class MemeGenerator extends React.Component {
 
   render() {
     // Redux: Update Signed in State
-    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
-
     return (
       <div className="generator-view">
         <ControlsComponent
@@ -523,6 +331,20 @@ class MemeGenerator extends React.Component {
           currentInputBoxes={this.state.inputBoxes}
           setInputBoxes={this.setInputBoxes}
           addTextBoxes={this.addTextBoxes}
+        />
+        <GenerateMemeComponent
+          URL={this.state.URL}
+          imageData={this.state.imageData}
+          templateData={this.state.templateData}
+          retrieveImage={this.retrieveImage}
+          retrieveTemplate={this.retrieveTemplate}
+          inputBoxes={this.state.inputBoxes}
+          drawPaths={this.state.drawPaths}
+          additionalImages={this.state.additionalImages}
+          memeCreationEvent={this.state.memeCreationEvent}
+          memeVisibility={this.state.memeVisibility}
+          maxImageSize={this.state.maxImageSize}
+          currentTemplate={this.state.currentTemplate}
         />
 
       </div>

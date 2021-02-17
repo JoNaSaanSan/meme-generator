@@ -21,6 +21,11 @@ class SliderComponent extends React.Component {
   componentDidUpdate(prevProps) {
     if(this.props.memesArray !== prevProps.memesArray)
     this.createImages(this.state.indexArray); 
+    if(this.props.indexPos !== prevProps.indexPos){
+      this.setState({
+        indexArray: this.props.indexPos
+      }, () =>   this.createImages(0))
+    }
   }
 
   createImages(x) {

@@ -8,7 +8,6 @@ class PreviewComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      index: 0,
       urlArray: []
     }
     this.selectedImage = this.selectedImage.bind(this)
@@ -45,7 +44,6 @@ class PreviewComponent extends React.Component {
   }
 
   selectedImage(index){
-    this.setState({index: index})
     this.props.setCurrentMemeState(index)
   }
 
@@ -54,7 +52,7 @@ class PreviewComponent extends React.Component {
     return (
 
       <div className="preview-box">
-        <SliderComponent memesArray = {this.state.urlArray} selectedImage = {this.selectedImage} optionsComponent = {false}/>
+        <SliderComponent memesArray = {this.state.urlArray} indexPos = {this.props.indexPos} selectedImage = {this.selectedImage} optionsComponent = {false}/>
       </div>
       
     )
