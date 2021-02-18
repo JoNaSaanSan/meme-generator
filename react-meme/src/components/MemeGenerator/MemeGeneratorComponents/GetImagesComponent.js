@@ -74,26 +74,26 @@ class GetImagesComponents extends React.Component {
                 let tmpAdditionalImages = [];
 
 
-                    for (var b = 0; b < data[i].box_count; b++) {
-                        if (data[i].inputBoxes === undefined) {
-                            tmpInputBoxes.push(new TextBoxes(
-                                b,
-                                initializeText.text,
-                                initializeText.textPosX,
-                                b * initializeText.textPosY + 50,
-                                initializeText.fontColor,
-                                initializeText.fontFamily,
-                                initializeText.fontSize,
-                                initializeText.outlineWidth,
-                                initializeText.outlineColor,
-                                initializeText.isBold,
-                                initializeText.isItalics)
-                            );
-                        } else {
-                            tmpInputBoxes.push(data[i].inputBoxes[b])
-                        }
+                for (var b = 0; b < data[i].box_count; b++) {
+                    if (data[i].inputBoxes === undefined) {
+                        tmpInputBoxes.push(new TextBoxes(
+                            b,
+                            initializeText.text,
+                            initializeText.textPosX,
+                            b * initializeText.textPosY + 50,
+                            initializeText.fontColor,
+                            initializeText.fontFamily,
+                            initializeText.fontSize,
+                            initializeText.outlineWidth,
+                            initializeText.outlineColor,
+                            initializeText.isBold,
+                            initializeText.isItalics)
+                        );
+                    } else {
+                        tmpInputBoxes.push(data[i].inputBoxes[b])
                     }
-                
+                }
+
 
                 if (data[i].drawPaths !== undefined) {
                     for (var b = 0; b < data[i].drawPaths.length; b++) {
@@ -106,8 +106,9 @@ class GetImagesComponents extends React.Component {
                         tmpAdditionalImages.push(data[i].tmpAdditionalImages[b])
                     }
                 }
+                var formatType = data[i].formatType || 'image';
 
-                var tmp = new Meme(data[i].url, data[i].id, data[i].width, data[i].height, data[i].name, data[i].box_count, tmpInputBoxes, tmpDrawPaths, tmpAdditionalImages);
+                var tmp = new Meme(data[i].url, data[i].id, data[i].width, data[i].height, data[i].name, data[i].box_count, tmpInputBoxes, tmpDrawPaths, tmpAdditionalImages, formatType);
                 memeArray.push(tmp)
             }
             this.props.setImagesArray(memeArray)

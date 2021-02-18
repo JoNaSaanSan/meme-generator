@@ -132,6 +132,7 @@ class MemeGenerator extends React.Component {
       newHeight = maxHeight;
       newWidth = newHeight * wrh;
     }
+    console.log(currentMemeFromChild)
     this.setState({
       currentTemplate: currentMemeFromChild,
       inputBoxes: currentMemeFromChild.inputBoxes,
@@ -172,6 +173,7 @@ class MemeGenerator extends React.Component {
    * 
    */
   addPath(path) {
+    console.log(path)
     if (path.length > 0) {
       this.setState(prevState => ({
         drawPaths: [...prevState.drawPaths, path]

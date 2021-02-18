@@ -1,5 +1,5 @@
 import Store from '../../../../redux/store';
-import { getImageDimensions } from '../../../../utils/imageServerHandling';
+import { getFormat, getImageDimensions, getVideoDimensions } from '../../../../utils/imageServerHandling';
 const React = require('react')
 
 // This component enables the user to upload images from the local s
@@ -26,14 +26,24 @@ class IfUploadComponent extends React.Component {
             isFetching: true,
         })
         var files = event.target.files;
-        var dimensions = [];
+        let dimensions = []
         for (var i = 0; i < files.length; ++i) {
             const file = files[i];
-            if (!file.type.match('image'))
-                continue;
+            let dim;
+            const formatType = getFormat(file.name);
+            console.log(formatType)
+            if (formatType === 'image') {
+                dim = getImageDimensions(file);
+            } else if (formatType === 'video') {
+                dim = getVideoDimensions(file);
+            } else if (formatType === 'gif') {
 
+            } else {
+                return
+            }
+            console.log(dim)
 
-            dimensions.push(getImageDimensions(file));
+            dimensions.push(dim);
 
             try {
                 this.uploadImagesToServer(file);
@@ -46,6 +56,7 @@ class IfUploadComponent extends React.Component {
             let data = []
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
+                const formatType = getFormat(file.name);
                 data.push({
                     id: i,
                     name: file.name,
@@ -53,6 +64,7 @@ class IfUploadComponent extends React.Component {
                     width: dims[i].width, //Todo: User width and height from image
                     height: dims[i].height,
                     url: URL.createObjectURL(file),
+                    formatType: formatType,
                 });
             }
             this.setState({
@@ -65,12 +77,12 @@ class IfUploadComponent extends React.Component {
     }
 
 
-/**
- * 
- * @param {*} file
- * Upload uploaded image to server
- *  
- */
+    /**
+     * 
+     * @param {*} file
+     * Upload uploaded image to server
+     *  
+     */
     uploadImagesToServer(file) {
         console.log(file)
         const reader = new FileReader();

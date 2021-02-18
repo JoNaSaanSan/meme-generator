@@ -29,13 +29,10 @@ class CanvasComponent extends React.Component {
   }
 
 
-  componentDidMount() {
-
-  }
 
   // When state is being updated
   componentDidUpdate(prevProps) {
-    if (this.props.currentImage.url !== prevProps.currentImage.url) {
+    if (this.props.currentTemplate.url !== prevProps.currentTemplate.url) {
       this.resizeCanvas(this.props.canvasWidth, this.props.canvasHeight, 1);
     }
 
@@ -66,7 +63,6 @@ class CanvasComponent extends React.Component {
    *  
    */
   resizeCanvas(newWidth, newHeight, wrh) {
-    console.log(newHeight, newWidth)
     this.setState({
       canvasDimensions: {
         width: newWidth,
@@ -138,15 +134,22 @@ class CanvasComponent extends React.Component {
    * Draws Canvas Background
    */
   drawBackground() {
-    var container = document.getElementById('canvas-container');
-    container.style.width = this.state.canvasDimensions.width;
-    container.height = this.state.canvasDimensions.height;
     var canvas = document.getElementById('canvas-background');
     canvas.width = this.state.canvasDimensions.width;
     canvas.height = this.state.canvasDimensions.height;
     var context = canvas.getContext('2d');
-    if (this.props.currentImage.image !== undefined)
-      this.drawImage(this.props.currentImage.image, 0, 0, canvas.width, canvas.height, context)
+    console.log(this.props.currentTemplate)
+    if (this.props.currentTemplate.formatType === 'image') {
+      if (this.props.currentTemplate.image !== undefined)
+        this.drawImage(this.props.currentTemplate.image, 0, 0, canvas.width, canvas.height, context)
+    }
+
+
+    if (this.props.currentTemplate.formatType === 'video') {
+      this.video2Canvas(this.props.currentTemplate, 0, 0, canvas.width, canvas.height, context)
+    }
+
+
   }
 
 
@@ -191,10 +194,10 @@ class CanvasComponent extends React.Component {
     for (var i = 0; i < textBoxes.length; i++) {
       var text = textBoxes[i];
       var style = '';
-      if(text.isBold){
+      if (text.isBold) {
         style += 'bold '
       }
-      if(text.isItalic){
+      if (text.isItalic) {
         style += 'italic '
       }
       context.font = style + text.fontSize + 'px ' + text.fontFamily;
@@ -389,12 +392,12 @@ class CanvasComponent extends React.Component {
     return ({ dx: dx, dy: dy })
   }
 
-/**
- * 
- * @param {index} i index of text
- * Select text according to the index
- *  
- */
+  /**
+   * 
+   * @param {index} i index of text
+   * Select text according to the index
+   *  
+   */
   selectText(i) {
     console.log('text-input_' + i)
     const input = document.getElementById('text-input_' + i);
@@ -439,7 +442,7 @@ class CanvasComponent extends React.Component {
     canvas.width = this.state.canvasDimensions.width;
     canvas.height = this.state.canvasDimensions.height;
     const context = canvas.getContext("2d");
-    
+
     const canvasBackground = document.getElementById("canvas-background");
     try {
       context.drawImage(canvasBackground, 0, 0);
@@ -450,16 +453,59 @@ class CanvasComponent extends React.Component {
     }
   }
 
+  video2Canvas(videoObject, posX, posY, width, height, context) {
+    console.log(videoObject.url)
+    var video = document.getElementById('video');
+    // var c2 = document.getElementById('c2');
+    // c2.width = 400;
+    //  c2.height = 400;
+    // var ctx2 = c2.getContext('2d');
+
+    video.addEventListener('play', () => {
+      console.log("play")
+      var width = video.videoWidth;
+      var height = video.videoHeight;
+      this.timerCallback(video, context, width, height);
+    }, false);
+
+    video.src = videoObject.url;
+  }
+
+  timerCallback(video, context, width, height) {
+    if (video.paused || video.ended) {
+      return;
+    }
+    this.computeFrame(video, context, width, height);
+    setTimeout(() => {
+      this.timerCallback(video, context, width, height);
+    }, 0);
+  }
+
+  computeFrame(video, context, width, height) {
+    context.drawImage(video, 0, 0, width, height);
+
+
+
+    //ctx2.putImageData(frame, 0, 0);
+    return;
+  }
+
   render() {
 
     return (
-      <div>
+      <div id="canvas-view">
         <div id="canvas-container" >
           <canvas id="canvas-background" />
           <canvas id="canvas-images" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp} />
           <canvas id="canvas-draw" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp} />
           <canvas id="canvas-text" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp} />
         </div>
+        {(this.props.currentTemplate.formatType === 'video') ?
+          <div id="video-container">
+            <video id="video" src="media/video.mp4" controls="true" crossorigin="anonymous" />
+          </div> : <div></div>
+        }
+
       </div>
     )
   }

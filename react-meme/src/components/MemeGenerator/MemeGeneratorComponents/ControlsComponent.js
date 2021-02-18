@@ -41,8 +41,6 @@ class ControlsComponent extends React.Component {
     this.setState({
       imageMemeArray: memeArray,
       index: 0,
-      width: 400,
-      height: 400,
     }, () => this.resetMemeState())
 
   }
@@ -75,6 +73,7 @@ class ControlsComponent extends React.Component {
    * resets meme index to 0
    */
   resetMemeState() {
+    console.log(this.state.imageMemeArray)
     this.setCurrentMemeState(0);
   }
 
@@ -151,6 +150,12 @@ class ControlsComponent extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   }
 
+  /**
+   * 
+   * @param {*} event 
+   * Function is called whenever a create meme event is triggered - sends the event to parent.
+   * 
+   */
   createMeme(event) {
     if (event.target.name === 'publish') {
       this.props.createMeme(event, this.state.memeVisibility, this.state.maxImageSize);

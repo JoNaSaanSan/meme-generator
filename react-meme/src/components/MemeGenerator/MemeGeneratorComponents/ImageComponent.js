@@ -1,4 +1,5 @@
 import CanvasComponent from './CanvasComponent';
+import { loadImage } from '../../../utils/imageServerHandling';
 const React = require('react');
 require('./ImageComponent.css');
 
@@ -15,7 +16,7 @@ class ImageComponent extends React.Component {
             isDrawMode: false,
             drawColor: '',
             drawBrushSize: 2,
-            currentImage: '',
+            currentTemplate: '',
         }
         this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
         this.addPath = this.addPath.bind(this);
@@ -32,11 +33,19 @@ class ImageComponent extends React.Component {
     // When state is being updated
     componentDidUpdate(prevProps) {
         if (this.props.currentTemplate.url !== prevProps.currentTemplate.url) {
-            this.loadImage(this.props.currentTemplate.url).then(result => {
-                this.setState({
-                    currentImage: { ...this.props.currentTemplate, image: result },
+            if (this.props.currentTemplate.formatType === 'image') {
+                loadImage(this.props.currentTemplate.url).then(result => {
+                    console.log(this.props.currentTemplate)
+                    this.setState({
+                        currentTemplate: { ...this.props.currentTemplate, image: result },
+                    })
                 })
-            })
+            } else if (this.props.currentTemplate.formatType === 'video') {
+                this.setState({
+                    currentTemplate: { ...this.props.currentTemplate},
+                })
+            }
+
         }
     }
 
@@ -80,7 +89,7 @@ class ImageComponent extends React.Component {
             var file = files[i];
             if (!file.type.match('image'))
                 continue;
-            images.push(this.loadImage(URL.createObjectURL(file)));
+            images.push(loadImage(URL.createObjectURL(file)));
         }
 
         Promise.all(images).then((result) => {
@@ -126,23 +135,11 @@ class ImageComponent extends React.Component {
         })
     }
 
-    loadImage(url) {
-        var result = new Promise((resolve, reject) => {
-            var img = new Image();
-            img.setAttribute('crossOrigin', 'anonymous');
-            img.onload = () => {
-                return resolve(img);
-            }
-            img.src = url;
-        })
-        return result;
-    }
-
-    imageRetrieved(data){
+    imageRetrieved(data) {
         this.props.imageRetrieved(data);
     }
 
-    templateRetrieved(data){
+    templateRetrieved(data) {
         this.props.templateRetrieved(data);
     }
 
@@ -172,7 +169,7 @@ class ImageComponent extends React.Component {
                 </div>
                 <div className="canvas-view">
                     <CanvasComponent
-                        currentImage={this.state.currentImage}
+                        currentTemplate={this.state.currentTemplate}
                         currentName={this.props.currentTemplate.name}
                         inputBoxes={this.props.inputBoxes}
                         imageDimensions={this.props.imageDimensions}

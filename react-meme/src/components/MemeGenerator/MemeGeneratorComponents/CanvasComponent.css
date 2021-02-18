@@ -1,5 +1,5 @@
 #canvas-container {
-  padding: 50px;
+  height: 500px;
   display: flex;
 }
 
@@ -7,4 +7,15 @@
   display: block;
   position: absolute;
   overflow: hidden;
+}
+
+#video-container {
+  bottom: 0;
+
+}
+
+#canvas-view {
+  padding: 50px;
+  display: block;
+
 }

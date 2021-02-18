@@ -28,6 +28,7 @@ class IfServerComponent extends React.Component {
                 this.setState({
                     isFetching: false
                 })
+                
                 this.props.setImagesArray(data, this.state.isFetching);
                 console.log("Fetching Memes is done!")
             }).catch(error => {
