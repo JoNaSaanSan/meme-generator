@@ -43,15 +43,6 @@ class CanvasComponent extends React.Component {
     this.drawImages();
     this.drawPaths();
     this.drawText();
-
-
-    if (prevProps.retrieveImageTrigger !== this.props.retrieveImageTrigger) {
-      this.retrieveImage();
-    }
-
-    if (prevProps.retrieveTemplateTrigger !== this.props.retrieveTemplateTrigger) {
-      this.retrieveTemplate();
-    }
   }
 
   /**
@@ -192,7 +183,11 @@ class CanvasComponent extends React.Component {
    */
   addTextBoxes(textBoxes, context) {
     for (var i = 0; i < textBoxes.length; i++) {
+
       var text = textBoxes[i];
+      if(!text.isVisible)
+      continue;
+
       var style = '';
       if (text.isBold) {
         style += 'bold '
@@ -406,52 +401,7 @@ class CanvasComponent extends React.Component {
     input.select();
   }
 
-  /**
-   *  Merges the different canvas and then passes base64 string of it to parent function image retrieved
-   */
-  retrieveImage = () => {
-    const canvas = document.createElement("canvas");
-    canvas.setAttribute("id", "canvas");
-    canvas.width = this.state.canvasDimensions.width;
-    canvas.height = this.state.canvasDimensions.height;
-    const context = canvas.getContext("2d");
 
-    const canvasBackground = document.getElementById("canvas-background");
-    const canvasImages = document.getElementById("canvas-images");
-    const canvasDraw = document.getElementById("canvas-draw");
-    const canvasText = document.getElementById("canvas-text");
-    try {
-      context.drawImage(canvasBackground, 0, 0);
-      context.drawImage(canvasImages, 0, 0);
-      context.drawImage(canvasDraw, 0, 0);
-      context.drawImage(canvasText, 0, 0);
-
-      const canvasdata = canvas.toDataURL("image/png");
-      this.props.imageRetrieved(canvasdata)
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  /**
-   * Retrieve base64 string of background image and call parent function template retrieved
-   */
-  retrieveTemplate = () => {
-    const canvas = document.createElement("canvas");
-    canvas.setAttribute("id", "canvas");
-    canvas.width = this.state.canvasDimensions.width;
-    canvas.height = this.state.canvasDimensions.height;
-    const context = canvas.getContext("2d");
-
-    const canvasBackground = document.getElementById("canvas-background");
-    try {
-      context.drawImage(canvasBackground, 0, 0);
-      const canvasdata = canvas.toDataURL("image/png");
-      this.props.templateRetrieved(canvasdata)
-    } catch (e) {
-      console.log(e)
-    }
-  }
 
   video2Canvas(videoObject, posX, posY, width, height, context) {
     console.log(videoObject.url)
@@ -505,6 +455,8 @@ class CanvasComponent extends React.Component {
             <video id="video" src="media/video.mp4" controls="true" crossorigin="anonymous" />
           </div> : <div></div>
         }
+
+        <image src=""> </image>
 
       </div>
     )

@@ -19,6 +19,7 @@ const initializeText = {
   outlineColor: '#000000',
   isItalic: false,
   isBold: false,
+  isVisible: true,
 }
 
 
@@ -31,7 +32,6 @@ class MemeGenerator extends React.Component {
     this.state = {
       URL: 'http://localhost:3000',
       currentTemplate: '',
-      generatedMeme: '',
       inputBoxes: [],
       drawPaths: [],
       additionalImages: [],
@@ -43,8 +43,6 @@ class MemeGenerator extends React.Component {
       memeCreationEvent: 0,
       memeVisibility: -1,
       maxImageSize: '',
-      imageData: null,
-      templateData: null,
     }
 
     this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
@@ -56,59 +54,18 @@ class MemeGenerator extends React.Component {
     this.undoDrawing = this.undoDrawing.bind(this);
     this.clearDrawing = this.clearDrawing.bind(this);
     this.clearImages = this.clearImages.bind(this);
-    this.imageRetrieved = this.imageRetrieved.bind(this);
-    this.templateRetrieved = this.templateRetrieved.bind(this);
-    this.retrieveTemplate = this.retrieveTemplate.bind(this);
-    this.retrieveImage = this.retrieveImage.bind(this);
     this.createMeme = this.createMeme.bind(this);;
 
   }
 
   createMeme(event, memeVisibility, maxImageSize) {
     if (event === undefined)
-        return;
-    console.log(event)
-    console.log("Creation Event: " + event.target.name + memeVisibility)
-    //this.retrieveImage();
-
+      return;
     this.setState({
-        memeCreationEvent: event,
-        memeVisibility: memeVisibility,
-        maxImageSize: maxImageSize,
+      memeCreationEvent: event,
+      memeVisibility: memeVisibility,
+      maxImageSize: maxImageSize,
     })
-  }
-
-  imageRetrieved(data) {
-    this.setState({
-      imageData: data,
-    })
-  }
-
-  templateRetrieved(data) {
-    this.setState({
-      templateData: data,
-    })
-  }
-
-  
-  /**
-   * function to trigger the canvas2base64 function in child to get the entire canvas as a base64 string which is returned in the imageretrieved function
-   */
-  retrieveImage() {
-    this.setState(
-      prevState => ({
-        retrieveImageTrigger: !prevState.retrieveImageTrigger
-      }))
-  }
-
-  /**
- * function to trigger the canvas2base64 function in child to get the background as base64 string which is return in the template retrieved function
- */
-  retrieveTemplate() {
-    this.setState(
-      prevState => ({
-        retrieveTemplateTrigger: !prevState.retrieveTemplateTrigger
-      }))
   }
 
   /**
@@ -291,6 +248,7 @@ class MemeGenerator extends React.Component {
         initializeText.outlineColor,
         initializeText.isBold,
         initializeText.isItalics,
+        initializeText.isVisible,
       )]
     }))
   }
@@ -305,6 +263,7 @@ class MemeGenerator extends React.Component {
           handleCanvasChange={this.handleCanvasChange}
           setCurrentMeme={this.setCurrentMeme}
           createMeme={this.createMeme}
+          currentTemplate={this.state.currentTemplate}
           canvasWidth={this.state.canvasWidth}
           canvasHeight={this.state.canvasHeight} />
         <ImageComponent
@@ -323,10 +282,6 @@ class MemeGenerator extends React.Component {
           handleInputBoxesChange={this.handleInputBoxesChange}
           clearDrawing={this.clearDrawing}
           undoDrawing={this.undoDrawing}
-          retrieveImageTrigger={this.state.retrieveImageTrigger}
-          retrieveTemplateTrigger={this.state.retrieveTemplateTrigger}
-          imageRetrieved={this.imageRetrieved}
-          templateRetrieved={this.templateRetrieved}
         />
         <TextUIComponent
           handleInputBoxesChange={this.handleInputBoxesChange}
@@ -336,10 +291,6 @@ class MemeGenerator extends React.Component {
         />
         <GenerateMemeComponent
           URL={this.state.URL}
-          imageData={this.state.imageData}
-          templateData={this.state.templateData}
-          retrieveImage={this.retrieveImage}
-          retrieveTemplate={this.retrieveTemplate}
           inputBoxes={this.state.inputBoxes}
           drawPaths={this.state.drawPaths}
           additionalImages={this.state.additionalImages}
@@ -347,6 +298,8 @@ class MemeGenerator extends React.Component {
           memeVisibility={this.state.memeVisibility}
           maxImageSize={this.state.maxImageSize}
           currentTemplate={this.state.currentTemplate}
+          canvasWidth={this.state.canvasWidth}
+          canvasHeight={this.state.canvasHeight}
         />
 
       </div>

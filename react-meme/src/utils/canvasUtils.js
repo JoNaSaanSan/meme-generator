@@ -23,4 +23,33 @@ export const getTextWidth = (inputText, isBold, isItalic, fontSize, fontFamily) 
     return Math.ceil(textWidth)
   }
 
+  export const retrieveImage = (canvasType, width, height) => {
+    return new Promise((resolve, reject) => {
+        const canvas = document.createElement("canvas");
+        canvas.setAttribute("id", "canvas");
+        canvas.width = width;
+        canvas.height =  height;
+        const context = canvas.getContext("2d");
+
+        const canvasBackground = document.getElementById("canvas-background");
+        const canvasImages = document.getElementById("canvas-images");
+        const canvasDraw = document.getElementById("canvas-draw");
+        const canvasText = document.getElementById("canvas-text");
+        try {
+            context.drawImage(canvasBackground, 0, 0);
+            const canvasTemplateData = canvas.toDataURL("image/png");
+            if (canvasType === 'background')
+                resolve(canvasTemplateData);
+
+            context.drawImage(canvasImages, 0, 0);
+            context.drawImage(canvasDraw, 0, 0);
+            context.drawImage(canvasText, 0, 0);
+
+            const canvasImageData = canvas.toDataURL("image/png");
+            resolve(canvasImageData);
+        } catch (e) {
+            console.log(e)
+        }
+    });
+}
 

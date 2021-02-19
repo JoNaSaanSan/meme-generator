@@ -1,5 +1,5 @@
 import CanvasComponent from './CanvasComponent';
-import { loadImage } from '../../../utils/imageServerHandling';
+import { loadImage } from '../../../utils/imageUtils';
 const React = require('react');
 require('./ImageComponent.css');
 
@@ -23,8 +23,6 @@ class ImageComponent extends React.Component {
         this.addDrawing = this.addDrawing.bind(this);
         this.addImage = this.addImage.bind(this);
         this.handleImageChange = this.handleImageChange.bind(this);
-        this.imageRetrieved = this.imageRetrieved.bind(this)
-        this.templateRetrieved = this.templateRetrieved.bind(this)
         this.undoDrawing = this.undoDrawing.bind(this);
         this.clearDrawing = this.clearDrawing.bind(this);
         this.clearImages = this.clearImages.bind(this);
@@ -135,15 +133,6 @@ class ImageComponent extends React.Component {
         })
     }
 
-    imageRetrieved(data) {
-        this.props.imageRetrieved(data);
-    }
-
-    templateRetrieved(data) {
-        this.props.templateRetrieved(data);
-    }
-
-
     render() {
         return (
             <div className="image-view">
@@ -173,10 +162,6 @@ class ImageComponent extends React.Component {
                         currentName={this.props.currentTemplate.name}
                         inputBoxes={this.props.inputBoxes}
                         imageDimensions={this.props.imageDimensions}
-                        retrieveImageTrigger={this.props.retrieveImageTrigger}
-                        imageRetrieved={this.imageRetrieved}
-                        retrieveTemplateTrigger={this.props.retrieveTemplateTrigger}
-                        templateRetrieved={this.templateRetrieved}
                         inputBoxesUpdated={this.props.inputBoxesUpdated}
                         additionalImages={this.props.additionalImages}
                         handleImageChange={this.handleImageChange}

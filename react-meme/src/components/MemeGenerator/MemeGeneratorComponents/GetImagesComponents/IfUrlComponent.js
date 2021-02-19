@@ -1,4 +1,4 @@
-import { getFormat, getImageDimensions, getVideoDimensions } from '../../../../utils/imageServerHandling';
+import { getFormat, getImageDimensions, getVideoDimensions } from '../../../../utils/imageUtils';
 const React = require('react')
 // This component enables the user to upload images from the local device
 class IfUrlComponent extends React.Component {
@@ -39,13 +39,13 @@ class IfUrlComponent extends React.Component {
 
         console.log(this.state.inputUrl)
         // console.log( URL.createObjectURL(this.state.inputUrl))
-        const format = getFormat(this.state.inputUrl);
+        const formatType = getFormat(this.state.inputUrl);
         let dimension = {}
-        if (format === 'image') {
+        if (formatType === 'image') {
             dimension = getImageDimensions(this.state.inputUrl);
-        } else if (format === 'video') {
+        } else if (formatType === 'video') {
             dimension = getVideoDimensions(this.state.inputUrl);;
-        } else if (format === 'gif') {
+        } else if (formatType === 'gif') {
             
         } else {
             return

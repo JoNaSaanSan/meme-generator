@@ -1,6 +1,7 @@
 import GetImagesComponents from './GetImagesComponent';
 import PreviewComponent from './PreviewComponent'
 import Store from '../../../redux/store';
+import GraphComponent from './GraphComponent';
 const React = require('react');
 require('./ControlsComponent.css');
 
@@ -187,6 +188,10 @@ class ControlsComponent extends React.Component {
           <button id="change-title-button" className="button" onClick={this.changeTitle}> Change Meme Title </button>
         </div>
         <div>
+          <GraphComponent currentTemplate={this.props.currentTemplate} />
+        </div>
+        <div> Canvas Size </div>
+        <div>
           <input type="text" placeholder="400" name="canvasWidth" className="dimension-input-box" maxLength="3" value={this.props.canvasWidth} onChange={this.handleCanvasChange.bind(this)} />
           <input type="text" placeholder="400" name="canvasHeight" className="dimension-input-box" maxLength="3" value={this.props.canvasHeight} onChange={this.handleCanvasChange.bind(this)} />
         </div>
@@ -202,10 +207,9 @@ class ControlsComponent extends React.Component {
               <option value="2">Public</option>
             </select>
             <button name="publish" onClick={this.createMeme} id="publish-button" className="button" > Publish Meme </button>
-            <button name="save" onClick={this.createMeme} id="save-button" className="button" > Save as Draft </button> </div> : <button className="button"> Sign in to publish or save! </button>}
-        <button name="share" onClick={this.createMeme} id="share-button" className="button" > Share Meme</button>
+            <button name="save" onClick={this.createMeme} id="save-button" className="button" > Save as Draft </button> </div> : <a className="button" href="#login">Sign in to publish or save!</a>}
+        <a name="share" href="#share" onClick={this.createMeme} id="share-button" className="button" > Share Meme</a>
         <button name="download" onClick={this.createMeme} id="download-button" className="button">Download Meme!</button>
-
         <PreviewComponent samplesMemeArray={this.state.imageMemeArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />
 
       </div>

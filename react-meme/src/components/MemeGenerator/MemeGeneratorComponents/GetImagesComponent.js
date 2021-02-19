@@ -22,7 +22,8 @@ const initializeText = {
     outlineWidth: '3',
     outlineColor: '#000000',
     isItalic: false,
-    isBold: false
+    isBold: false,
+    isVisible: true,
 }
 
 /**
@@ -87,7 +88,9 @@ class GetImagesComponents extends React.Component {
                             initializeText.outlineWidth,
                             initializeText.outlineColor,
                             initializeText.isBold,
-                            initializeText.isItalics)
+                            initializeText.isItalics,
+                            initializeText.isVisible,
+                            )
                         );
                     } else {
                         tmpInputBoxes.push(data[i].inputBoxes[b])

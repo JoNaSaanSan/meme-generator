@@ -1,5 +1,5 @@
 import Store from '../../../../redux/store';
-import { getFormat, getImageDimensions, getVideoDimensions } from '../../../../utils/imageServerHandling';
+import { getFormat, getImageDimensions, getVideoDimensions } from '../../../../utils/imageUtils';
 const React = require('react')
 
 // This component enables the user to upload images from the local s
