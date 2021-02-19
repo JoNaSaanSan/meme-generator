@@ -1,9 +1,23 @@
 .container{
     width: 100%;
+    margin-bottom: 10%;
+}
+
+.user-date_container{
+    display: flex;
+    float: left;
+    width: 100%;
 }
 
 .username{
     margin-bottom: 0%;
+    
+}
+
+.date{
+    margin-bottom: 0%;
+    margin-left: 3%;
+    color: grey;
 }
 
 .above-image_container{
@@ -74,4 +88,23 @@
     height: 90%;
     margin-left: -20%;
     margin-top: 5%;
+}
+
+.comments{
+    margin-top: 10px;
+}
+
+.input-text{
+    height: 30px;
+    width: 50%;
+    background-color: white;
+    border-radius: 5px;
+    border: none;
+    
+}
+
+.send{
+    width: max-content;
+    height: 30px;
+    margin-left: 0.5rem;
 }
