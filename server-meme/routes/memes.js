@@ -5,11 +5,9 @@ const axios = require('axios');
 var qs = require('qs');
 const fs = require('fs');
 var dateHelper = require('../helpers/dateHelper.js');
-//const upload = require("../middlewares/upload");
 const puppeteer = require('puppeteer');
 const util = require("util");
 let multer = require("multer");
-//const GridFsStorage = require("multer-gridfs-storage");
 let upload = multer();
 const verifyToken = require("../middlewares/authJWT.js");
 const {
@@ -79,17 +77,17 @@ router.post('/generateMeme', upload.fields([]), (req, res, next) => {
 /*
   Saves a meme url with title, creator to the DB.
 */
-router.post('/savememe', verifyToken, upload.fields([]), function(req, res) {
+router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
   const memes = req.db.get('memes');
   const users = req.db.get('users');
 
   let url = req.body.url;
-  let base64_img = req.body.base64_img;
+  let base64 = req.body.base64;
   let userId = req.userId;
   let title = req.body.title;
   let access;
 
-  if (url == null && base64_img == null) {
+  if (url == null && base64 == null) {
     res.status(400).send({
       message: "url and base64 is null"
     });
@@ -97,7 +95,7 @@ router.post('/savememe', verifyToken, upload.fields([]), function(req, res) {
 
   meme = {
     url: url,
-    base64_img: base64_img,
+    base64: base64,
     title: title,
     creatorId: ObjectId(userId),
     upvotes: 0,
@@ -135,22 +133,6 @@ router.post('/savememe', verifyToken, upload.fields([]), function(req, res) {
     res.status(400).send({
       message: error
     });
-  });
-});
-
-/*
-  Requests all memes created by the user.
-  Returns an array of memes.
-*/
-router.get('/getmymemes', (req, res, next) => {
-  const memes = req.db.get('memes');
-  const user = req.body.user;
-
-  memes.find({
-    creator: user
-  }).then(memes => {
-    console.log(memes);
-    res.send(memes);
   });
 });
 
@@ -288,14 +270,14 @@ router.post('/uploadtemplate', verifyToken, upload.fields([]), (req, res) => {
   const users = req.db.get('users');
   const creatorId = req.userId;
   const title = req.body.title;
-  const imgstring = req.body.base64_img;
+  const imgstring = req.body.base64;
 
   //var imgBuffer = new Buffer(imgstring, "base64")
   //console.log(imgstring)
   template = {
     title: title,
     creatorId: creatorId,
-    base64_img: base64_img,
+    base64: base64,
     dateCreated: new Date().toLocaleString()
   }
 
@@ -338,7 +320,7 @@ router.get("/templatefromurl", (req, res) => {
     })().then(pic => {
       //TODO bild direkt unter templates in der db speichern?
       res.status(200).send({
-        base64_img: pic
+        base64: pic
       });
     });
   }
@@ -388,6 +370,13 @@ router.post("/comment", verifyToken, upload.fields([]), (req, res) => {
     });
   });
 });
+
+/*
+router.post("/publishmeme", upload.fields([]), (req, res) => {
+  let title = req.body.name;
+  let base64 = req.body.base64;
+  let visibility = req.body.visibility; //0=unlisted, 1=private, 2=public
+});*/
 
 router.post("/creatememefromurl", upload.fields([]), (res, req) => {
   let memes = req.db.get('memes');
