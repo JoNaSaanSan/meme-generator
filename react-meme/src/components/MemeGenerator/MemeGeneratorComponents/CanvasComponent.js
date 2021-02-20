@@ -1,4 +1,5 @@
-import { getTextWidth } from '../../../utils/canvasUtils'
+import { getTextWidth } from '../../../utils/CanvasUtils'
+import GIFGroover from '../../../utils/GIFGroover'
 const React = require('react');
 require('./CanvasComponent.css');
 
@@ -140,6 +141,9 @@ class CanvasComponent extends React.Component {
       this.video2Canvas(this.props.currentTemplate, 0, 0, canvas.width, canvas.height, context)
     }
 
+    if (this.props.currentTemplate.formatType === 'gif') {
+      this.gif2Canvas(this.props.currentTemplate, 0, 0, canvas.width, canvas.height, context)
+    }
 
   }
 
@@ -185,8 +189,8 @@ class CanvasComponent extends React.Component {
     for (var i = 0; i < textBoxes.length; i++) {
 
       var text = textBoxes[i];
-      if(!text.isVisible)
-      continue;
+      if (!text.isVisible)
+        continue;
 
       var style = '';
       if (text.isBold) {
@@ -397,48 +401,51 @@ class CanvasComponent extends React.Component {
     console.log('text-input_' + i)
     const input = document.getElementById('text-input_' + i);
 
-    input.focus();
+    // input.focus();
     input.select();
   }
 
 
 
   video2Canvas(videoObject, posX, posY, width, height, context) {
-    console.log(videoObject.url)
     var video = document.getElementById('video');
-    // var c2 = document.getElementById('c2');
-    // c2.width = 400;
-    //  c2.height = 400;
-    // var ctx2 = c2.getContext('2d');
-
-    video.addEventListener('play', () => {
-      console.log("play")
-      var width = video.videoWidth;
-      var height = video.videoHeight;
-      this.timerCallback(video, context, width, height);
-    }, false);
-
     video.src = videoObject.url;
+    video.addEventListener('play', () => {
+      let displayVideo = () => {
+        if (video.paused || video.ended) {
+          return;
+        }
+        this.computeFrame(video, context, width, height);
+        setTimeout(() => {
+          displayVideo();
+        }, 0);
+      }
+      displayVideo();
+    }, false);
   }
 
-  timerCallback(video, context, width, height) {
-    if (video.paused || video.ended) {
-      return;
+  gif2Canvas(gifObject, posX, posY, width, height, context) {
+    const myGif = GIFGroover();
+    myGif.src = gifObject.url;
+    myGif.onload = (e) => {
+      const gif = e.gif;
+      
+      // Display loop
+      let displayGif = () => {
+        this.computeFrame(gif.image, context, width, height);
+        requestAnimationFrame(displayGif);
+      }
+      requestAnimationFrame(displayGif);    // start displaying the gif.
     }
-    this.computeFrame(video, context, width, height);
-    setTimeout(() => {
-      this.timerCallback(video, context, width, height);
-    }, 0);
   }
 
-  computeFrame(video, context, width, height) {
-    context.drawImage(video, 0, 0, width, height);
-
-
-
-    //ctx2.putImageData(frame, 0, 0);
+  computeFrame(obj, context, width, height) {
+    context.clearRect(0, 0, width, height); // Clear in case the video/gif is transparent
+    context.drawImage(obj, 0, 0, width, height);  // The current frame    
     return;
   }
+
+
 
   render() {
 
@@ -450,14 +457,6 @@ class CanvasComponent extends React.Component {
           <canvas id="canvas-draw" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp} />
           <canvas id="canvas-text" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp} />
         </div>
-        {(this.props.currentTemplate.formatType === 'video') ?
-          <div id="video-container">
-            <video id="video" src="media/video.mp4" controls="true" crossorigin="anonymous" />
-          </div> : <div></div>
-        }
-
-        <image src=""> </image>
-
       </div>
     )
   }

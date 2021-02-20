@@ -1,5 +1,5 @@
 import Store from '../../../../redux/store';
-import { getFormat, getImageDimensions, getVideoDimensions } from '../../../../utils/imageUtils';
+import { getFormat, getImageDimensions, getVideoDimensions } from '../../../../utils/ImageUtils';
 const React = require('react')
 
 // This component enables the user to upload images from the local s
@@ -32,12 +32,10 @@ class IfUploadComponent extends React.Component {
             let dim;
             const formatType = getFormat(file.name);
             console.log(formatType)
-            if (formatType === 'image') {
+            if (formatType === 'image' ||  formatType === 'gif') {
                 dim = getImageDimensions(file);
             } else if (formatType === 'video') {
                 dim = getVideoDimensions(file);
-            } else if (formatType === 'gif') {
-
             } else {
                 return
             }

@@ -68,11 +68,11 @@ class TextUIComponent extends React.Component {
           <div>
             <button id={"visible-toggle-button_" + i} className="toggle-button visible-button" name="isVisible" value={this.props.currentInputBoxes[i].isVisible} onClick={this.handleChange.bind(this, i)}> Hide </button>
           </div>
-          <h3>Text</h3>
+          <p>Text</p>
           <div>
             <input type="text" id={"text-input_" + i} placeholder="Text" name="text" value={this.props.currentInputBoxes[i].text} className="input-box" onChange={this.handleChange.bind(this, i)} />
           </div>
-          <h3>Font</h3>
+          <p>Font</p>
           <div>
             <input type="text" placeholder="50" name="fontSize" value={this.props.currentInputBoxes[i].fontSize} className="number-input-box" min="1" max="1000" maxLength="3" onChange={this.handleChange.bind(this, i)} />
             <select name="fontFamily" className="input-box" value={this.props.currentInputBoxes[i].fontFamily} onChange={this.handleChange.bind(this, i)}>
@@ -85,14 +85,14 @@ class TextUIComponent extends React.Component {
             </select>
             <input type="color" name="fontColor" className="color-input-box" value={this.props.currentInputBoxes[i].fontColor} onChange={this.handleChange.bind(this, i)} />
           </div>
-          <h3>Outline</h3>
+          <p>Outline</p>
           <div className="text-styling-container">
             <button id={"bold-toggle-button_" + i} className="toggle-button" name="isBold" value={this.props.currentInputBoxes[i].isBold} onClick={this.handleChange.bind(this, i)}> B </button>
             <button id={"italic-toggle-button_" + i} className="toggle-button" name="isItalic" value={this.props.currentInputBoxes[i].isItalic} onClick={this.handleChange.bind(this, i)}> I </button>
             <input type="text" placeholder="3" name="outlineWidth" value={this.props.currentInputBoxes[i].outlineWidth} className="number-input-box" min="1" max="50" onChange={this.handleChange.bind(this, i)} />
             <input type="color" name="outlineColor" value={this.props.currentInputBoxes[i].outlineColor} className="color-input-box" onChange={this.handleChange.bind(this, i)} />
           </div>
-          <h3>Position</h3>
+          <p>Position</p>
           <div>
             <input type="number" placeholder="200" name="textPosX" value={this.props.currentInputBoxes[i].textPosX} className="dimension-input-box" min="1" max="5000" maxLength="2" onChange={this.handleChange.bind(this, i)} />
             <input type="number" placeholder="200" name="textPosY" value={this.props.currentInputBoxes[i].textPosY} className="dimension-input-box" min="1" max="5000" maxLength="2" onChange={this.handleChange.bind(this, i)} />

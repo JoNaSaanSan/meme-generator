@@ -1,5 +1,6 @@
 import CanvasComponent from './CanvasComponent';
-import { loadImage } from '../../../utils/imageUtils';
+import { loadImage } from '../../../utils/ImageUtils';
+import VideoHandlingComponent from './VideoHandlingComponent';
 const React = require('react');
 require('./ImageComponent.css');
 
@@ -38,9 +39,9 @@ class ImageComponent extends React.Component {
                         currentTemplate: { ...this.props.currentTemplate, image: result },
                     })
                 })
-            } else if (this.props.currentTemplate.formatType === 'video') {
+            } else if (this.props.currentTemplate.formatType === 'video' || this.props.currentTemplate.formatType === 'gif') {
                 this.setState({
-                    currentTemplate: { ...this.props.currentTemplate},
+                    currentTemplate: { ...this.props.currentTemplate },
                 })
             }
 
@@ -175,6 +176,10 @@ class ImageComponent extends React.Component {
                         canvasHeight={this.props.canvasHeight}
                     />
                 </div>
+                <VideoHandlingComponent
+                    currentTemplate={this.state.currentTemplate}
+                    canvasWidth={this.props.canvasWidth}
+                    canvasHeight={this.props.canvasHeight} />
             </div >)
     }
 }

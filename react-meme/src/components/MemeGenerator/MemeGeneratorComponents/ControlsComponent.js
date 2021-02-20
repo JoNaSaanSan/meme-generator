@@ -210,7 +210,7 @@ class ControlsComponent extends React.Component {
             <button name="save" onClick={this.createMeme} id="save-button" className="button" > Save as Draft </button> </div> : <a className="button" href="#login">Sign in to publish or save!</a>}
         <a name="share" href="#share" onClick={this.createMeme} id="share-button" className="button" > Share Meme</a>
         <button name="download" onClick={this.createMeme} id="download-button" className="button">Download Meme!</button>
-        <PreviewComponent samplesMemeArray={this.state.imageMemeArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />
+       <PreviewComponent samplesMemeArray={this.state.imageMemeArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />
 
       </div>
     )

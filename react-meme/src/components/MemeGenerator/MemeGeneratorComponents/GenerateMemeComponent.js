@@ -1,6 +1,6 @@
 import Store from '../../../redux/store';
-import { b64toBlob } from '../../../utils/imageUtils';
-import { retrieveImage } from '../../../utils/canvasUtils';
+import { b64toBlob } from '../../../utils/ImageUtils';
+import { retrieveImage } from '../../../utils/CanvasUtils';
 import {
     EmailShareButton,
     FacebookShareButton,
@@ -25,6 +25,7 @@ class GenerateMemeComponent extends React.Component {
 
 
     componentDidUpdate(prevProps, prevState) {
+
         if (this.props.memeCreationEvent !== prevProps.memeCreationEvent) {
             if (this.props.memeCreationEvent.target.name === "imgFlipGenerate") {
                 this.generateMemeImageFlip();
@@ -41,6 +42,9 @@ class GenerateMemeComponent extends React.Component {
             }
             if (this.props.memeCreationEvent.target.name === "share") {
                 this.shareMeme();
+            }
+            if (this.props.memeCreationEvent.target.name === "record") {
+                this.recordVideo();
             }
         }
     }
@@ -158,36 +162,36 @@ class GenerateMemeComponent extends React.Component {
     shareMeme() {
         console.log("share")
         this.publishImage().then(data => {
-            
+
         });
-      /*  retrieveImage('background', this.props.canvasWidth, this.props.canvasHeight).then((imageData) => {
-            const base64ImageData = imageData;
-            const contentType = 'image/png';
-
-            const byteCharacters = atob(base64ImageData.substr(`data:${contentType};base64,`.length));
-            const byteArrays = [];
-
-            for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
-                const slice = byteCharacters.slice(offset, offset + 1024);
-
-                const byteNumbers = new Array(slice.length);
-                for (let i = 0; i < slice.length; i++) {
-                    byteNumbers[i] = slice.charCodeAt(i);
-                }
-
-                const byteArray = new Uint8Array(byteNumbers);
-
-                byteArrays.push(byteArray);
-            }
-            const blob = new Blob(byteArrays, { type: contentType });
-            const blobUrl = URL.createObjectURL(blob);
-
-            window.open(blobUrl, '_blank');
-            // const file = URL.createObjectURL(b64toBlob(imageData));
-            // console.log(file)
-            //<Route exact path=`/product/${item.id}` component={Product} />
-            //this.setState(prevState => ({ downloadImageTrigger: !prevState.downloadImageTrigger }))
-        })*/
+        /*  retrieveImage('background', this.props.canvasWidth, this.props.canvasHeight).then((imageData) => {
+              const base64ImageData = imageData;
+              const contentType = 'image/png';
+  
+              const byteCharacters = atob(base64ImageData.substr(`data:${contentType};base64,`.length));
+              const byteArrays = [];
+  
+              for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+                  const slice = byteCharacters.slice(offset, offset + 1024);
+  
+                  const byteNumbers = new Array(slice.length);
+                  for (let i = 0; i < slice.length; i++) {
+                      byteNumbers[i] = slice.charCodeAt(i);
+                  }
+  
+                  const byteArray = new Uint8Array(byteNumbers);
+  
+                  byteArrays.push(byteArray);
+              }
+              const blob = new Blob(byteArrays, { type: contentType });
+              const blobUrl = URL.createObjectURL(blob);
+  
+              window.open(blobUrl, '_blank');
+              // const file = URL.createObjectURL(b64toBlob(imageData));
+              // console.log(file)
+              //<Route exact path=`/product/${item.id}` component={Product} />
+              //this.setState(prevState => ({ downloadImageTrigger: !prevState.downloadImageTrigger }))
+          })*/
     }
 
     /**
@@ -233,6 +237,56 @@ class GenerateMemeComponent extends React.Component {
             });
     }
 
+    recordVideo() {
+
+        const canvas = document.createElement("canvas");
+        canvas.setAttribute("id", "canvas");
+        canvas.width = this.props.canvasWidth;
+        canvas.height = this.props.canvasHeight
+        const context = canvas.getContext("2d");
+
+        const canvasBackground = document.getElementById("canvas-background");
+        const canvasImages = document.getElementById("canvas-images");
+        const canvasDraw = document.getElementById("canvas-draw");
+        const canvasText = document.getElementById("canvas-text");
+
+        function draw() {
+
+            context.drawImage(canvasBackground, 0, 0);
+            context.drawImage(canvasImages, 0, 0);
+            context.drawImage(canvasDraw, 0, 0);
+            context.drawImage(canvasText, 0, 0);
+
+        }
+        var videoStream = canvas.captureStream(30);
+        var mediaRecorder = new MediaRecorder(videoStream);
+
+        var chunks = [];
+        mediaRecorder.ondataavailable = (e) => {
+            chunks.push(e.data);
+        };
+
+
+        var video = document.getElementById('video-output');
+        console.log(video)
+        mediaRecorder.onstop = (e) => {
+            var blob = new Blob(chunks, { 'type': 'video/mp4' });
+            chunks = [];
+            var videoURL = URL.createObjectURL(blob);
+            if (video !== null)
+                video.src = videoURL;
+        };
+        mediaRecorder.ondataavailable = function (e) {
+            chunks.push(e.data);
+        };
+
+        mediaRecorder.start();
+        setInterval(draw, 30);
+        setTimeout(function () { mediaRecorder.stop(); }, 15000);
+    }
+
+
+
 
 
 
@@ -241,7 +295,7 @@ class GenerateMemeComponent extends React.Component {
         const shareUrl = 'http://github.com';
         const title = 'GitHub';
 
-        return <div> 
+        return <div>
             <div id="share" className="modal-window">
                 <div>
                     <a href="/#" title="Close" id="share-window-close" className="modal-close">Close</a>

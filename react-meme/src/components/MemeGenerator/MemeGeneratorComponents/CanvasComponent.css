@@ -1,21 +1,17 @@
 #canvas-container {
   height: 500px;
   display: flex;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
 }
 
 #canvas-container>canvas {
   display: block;
   position: absolute;
-  overflow: hidden;
-}
-
-#video-container {
-  bottom: 0;
-
 }
 
 #canvas-view {
-  padding: 50px;
-  display: block;
 
 }

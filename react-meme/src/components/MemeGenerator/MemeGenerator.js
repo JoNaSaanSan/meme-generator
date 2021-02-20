@@ -2,6 +2,7 @@ import ControlsComponent from './MemeGeneratorComponents/ControlsComponent';
 import ImageComponent from './MemeGeneratorComponents/ImageComponent';
 import TextUIComponent from './MemeGeneratorComponents/TextUIComponent';
 import GenerateMemeComponent from './MemeGeneratorComponents/GenerateMemeComponent';
+import { textToSpeech } from '../../utils/TextToSpeech'
 import TextBoxes from './TextBoxes';
 require('./MemeGenerator.css');
 const React = require('react');
@@ -43,6 +44,7 @@ class MemeGenerator extends React.Component {
       memeCreationEvent: 0,
       memeVisibility: -1,
       maxImageSize: '',
+      textToSpeechActive: false,
     }
 
     this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
@@ -56,6 +58,10 @@ class MemeGenerator extends React.Component {
     this.clearImages = this.clearImages.bind(this);
     this.createMeme = this.createMeme.bind(this);;
 
+  }
+
+  componentDidMount(){
+    var voices = window.speechSynthesis.getVoices();
   }
 
   createMeme(event, memeVisibility, maxImageSize) {
@@ -78,8 +84,8 @@ class MemeGenerator extends React.Component {
     var wrh = currentMemeFromChild.width / currentMemeFromChild.height;
     var newWidth = currentMemeFromChild.width;
     var newHeight = currentMemeFromChild.height;
-    var maxWidth = 700;
-    var maxHeight = 700;
+    var maxWidth = 500;
+    var maxHeight = 500;
     if (newWidth > maxWidth) {
       newWidth = maxWidth;
       newHeight = newWidth / wrh;
@@ -97,9 +103,11 @@ class MemeGenerator extends React.Component {
       canvasHeight: newHeight,
       drawPaths: currentMemeFromChild.drawPaths,
       additionalImages: currentMemeFromChild.additionalImages,
-    }, () => this.assignNewText2Textboxes(this.state.tmpInputTextBoxesArray))
-
-
+    }, () => {
+      var voices = window.speechSynthesis.getVoices();
+      this.assignNewText2Textboxes(this.state.tmpInputTextBoxesArray)
+      textToSpeech(this.state.currentTemplate.name,voices[5],this.state.textToSpeechActive);
+    })
   }
 
   /**

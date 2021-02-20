@@ -1,5 +1,5 @@
 import Store from '../../../../redux/store';
-import { getImageDimensions } from '../../../../utils/imageUtils';
+import { getImageDimensions } from '../../../../utils/ImageUtils';
 const React = require('react');
 
 // This component fetches an array of images from the server

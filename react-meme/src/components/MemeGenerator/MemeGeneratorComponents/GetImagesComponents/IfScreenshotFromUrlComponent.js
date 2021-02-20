@@ -1,4 +1,4 @@
-import { getImageDimensions } from '../../../../utils/imageUtils';
+import { getImageDimensions } from '../../../../utils/ImageUtils';
 const React = require('react');
 
 

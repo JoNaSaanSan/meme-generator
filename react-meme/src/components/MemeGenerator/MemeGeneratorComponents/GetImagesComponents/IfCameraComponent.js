@@ -1,5 +1,5 @@
 import Camera from 'react-html5-camera-photo';
-import { getImageDimensions } from '../../../../utils/imageUtils';
+import { getImageDimensions } from '../../../../utils/ImageUtils';
 import 'react-html5-camera-photo/build/css/index.css';
 const React = require('react')
 // This component enables the user to upload images from the local s
