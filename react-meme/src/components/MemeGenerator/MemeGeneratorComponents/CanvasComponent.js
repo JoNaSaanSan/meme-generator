@@ -457,7 +457,8 @@ class CanvasComponent extends React.Component {
           <canvas id="canvas-draw" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp} />
           <canvas id="canvas-text" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp} />
         </div>
-      </div>
+        <img id='gifimg' height='300' width='500'></img>
+      </div> 
     )
   }
 }
