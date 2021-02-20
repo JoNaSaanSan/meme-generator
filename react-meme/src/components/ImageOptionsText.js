@@ -3,25 +3,30 @@ import downvote from '../pictures/downvote.png'
 import comments from '../pictures/comments.png'
 import share from '../pictures/share.png'
 import download from '../pictures/download.png'
+import Store from '../redux/store';
 const React = require('react');
 require('./ImageOptionsText.css');
 
 
 class ImageOptionsText extends React.Component {
-    state = {  }
+    state = {
+        accessToken: Store.getState().user.accessToken,
+        isSignedIn: Store.getState().user.isSignedIn,
+      }
 
     upvote(){
         console.log("upvote");
-        var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MDJhZTM1OTc5OWQ4MDJkYjA4YTRjOGQiLCJpYXQiOjE2MTM0Nzg0MjEsImV4cCI6MTYxMzU2NDgyMX0.UCmL0JPFKC8QY5-cInYNDxmLDe7Qh0GpFMwcwOSVqes"
+
+        var token = this.state.accessToken;
+        var memeId = this.props.meme._id;
         const requestOptions = {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              'x-access-token': token
+              'x-access-token': token,
             },
-            body: this.props.meme.id
           };
-        fetch('http://localhost:3000/memes/upvote', requestOptions)
+        fetch('http://localhost:3000/memes/upvote' + "?memeId="+ memeId, requestOptions)
         .then(response => {
             return response.json();
         })
@@ -29,6 +34,7 @@ class ImageOptionsText extends React.Component {
 
     downvote(){
         console.log("downvote");
+
     }
 
     numberOfComments(){
@@ -42,13 +48,18 @@ class ImageOptionsText extends React.Component {
 
     commit(){
         console.log("make a commit")
+
+        //var newD  = document.createElement('img');
+        //document.querySelector('.commets_container').appendChild(newD);
         return(
             <div>Testen</div>
         )
     }
 
 
-    render() { 
+    render() {
+        Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken  })) 
+        console.log("access: " + this.state.accessToken)
         return (
             <div className= "container">
                 <div className= "user-date_container">
@@ -81,8 +92,9 @@ class ImageOptionsText extends React.Component {
                     
 
                 <div className="comments">
-                    <input className="input-text"/>
+                    <input className="input-text" placeholder="Leave a comment"/>
                     <button className="send">Send</button>
+                    <div className="commets_container"></div>
                 </div>
                 
                 
