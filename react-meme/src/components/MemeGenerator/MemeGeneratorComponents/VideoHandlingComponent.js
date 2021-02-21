@@ -9,19 +9,18 @@ class VideoHandlingComponent extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-
+            videoDuration: 0,
+            currentTime: 0,
+            recordingState: 'Not recording',
         }
     }
 
 
 
     componentDidUpdate(prevProps, prevState) {
-
-
     }
 
     recordGif() {
-
         const canvas = document.createElement("canvas");
         canvas.width = this.props.canvasWidth;
         canvas.height = this.props.canvasHeight
@@ -32,42 +31,79 @@ class VideoHandlingComponent extends React.Component {
         const canvasDraw = document.getElementById("canvas-draw");
         const canvasText = document.getElementById("canvas-text");
 
-        function draw() {
+        var inputVideo = document.getElementById('video-input');
 
+        let draw = () => {
+            if (this.state.recordingState === 'Not recording') {
+                gifStop();
+                clearInterval(interval);
+            }
             context.drawImage(canvasBackground, 0, 0);
             context.drawImage(canvasImages, 0, 0);
             context.drawImage(canvasDraw, 0, 0);
             context.drawImage(canvasText, 0, 0);
+            this.setState({
+                currentTime: Math.round(inputVideo.currentTime * 100) / 100,
+            })
             encoder.addFrame(context)
         }
 
 
-        const encoder = new GIFEncoder(this.props.canvasWidth, this.props.canvasHeight, 'octree', true)
+
+        const encoder = new GIFEncoder(this.props.canvasWidth, this.props.canvasHeight, 'octree', true, 500)
         encoder.start()
-        setInterval(draw, 20);
-        setTimeout(function () {
+        inputVideo.play()
+        var interval = setInterval(draw, 10);
+
+        var gifStop = () => {
             encoder.finish()
-            console.log(encoder);
             const buffer = encoder.out.getData()
-            console.log([buffer])
             const blob = new Blob([buffer], { 'type': 'image/gif' });
-            console.log(blob)
             const url = URL.createObjectURL(blob);
             const img = document.getElementById('gifimg');
+            img.width = this.props.canvasWidth;
+            img.height = this.props.canvasHeight;
             img.src = url;
+        }
 
-        }, 5000);
+        var duration = (this.state.duration * 1000) || inputVideo.duration * 1000 || 5000;
+        if (duration > 15000) {
+            duration = 15000;
+        }
 
 
+        if (this.state.recordingState === 'Recording GIF') {
+            setTimeout(function () {
+                gifStop();
+                clearInterval(interval);
+            }, duration);
+
+            this.props.inputBoxes.map((el, i) => {
+                this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: false } });
+                return new Promise((resolve, reject) => {
+                    setTimeout(resolve, this.props.inputBoxes[i].start * 1000);
+                }).then(() => {
+                    this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: true } });
+
+                    return new Promise((resolve, reject) => {
+                        if (this.props.inputBoxes[i].end > this.props.inputBoxes[i].start) {
+                            setTimeout(resolve, (this.props.inputBoxes[i].end - this.props.inputBoxes[i].start) * 1000);
+                        }
+                    }).then(() => {
+                        if (this.props.inputBoxes[i].end > 0) {
+                            this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: false } });
+                        }
+                    });
+                });
+            })
+        }
     }
 
-    combineCanvas() {
 
-    }
+
 
 
     recordVideo() {
-
         const canvas = document.createElement("canvas");
         canvas.setAttribute("id", "canvas");
         canvas.width = this.props.canvasWidth;
@@ -78,72 +114,136 @@ class VideoHandlingComponent extends React.Component {
         const canvasImages = document.getElementById("canvas-images");
         const canvasDraw = document.getElementById("canvas-draw");
         const canvasText = document.getElementById("canvas-text");
+        var videoStream = canvas.captureStream(30);
+        var mediaRecorder = new MediaRecorder(videoStream);
+        var inputVideo = document.getElementById('video-input');
+        var outputVideo = document.getElementById('video-output');
+        var chunks = [];
 
-        function draw() {
 
+
+        let draw = () => {
+            if (this.state.recordingState === 'Not recording') {
+                clearInterval(interval);
+                mediaRecorder.stop();
+            }
             context.drawImage(canvasBackground, 0, 0);
             context.drawImage(canvasImages, 0, 0);
             context.drawImage(canvasDraw, 0, 0);
             context.drawImage(canvasText, 0, 0);
-
+            this.setState({
+                currentTime: Math.round(inputVideo.currentTime * 100) / 100,
+            })
         }
-        var videoStream = canvas.captureStream(30);
-        console.log(videoStream)
-        var mediaRecorder = new MediaRecorder(videoStream);
 
-        var chunks = [];
         mediaRecorder.ondataavailable = (e) => {
             chunks.push(e.data);
         };
 
 
-        var video = document.getElementById('video-output');
-        console.log(video)
         mediaRecorder.onstop = (e) => {
-            console.log(chunks)
             var blob = new Blob(chunks, { 'type': 'video/mp4' });
             chunks = [];
             var videoURL = URL.createObjectURL(blob);
-            if (video !== null)
-                video.src = videoURL;
+            if (outputVideo !== null)
+                outputVideo.src = videoURL;
         };
         mediaRecorder.ondataavailable = function (e) {
             chunks.push(e.data);
         };
 
-        mediaRecorder.start();
-        setInterval(draw, 30);
-        setTimeout(function () { mediaRecorder.stop(); }, 5000);
-    }
+        if (this.state.recordingState === 'Recording Video') {
+            mediaRecorder.start();
+            inputVideo.play()
+            var interval = setInterval(draw, 30);
 
+            var duration = (this.state.duration * 1000) || inputVideo.duration * 1000 || 5000;
+            setTimeout(function () { mediaRecorder.stop(); clearInterval(interval); }, duration);
+            this.props.inputBoxes.map((el, i) => {
+                this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: false } });
+                return new Promise((resolve, reject) => {
+                    setTimeout(resolve, this.props.inputBoxes[i].start * 1000);
+                }).then(() => {
+                    this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: true } });
 
-
-    handleChange(event) {
-        if (event.target.name === 'record') {
-            this.recordVideo();
-        } else if (event.target.name === 'stop') {
-
-        } else if (event.target.name === 'recordGIF') {
-            this.recordGif();
+                    return new Promise((resolve, reject) => {
+                        if (this.props.inputBoxes[i].end > this.props.inputBoxes[i].start) {
+                            setTimeout(resolve, (this.props.inputBoxes[i].end - this.props.inputBoxes[i].start) * 1000);
+                        }
+                    }).then(() => {
+                        if (this.props.inputBoxes[i].end > 0) {
+                            this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: false } });
+                        }
+                    });
+                });
+            })
         }
     }
 
+    handleTextChange(i, event) {
+        this.props.handleInputBoxesChange(i, event);
+    }
 
+    handleChange(event) {
+        if (event.target.name === 'recordVideo') {
+            this.setState({
+                recordingState: 'Recording Video',
+            }, () => this.recordVideo())
+        } else if (event.target.name === 'stop') {
+            this.setState({
+                recordingState: 'Not recording',
+            })
+        } else if (event.target.name === 'recordGIF') {
+            this.setState({
+                recordingState: 'Recording GIF'
+            }, () => this.recordGif())
+        } else if (event.target.name === 'duration') {
+            this.setState({
+                duration: event.target.value,
+            })
+        }
+    }
 
+    textVideoUI() {
+        if (this.props.inputBoxes !== null && this.props.inputBoxes !== undefined) {
+
+            return this.props.inputBoxes.map((el, i) =>
+                <div key={i} className="timeline-item">
+                    <div> Textbox: {el.text}
+                        <div>
+                            <input type="text" placeholder="0" name="start" id={'start-input_' + i} value={this.props.inputBoxes[i].start} className="input-box" maxLength="3" onChange={this.handleTextChange.bind(this, i)} />
+                            <input type="text" placeholder="2" name="end" id={'end-input_' + i} value={this.props.inputBoxes[i].end} className="input-box" maxLength="3" onChange={this.handleTextChange.bind(this, i)} />
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+    }
     render() {
 
 
         return <div className='video-view'>
-            <button name="record" onClick={this.handleChange.bind(this)} id="record-button" className="button">Record</button>
+            {this.state.recordingState}
+            <div> <div> Time </div>
+                {this.state.currentTime}</div>
+            <button name="recordVideo" onClick={this.handleChange.bind(this)} id="record-button" className="button">Record Video</button>
+            <button name="renderVideo" onClick={this.handleChange.bind(this)} id="render-button" className="button">Render Video</button>
+            <button name="recordGIF" onClick={this.handleChange.bind(this)} id="record-button" className="button">Record GIF</button>
+            <button name="renderGIF" onClick={this.handleChange.bind(this)} id="render-button" className="button">Render GIF</button>
+
             <button name="stop" onClick={this.handleChange.bind(this)} id="stop-button" className="button">Stop Record</button>
 
-
-            <button name="recordGIF" onClick={this.handleChange.bind(this)} id="record-button" className="button">Record GIf</button>
+            <div> Duration in Seconds </div>
+            <input type="text" placeholder="Leave empty for full video" name="duration" className="input-box" maxLength="3" value={this.state.duration} onChange={this.handleChange.bind(this)} />
+            {this.textVideoUI()}
 
             {//(this.props.currentTemplate.formatType === 'video' || ) ?
                 <div id="video-container">
-                    <video id="video" controls="true" crossorigin="anonymous" />
+                    <video id="video-input" controls="true" crossorigin="anonymous" autoplay="autoplay" />
+                    <div> Video Output </div>
                     <video id="video-output" controls="true" crossorigin="anonymous" />
+                    <div> GIF Output </div>
+                    <img id='gifimg' height='300' width='500'></img>
                 </div>
 
                 // : <div></div>

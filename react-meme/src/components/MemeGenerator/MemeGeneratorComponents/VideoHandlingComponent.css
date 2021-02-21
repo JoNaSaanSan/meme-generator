@@ -8,3 +8,8 @@
   background-color: rgb(41, 41, 41);
   padding: 20px;
 }
+
+
+#video-input{
+  display: none;
+}

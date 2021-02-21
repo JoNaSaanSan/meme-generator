@@ -408,7 +408,7 @@ class CanvasComponent extends React.Component {
 
 
   video2Canvas(videoObject, posX, posY, width, height, context) {
-    var video = document.getElementById('video');
+    var video = document.getElementById('video-input');
     video.src = videoObject.url;
     video.addEventListener('play', () => {
       let displayVideo = () => {
@@ -457,7 +457,6 @@ class CanvasComponent extends React.Component {
           <canvas id="canvas-draw" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp} />
           <canvas id="canvas-text" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp} />
         </div>
-        <img id='gifimg' height='300' width='500'></img>
       </div> 
     )
   }

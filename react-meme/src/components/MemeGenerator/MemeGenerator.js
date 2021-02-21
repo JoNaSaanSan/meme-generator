@@ -21,6 +21,9 @@ const initializeText = {
   isItalic: false,
   isBold: false,
   isVisible: true,
+  start: 0,
+  end: -1,
+  duration: 1,
 }
 
 
@@ -255,8 +258,11 @@ class MemeGenerator extends React.Component {
         initializeText.outlineWidth,
         initializeText.outlineColor,
         initializeText.isBold,
-        initializeText.isItalics,
+        initializeText.isItalic,
         initializeText.isVisible,
+        initializeText.start,
+        initializeText.end,
+        initializeText.duration,
       )]
     }))
   }

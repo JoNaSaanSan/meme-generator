@@ -178,6 +178,8 @@ class ImageComponent extends React.Component {
                 </div>
                 <VideoHandlingComponent
                     currentTemplate={this.state.currentTemplate}
+                    inputBoxes={this.props.inputBoxes}
+                    handleInputBoxesChange={this.handleInputBoxesChange}
                     canvasWidth={this.props.canvasWidth}
                     canvasHeight={this.props.canvasHeight} />
             </div >)
