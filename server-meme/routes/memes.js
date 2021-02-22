@@ -182,7 +182,7 @@ router.get('/upvote', verifyToken, upload.fields([]), (req, res, next) => {
   Downvotes a meme existing in the DB. Adds the id of the downvoted meme to the user document,
    and decreases the upvote counter of the meme document by 1.
 */
-router.get('/downvote', (req, res, next) => {
+router.get('/downvote', verifyToken, (req, res, next) => {
   const memes = req.db.get('memes');
   const memeId = req.query.memeId;
   const userId = req.userId;
