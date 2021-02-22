@@ -85,7 +85,7 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
   let base64 = req.body.base64;
   let userId = req.userId;
   let title = req.body.title;
-  let access;
+  let visibility = req.body.visibility;
 
   if (url == null && base64 == null) {
     res.status(400).send({
