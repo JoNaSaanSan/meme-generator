@@ -49,9 +49,9 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
       });
     }
   }).catch(error => {
-      console.log(error);
-      res.status(400).send(error
-      );
+    console.log(error);
+    res.status(400).send(error);
+
   });
 });
 
