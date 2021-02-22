@@ -58,5 +58,37 @@ router.get("/loadtemplates", verifyToken, (req, res) => {
   });
 });
 
+/*
+  Captures a screnshot of a url to an png/jpg and sends it as base64 to the client
+*/
+router.get("/templatefromurl", (req, res) => {
+  const url = req.query.url;
+
+  //catch if url is empty
+  if (url == "") {
+    res.status(404).send({
+      message: "Empty url"
+    });
+  } else {
+    (async () => {
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.goto(url);
+      var scrsh = await page.screenshot({
+        type: "png",
+        encoding: "base64"
+      });
+
+      await browser.close();
+      return scrsh;
+    })().then(pic64 => {
+      //TODO bild direkt unter templates in der db speichern?
+      res.status(200).send({
+        base64: pic64
+      });
+    });
+  }
+});
+
 
 module.exports = router;

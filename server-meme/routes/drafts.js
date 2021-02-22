@@ -10,7 +10,7 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
   let drafts = req.db.get('drafts');
   let title = req.body.title;
   let base64 = req.body.base64; //Template! ohne schrift etc
-  //let currentMeme = req.body.currentMeme;
+  let currentMeme = req.body.currentMeme;
   let additionalImages = req.body.additionalImages; //eingefügte bilder
   let drawPaths = req.body.drawPaths;
   let inputBoxes = req.body.inputBoxes;
@@ -21,7 +21,8 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
     additionalImages,
     drawPaths,
     inputBoxes,
-    userId
+    userId,
+    currentMeme
   };
 
   drafts.find({
@@ -52,7 +53,6 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
   }).catch(error => {
     console.log(error);
     res.status(400).send(error);
-
   });
 });
 
