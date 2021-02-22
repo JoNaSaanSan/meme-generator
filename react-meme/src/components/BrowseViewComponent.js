@@ -18,8 +18,6 @@ class BrowseViewComponent extends React.Component {
   fetchMoreData = () => {
     // a fake async api call like which sends
     // 3 more records in 0.05 
-    console.log("items length: "+ this.state.items.length)
-    console.log("allMemes length: "+ this.state.allMemes.length)
     if( this.state.items.length < this.state.allMemes.length-1){
       
         setTimeout(() => {

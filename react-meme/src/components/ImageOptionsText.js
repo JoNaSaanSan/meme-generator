@@ -24,6 +24,7 @@ class ImageOptionsText extends React.Component {
         console.log("upvote");
 
         var token = this.state.accessToken;
+        console.log("my token" + token)
         var memeId = this.props.meme._id;
         const requestOptions = {
             method: 'GET',
@@ -33,14 +34,33 @@ class ImageOptionsText extends React.Component {
             },
         };
         fetch('http://localhost:3000/memes/upvote' + "?memeId=" + memeId, requestOptions)
-            .then(response => {
+            .then(async response => {
+                const data = await response.json()
+                console.log(data)
                 //return response.json();
-                this.setState({ upvotes: response.upvotes });
+                this.setState({ upvotes: data.upvotes});
             })
+
     }
 
     downvote() {
         console.log("downvote");
+        var token = this.state.accessToken;
+        console.log("my token" + token)
+        var memeId = this.props.meme._id;
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-access-token': token,
+            },
+        };
+        fetch('http://localhost:3000/memes/downvote' + "?memeId=" + memeId, requestOptions)
+            .then(async response => {
+                const data = await response.json()
+                //return response.json();
+                this.setState({ downvotes: data.downvotes });
+            })
 
     }
 
@@ -88,7 +108,7 @@ class ImageOptionsText extends React.Component {
                     <img src={this.props.meme.base64} className="image" />
                 </div>
                 <div className="points-commits">
-                    <p className="voting-point">Points: {this.state.upvotes + this.state.downvotes} </p>
+                    <p className="voting-point">Points: {this.state.upvotes - this.state.downvotes} </p>
                     <p className="voting-point">Comments: {this.numberOfComments()}</p>
                 </div>
                 <div className="option_container">
