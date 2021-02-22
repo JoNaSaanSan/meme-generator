@@ -39,111 +39,65 @@ class IfServerBase64Component extends React.Component {
 
         fetch(url, requestOptions)
             .then(async response => {
+                response.json().then(fetchedData => {
+                    const drafts = fetchedData.drafts;
+                    console.log(fetchedData.drafts)
 
-                const data = await response.json();
-                const drafts = data.drafts;
-
-                let dimensions = []
-                for (var i = 0; i < drafts.length; ++i) {
-
-                    const draft = drafts[i];
-                    let dim;
-                    const formatType = getFormat(draft.currentmeme.formatType);
-                    console.log(formatType)
-                    if (formatType === 'image' || formatType === 'gif') {
-                        dim = getImageDimensions(draft);
-                    } else if (formatType === 'video') {
-                        dim = getVideoDimensions(draft);
-                    } else {
-                        return
-                    }
-                    console.log(dim)
-
-                    dimensions.push(dim);
-
-                    try {
-                        this.uploadImagesToServer(file);
-                    } catch (e) {
-                        console.log(e)
-                    }
-                }
-
-                Promise.all(dimensions).then((dims) => {
                     let data = []
-                    const image = 'data:image/png;base64,' + data.base64_img;
-                    const inputBoxes = data.inputBoxes;
-                    const drawPaths = data.drawPaths;
-                    const additionalImages = data.additionalImages;
-                    const currentMeme = data.currentMeme;
-                    for (var i = 0; i < files.length; i++) {
-                        var file = files[i];
-                        const formatType = getFormat(file.name);
+
+
+                    for (var i = 0; i < drafts.length; i++) {
+                        var draft = drafts[i];
+                        console.log(draft)
+                        const image = 'data:image/png;base64,' + draft.base64;
                         data.push({
                             id: i,
-                            name: file.name,
+                            name: draft.name,
                             box_count: 2,
-                            width: dims[i].width, //Todo: User width and height from image
-                            height: dims[i].height,
-                            url: URL.createObjectURL(file),
-                            inputBoxes: inputBoxes,
-                            drawPaths: drawPaths,
-                            additionalImages: additionalImages,
-                            formatType: formatType,
+                            width: draft.currentMeme.width, //Todo: User width and height from image
+                            height: draft.currentMeme.height,
+                            url: URL.createObjectURL(image),
+                            inputBoxes: draft.inputBoxes,
+                            drawPaths: draft.drawPaths,
+                            additionalImages: draft.additionalImages,
+                            formatType: draft.formatType,
                         });
                     }
                     this.setState({
                         isFetching: false,
                     }, () => this.props.setImagesArray(data, this.state.isFetching))
-                }).catch(function (errdims) {
-                    console.log(errdims)
                 })
+            })
+    }
 
-            }) * /
-
-        // check for error response
-        if (!response.ok) {
-            // get error message from body or default to response status
-            const error = (data && data.message) || response.status;
-            return Promise.reject(error);
+    /**
+    * 
+    * @param {event} event 
+    * handles URL input change
+    * 
+    */
+    updateUrl(event) {
+        try {
+            this.setState({
+                inputUrl: event.target.value,
+                isFetching: true
+            })
         }
-
-    })
-            .catch(error => {
-        this.setState({
-            errorMessage: error.toString()
-        });
-console.error('There was an error!', error);
-            });
+        catch (e) {
+            console.log(e);
+        }
     }
 
-/**
-* 
-* @param {event} event 
-* handles URL input change
-* 
-*/
-updateUrl(event) {
-    try {
-        this.setState({
-            inputUrl: event.target.value,
-            isFetching: true
-        })
+
+    render() {
+        Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
+
+        return (
+            <div>
+                <button onClick={() => this.fetchImageFromUrl(this.props.URL)} id="fetch-button" className="button" > {this.props.getImagesButtonName} </button>
+            </div >
+        )
     }
-    catch (e) {
-        console.log(e);
-    }
-}
-
-
-render() {
-    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
-
-    return (
-        <div>
-            <button onClick={() => this.fetchImageFromUrl(this.props.URL)} id="fetch-button" className="button" > {this.props.getImagesButtonName} </button>
-        </div>
-    )
-}
 }
 
 export default IfServerBase64Component;
