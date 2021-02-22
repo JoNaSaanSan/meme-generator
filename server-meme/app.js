@@ -11,6 +11,7 @@ var usersRouter = require('./routes/users');
 var memesRouter = require('./routes/memes');
 var templatesRouter = require('./routes/templates');
 var draftsRouter = require('./routes/drafts');
+var apiRouter = require('./routes/api');
 
 var app = express();
 /*
@@ -48,6 +49,7 @@ app.use('/users', usersRouter);
 app.use('/memes', memesRouter);
 app.use('/templates', templatesRouter);
 app.use('/drafts', draftsRouter);
+app.use('/api', apiRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
