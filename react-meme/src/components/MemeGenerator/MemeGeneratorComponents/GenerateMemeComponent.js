@@ -15,6 +15,7 @@ class GenerateMemeComponent extends React.Component {
         this.state = {
             accessToken: null,
             isSignedIn: Store.getState().user.isSignedIn,
+            currentMeme: null,
         }
     }
 
@@ -89,6 +90,9 @@ class GenerateMemeComponent extends React.Component {
                 fetch(this.props.URL + '/memes/publishMeme', requestOptions)
                     .then(async response => {
                         const data = await response.json();
+                        this.setState({
+                            currentMeme: data.memeID
+                        })
                         resolve(data);
                         // check for error response
                         if (!response.ok) {
@@ -133,7 +137,7 @@ class GenerateMemeComponent extends React.Component {
                 },
                 body: JSON.stringify(object2Save)
             };
-            fetch(this.props.URL + '/memes/saveDraft', requestOptions)
+            fetch(this.props.URL + '/drafts/savedraft', requestOptions)
                 .then(async response => {
                     const data = await response.json();
                     console.log(data);

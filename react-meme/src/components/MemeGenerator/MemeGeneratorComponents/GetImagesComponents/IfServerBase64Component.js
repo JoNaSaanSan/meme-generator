@@ -18,7 +18,7 @@ class IfServerBase64Component extends React.Component {
 
     // Fetch all images from /samplememes and store them into a state array
     fetchImageFromUrl(url) {
-        Store.subscribe(() => this.setState({ accessToken: Store.getState().user.accessToken }))
+
 
         this.setState({
             isFetching: true
@@ -41,81 +41,109 @@ class IfServerBase64Component extends React.Component {
             .then(async response => {
 
                 const data = await response.json();
-                const image = 'data:image/png;base64,' + data.base64_img;
-                const inputBoxes = data.inputBoxes;
-                const drawPaths = data.drawPaths;
-                const additionalImages = data.additionalImages;
-                const currentMeme = data.currentMeme;
-                console.log(image)
-                fetch(image)
-                    .then(res => res.blob()).then(res => {
+                const drafts = data.drafts;
 
-                        const dimensions = getImageDimensions(res);
+                let dimensions = []
+                for (var i = 0; i < drafts.length; ++i) {
 
- 
-                        dimensions.then((dims) => {
-                            console.log(dimensions.width)
-                            var tmpArr = [];
-                            tmpArr.push({
-                                id: 1,
-                                name: this.props.getImagesButtonName,
-                                box_count: currentMeme.box_count,
-                                width: dims.width,
-                                height: dims.height,
-                                url: URL.createObjectURL(res),
-                                inputBoxes: inputBoxes,
-                                drawPaths: drawPaths,
-                                additionalImages: additionalImages,
-                            })
-                            this.setState({
-                                isFetching: false
-                            }, () =>
-                            this.props.setImagesArray(tmpArr, this.state.isFetching))
-                        })
-                    })
+                    const draft = drafts[i];
+                    let dim;
+                    const formatType = getFormat(draft.currentmeme.formatType);
+                    console.log(formatType)
+                    if (formatType === 'image' || formatType === 'gif') {
+                        dim = getImageDimensions(draft);
+                    } else if (formatType === 'video') {
+                        dim = getVideoDimensions(draft);
+                    } else {
+                        return
+                    }
+                    console.log(dim)
 
-                // check for error response
-                if (!response.ok) {
-                    // get error message from body or default to response status
-                    const error = (data && data.message) || response.status;
-                    return Promise.reject(error);
+                    dimensions.push(dim);
+
+                    try {
+                        this.uploadImagesToServer(file);
+                    } catch (e) {
+                        console.log(e)
+                    }
                 }
 
-            })
+                Promise.all(dimensions).then((dims) => {
+                    let data = []
+                    const image = 'data:image/png;base64,' + data.base64_img;
+                    const inputBoxes = data.inputBoxes;
+                    const drawPaths = data.drawPaths;
+                    const additionalImages = data.additionalImages;
+                    const currentMeme = data.currentMeme;
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i];
+                        const formatType = getFormat(file.name);
+                        data.push({
+                            id: i,
+                            name: file.name,
+                            box_count: 2,
+                            width: dims[i].width, //Todo: User width and height from image
+                            height: dims[i].height,
+                            url: URL.createObjectURL(file),
+                            inputBoxes: inputBoxes,
+                            drawPaths: drawPaths,
+                            additionalImages: additionalImages,
+                            formatType: formatType,
+                        });
+                    }
+                    this.setState({
+                        isFetching: false,
+                    }, () => this.props.setImagesArray(data, this.state.isFetching))
+                }).catch(function (errdims) {
+                    console.log(errdims)
+                })
+
+            }) * /
+
+        // check for error response
+        if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+        }
+
+    })
             .catch(error => {
-                this.setState({
-                    errorMessage: error.toString()
-                });
-                console.error('There was an error!', error);
+        this.setState({
+            errorMessage: error.toString()
+        });
+console.error('There was an error!', error);
             });
     }
 
-    /**
-    * 
-    * @param {event} event 
-    * handles URL input change
-    * 
-    */
-    updateUrl(event) {
-        try {
-            this.setState({
-                inputUrl: event.target.value,
-                isFetching: true
-            })
-        }
-        catch (e) {
-            console.log(e);
-        }
+/**
+* 
+* @param {event} event 
+* handles URL input change
+* 
+*/
+updateUrl(event) {
+    try {
+        this.setState({
+            inputUrl: event.target.value,
+            isFetching: true
+        })
     }
+    catch (e) {
+        console.log(e);
+    }
+}
 
 
-    render() {
-        return (
-            <div>
-                <button onClick={() => this.fetchImageFromUrl(this.props.URL)} id="fetch-button" className="button" > {this.props.getImagesButtonName} </button>
-            </div>
-        )
-    }
+render() {
+    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
+
+    return (
+        <div>
+            <button onClick={() => this.fetchImageFromUrl(this.props.URL)} id="fetch-button" className="button" > {this.props.getImagesButtonName} </button>
+        </div>
+    )
+}
 }
 
 export default IfServerBase64Component;
