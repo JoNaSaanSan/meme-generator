@@ -22,7 +22,11 @@ const initializeText = {
     outlineWidth: '3',
     outlineColor: '#000000',
     isItalic: false,
-    isBold: false
+    isBold: false,
+    isVisible: true,
+    start: 0,
+    end: -1,
+    duration: 1,
 }
 
 /**
@@ -70,6 +74,10 @@ class GetImagesComponents extends React.Component {
             let memeArray = [];
             for (var i = 0; i < data.length; i++) {
                 let tmpInputBoxes = [];
+                let tmpDrawPaths = [];
+                let tmpAdditionalImages = [];
+
+
                 for (var b = 0; b < data[i].box_count; b++) {
                     if (data[i].inputBoxes === undefined) {
                         tmpInputBoxes.push(new TextBoxes(
@@ -83,14 +91,33 @@ class GetImagesComponents extends React.Component {
                             initializeText.outlineWidth,
                             initializeText.outlineColor,
                             initializeText.isBold,
-                            initializeText.isItalics)
+                            initializeText.isItalic,
+                            initializeText.isVisible,
+                            initializeText.start,
+                            initializeText.end,
+                            initializeText.duration,
+                            )
                         );
                     } else {
                         tmpInputBoxes.push(data[i].inputBoxes[b])
                     }
                 }
 
-                var tmp = new Meme(data[i].url, data[i].id, data[i].width, data[i].height, data[i].name, data[i].box_count, tmpInputBoxes);
+
+                if (data[i].drawPaths !== undefined) {
+                    for (var b = 0; b < data[i].drawPaths.length; b++) {
+                        tmpDrawPaths.push(data[i].drawPaths[b])
+                    }
+                }
+
+                if (data[i].tmpAdditionalImages !== undefined) {
+                    for (var b = 0; b < data[i].tmpAdditionalImages.length; b++) {
+                        tmpAdditionalImages.push(data[i].tmpAdditionalImages[b])
+                    }
+                }
+                var formatType = data[i].formatType || 'image';
+
+                var tmp = new Meme(data[i].url, data[i].id, data[i].width, data[i].height, data[i].name, data[i].box_count, tmpInputBoxes, tmpDrawPaths, tmpAdditionalImages, formatType);
                 memeArray.push(tmp)
             }
             this.props.setImagesArray(memeArray)
@@ -106,13 +133,19 @@ class GetImagesComponents extends React.Component {
                     <div>
                         <a href="/#" title="Close" id="upload-image-close" className="modal-close">Close</a>
                         <div className="get-images-container">
+                        <div> Saved Templates and Drafts </div>
+                        <IfServerBase64Component setImagesArray={this.setImagesArray} URL={this.props.URL + '/memes/loadDrafts'} getImagesButtonName={"Load Drafts"} />
+                        <IfServerBase64Component setImagesArray={this.setImagesArray} URL={this.props.URL + '/memes/loadsavedTemplates'} getImagesButtonName={"Load Saved Templates"} />
+                         
+                        <div> Images </div>
                             <BlankComponent setImagesArray={this.setImagesArray} />
                             <IfCameraComponent setImagesArray={this.setImagesArray} />
                             <IfServerComponent setImagesArray={this.setImagesArray} URL={this.props.URL} getImagesButtonName={"ImgFlip"} />
                             <IfScreenshotFromUrlComponent setImagesArray={this.setImagesArray} URL={this.props.URL + '/memes/templatefromurl'} getImagesButtonName={"Get Screenshot from URL "} />
-                            <IfServerBase64Component setImagesArray={this.setImagesArray} URL={this.props.URL + '/memes/loaddraft'} getImagesButtonName={"Load Drafts"} />
-                            <IfUploadComponent setImagesArray={this.setImagesArray} />
+                           
+                            <div> Images / Videos / Gifs</div>
                             <IfUrlComponent setImagesArray={this.setImagesArray} />
+                            <IfUploadComponent setImagesArray={this.setImagesArray} URL={this.props.URL + '/memes/uploadtemplate'} />
                         </div>
                     </div>
                 </div>

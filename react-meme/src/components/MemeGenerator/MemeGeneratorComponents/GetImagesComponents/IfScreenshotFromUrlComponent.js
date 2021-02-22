@@ -1,3 +1,4 @@
+import { getImageDimensions } from '../../../../utils/ImageUtils';
 const React = require('react');
 
 
@@ -34,15 +35,7 @@ class IfScreenshotFromUrlComponent extends React.Component {
                 fetch(image)
                     .then(res => res.blob()).then(res => {
 
-                        const dimensions = new Promise((resolve, reject) => {
-                            var src = URL.createObjectURL(res);
-                            var img = new Image();
-                            img.onload = () => {
-                                resolve({ width: img.width, height: img.height });
-                                URL.revokeObjectURL(src);
-                            };
-                            img.src = src;
-                        });
+                        const dimensions = getImageDimensions(res);
 
                         dimensions.then((dims) => {
                             console.log(dimensions.width)

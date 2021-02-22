@@ -1,4 +1,6 @@
 import CanvasComponent from './CanvasComponent';
+import { loadImage } from '../../../utils/ImageUtils';
+import VideoHandlingComponent from './VideoHandlingComponent';
 const React = require('react');
 require('./ImageComponent.css');
 
@@ -15,14 +17,13 @@ class ImageComponent extends React.Component {
             isDrawMode: false,
             drawColor: '',
             drawBrushSize: 2,
-            currentImage: '',
+            currentTemplate: '',
         }
         this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
         this.addPath = this.addPath.bind(this);
         this.addDrawing = this.addDrawing.bind(this);
         this.addImage = this.addImage.bind(this);
         this.handleImageChange = this.handleImageChange.bind(this);
-        this.imageRetrieved = this.imageRetrieved.bind(this)
         this.undoDrawing = this.undoDrawing.bind(this);
         this.clearDrawing = this.clearDrawing.bind(this);
         this.clearImages = this.clearImages.bind(this);
@@ -30,12 +31,20 @@ class ImageComponent extends React.Component {
 
     // When state is being updated
     componentDidUpdate(prevProps) {
-        if (this.props.currentMeme.url !== prevProps.currentMeme.url) {
-            this.loadImage(this.props.currentMeme.url).then(result => {
-                this.setState({
-                    currentImage: { ...this.props.currentMeme, image: result },
+        if (this.props.currentTemplate.url !== prevProps.currentTemplate.url) {
+            if (this.props.currentTemplate.formatType === 'image') {
+                loadImage(this.props.currentTemplate.url).then(result => {
+                    console.log(this.props.currentTemplate)
+                    this.setState({
+                        currentTemplate: { ...this.props.currentTemplate, image: result },
+                    })
                 })
-            })
+            } else if (this.props.currentTemplate.formatType === 'video' || this.props.currentTemplate.formatType === 'gif') {
+                this.setState({
+                    currentTemplate: { ...this.props.currentTemplate },
+                })
+            }
+
         }
     }
 
@@ -65,8 +74,13 @@ class ImageComponent extends React.Component {
         this.props.clearImages();
     }
 
+    /**
+     * 
+     * @param {*} event 
+     * Load added image
+     * 
+     */
     addImage(event) {
-
         console.log(event)
         var files = event.target.files;
         var images = [];
@@ -74,7 +88,7 @@ class ImageComponent extends React.Component {
             var file = files[i];
             if (!file.type.match('image'))
                 continue;
-            images.push(this.loadImage(URL.createObjectURL(file)));
+            images.push(loadImage(URL.createObjectURL(file)));
         }
 
         Promise.all(images).then((result) => {
@@ -96,36 +110,29 @@ class ImageComponent extends React.Component {
         }).catch((errdims) => {
             console.log(errdims)
         })
-
-
     }
 
+    /**
+     * 
+     * @param {*} image
+     * passes image change handling to parent
+     *  
+     */
     handleImageChange(image) {
         this.props.handleImageChange(image);
     }
 
+    /**
+     * 
+     * @param {*} event 
+     * passes draw tool change handling to parent
+     * 
+     */
     handleDrawToolChange(event) {
         this.setState({
             [event.target.name]: event.target.value
         })
     }
-
-    loadImage(url) {
-        var result = new Promise((resolve, reject) => {
-            var img = new Image();
-            img.setAttribute('crossOrigin', 'anonymous');
-            img.onload = () => {
-                return resolve(img);
-            }
-            img.src = url;
-        })
-        return result;
-    }
-
-    imageRetrieved(data){
-        this.props.imageRetrieved(data);
-    }
-
 
     render() {
         return (
@@ -141,7 +148,7 @@ class ImageComponent extends React.Component {
                                 <button onClick={() => this.addDrawing()} id="draw-button" className="button" > Stop Draw </button>
                             </div>}
                     </div>
-                    <h2 > {this.props.currentMeme.name} </h2>
+                    <h2 > {this.props.currentTemplate.name} </h2>
                     <div className="image-controls">
                         <div id="upload-button" className="button" >
                             <label htmlFor="additional-image-upload">
@@ -152,12 +159,10 @@ class ImageComponent extends React.Component {
                 </div>
                 <div className="canvas-view">
                     <CanvasComponent
-                        currentImage={this.state.currentImage}
-                        currentName={this.props.currentMeme.name}
+                        currentTemplate={this.state.currentTemplate}
+                        currentName={this.props.currentTemplate.name}
                         inputBoxes={this.props.inputBoxes}
                         imageDimensions={this.props.imageDimensions}
-                        retrieveImageTrigger={this.props.retrieveImageTrigger}
-                        imageRetrieved={this.imageRetrieved}
                         inputBoxesUpdated={this.props.inputBoxesUpdated}
                         additionalImages={this.props.additionalImages}
                         handleImageChange={this.handleImageChange}
@@ -171,6 +176,12 @@ class ImageComponent extends React.Component {
                         canvasHeight={this.props.canvasHeight}
                     />
                 </div>
+                <VideoHandlingComponent
+                    currentTemplate={this.state.currentTemplate}
+                    inputBoxes={this.props.inputBoxes}
+                    handleInputBoxesChange={this.handleInputBoxesChange}
+                    canvasWidth={this.props.canvasWidth}
+                    canvasHeight={this.props.canvasHeight} />
             </div >)
     }
 }

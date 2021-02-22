@@ -3,3 +3,7 @@
     flex-direction: column;
     align-items: flex-start;
 }
+
+.get-images-container>*{
+    margin: 5px;
+}

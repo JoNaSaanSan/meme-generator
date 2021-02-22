@@ -1,30 +1,7 @@
+import { getTextWidth } from '../../../utils/CanvasUtils'
+import GIFGroover from '../../../utils/GIFGroover'
 const React = require('react');
 require('./CanvasComponent.css');
-
-/**
- * Uses canvas.measureText to compute and return the width of the given text of given font in pixels.
- * 
- * @param {String} text The text to be rendered.
- * @param {String} font The css font descriptor that text is to be rendered with (e.g. "bold 14px verdana").
- * 
- * @see https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
- */
-function getTextWidth(inputText, isBold, isItalic, fontSize, fontFamily) {
-  // re-use canvas object for better performance
-  var canvas = document.createElement("canvas");
-  var context = canvas.getContext("2d");
-  var style = '';
-  if(isBold){
-    style += 'bold '
-  }
-  if(isItalic){
-    style += 'italic '
-  }
-  var font = style + fontSize + "px " + fontFamily;
-  context.font = font;
-  var textWidth = context.measureText(inputText).width;
-  return Math.ceil(textWidth)
-}
 
 class CanvasComponent extends React.Component {
 
@@ -53,13 +30,10 @@ class CanvasComponent extends React.Component {
   }
 
 
-  componentDidMount() {
-
-  }
 
   // When state is being updated
   componentDidUpdate(prevProps) {
-    if (this.props.currentImage.url !== prevProps.currentImage.url) {
+    if (this.props.currentTemplate.url !== prevProps.currentTemplate.url) {
       this.resizeCanvas(this.props.canvasWidth, this.props.canvasHeight, 1);
     }
 
@@ -70,11 +44,6 @@ class CanvasComponent extends React.Component {
     this.drawImages();
     this.drawPaths();
     this.drawText();
-
-
-    if (prevProps.retrieveImageTrigger !== this.props.retrieveImageTrigger) {
-      this.retrieveImage();
-    }
   }
 
   /**
@@ -86,12 +55,12 @@ class CanvasComponent extends React.Component {
    *  
    */
   resizeCanvas(newWidth, newHeight, wrh) {
-    console.log(newHeight, newWidth)
     this.setState({
       canvasDimensions: {
         width: newWidth,
         height: newHeight,
         wrh: wrh,
+
       }
     }, () => {
       this.drawBackground();
@@ -158,16 +127,29 @@ class CanvasComponent extends React.Component {
    * Draws Canvas Background
    */
   drawBackground() {
-    var container = document.getElementById('canvas-container');
-    container.style.width = this.state.canvasDimensions.width;
-    container.height = this.state.canvasDimensions.height;
-    console.log(container)
     var canvas = document.getElementById('canvas-background');
     canvas.width = this.state.canvasDimensions.width;
     canvas.height = this.state.canvasDimensions.height;
     var context = canvas.getContext('2d');
-    if (this.props.currentImage.image !== undefined)
-      this.drawImage(this.props.currentImage.image, 0, 0, canvas.width, canvas.height, context)
+
+    this.setState({
+      formatType: this.props.currentTemplate.formatType,
+    })
+
+    if (this.props.currentTemplate.formatType === 'image') {
+      if (this.props.currentTemplate.image !== undefined)
+        this.drawImage(this.props.currentTemplate.image, 0, 0, canvas.width, canvas.height, context)
+    }
+
+
+    if (this.props.currentTemplate.formatType === 'video') {
+      this.video2Canvas(this.props.currentTemplate, 0, 0, canvas.width, canvas.height, context)
+    }
+
+    if (this.props.currentTemplate.formatType === 'gif') {
+      this.gif2Canvas(this.props.currentTemplate, 0, 0, canvas.width, canvas.height, context)
+    }
+
   }
 
 
@@ -210,12 +192,16 @@ class CanvasComponent extends React.Component {
    */
   addTextBoxes(textBoxes, context) {
     for (var i = 0; i < textBoxes.length; i++) {
+
       var text = textBoxes[i];
+      if (!text.isVisible)
+        continue;
+
       var style = '';
-      if(text.isBold){
+      if (text.isBold) {
         style += 'bold '
       }
-      if(text.isItalic){
+      if (text.isItalic) {
         style += 'italic '
       }
       context.font = style + text.fontSize + 'px ' + text.fontFamily;
@@ -410,51 +396,87 @@ class CanvasComponent extends React.Component {
     return ({ dx: dx, dy: dy })
   }
 
-/**
- * 
- * @param {index} i index of text
- * Select text according to the index
- *  
- */
+  /**
+   * 
+   * @param {index} i index of text
+   * Select text according to the index
+   *  
+   */
   selectText(i) {
     console.log('text-input_' + i)
     const input = document.getElementById('text-input_' + i);
 
-    input.focus();
+    // input.focus();
     input.select();
   }
 
-  /**
-   *  Merges the different canvas and then downloads Meme as png
-   */
-  retrieveImage = () => {
-    const canvas = document.createElement("canvas");
-    canvas.setAttribute("id", "canvas");
-    canvas.width = this.state.canvasDimensions.width;
-    canvas.height = this.state.canvasDimensions.height;
-    const context = canvas.getContext("2d");
 
-    const canvasBackground = document.getElementById("canvas-background");
-    const canvasImages = document.getElementById("canvas-images");
-    const canvasDraw = document.getElementById("canvas-draw");
-    const canvasText = document.getElementById("canvas-text");
-    try {
-      context.drawImage(canvasBackground, 0, 0);
-      context.drawImage(canvasImages, 0, 0);
-      context.drawImage(canvasDraw, 0, 0);
-      context.drawImage(canvasText, 0, 0);
 
-      const canvasdata = canvas.toDataURL("image/png");
-      this.props.imageRetrieved(canvasdata)
-    } catch (e) {
-      console.log(e)
+  video2Canvas(videoObject, posX, posY, width, height, context) {
+    console.log(videoObject)
+    var video = document.getElementById('video-input');
+
+    video.src = videoObject.url;
+    video.onplaying = () => {
+      let displayVideo = () => {
+        if (video.paused || video.ended) {
+          return;
+        }
+        if (this.state.formatType === 'video')
+        this.computeFrame(video, context, width, height);
+        let timeout = setTimeout(() => {
+          if (this.state.formatType === 'video') {
+            displayVideo();
+          } else {
+            clearTimeout(timeout);
+            return;
+          }
+        }, 0);
+      }
+      displayVideo();
+    };
+
+
+  }
+
+  gif2Canvas(gifObject, posX, posY, width, height, context) {
+    const myGif = GIFGroover();
+    myGif.src = gifObject.url;
+    myGif.onload = (e) => {
+      const gif = e.gif;
+
+      // Display loop
+      let displayGif = () => {
+        if (this.state.formatType === 'gif')
+        this.computeFrame(gif.image, context, width, height);
+        let timeout = setTimeout(() => {
+          if (this.state.formatType === 'gif') {
+            requestAnimationFrame(displayGif);
+          } else {
+            clearTimeout(timeout);
+            return;
+          }
+        }, 0);
+      }
+      requestAnimationFrame(displayGif);    // start displaying the gif.
     }
   }
+
+  computeFrame(obj, context, width, height) {
+    if (!this.state.formatType === 'video' && !this.state.formatType === 'gif')
+      return;
+
+    context.clearRect(0, 0, width, height); // Clear in case the video/gif is transparent
+    context.drawImage(obj, 0, 0, width, height);  // The current frame    
+    return;
+  }
+
+
 
   render() {
 
     return (
-      <div>
+      <div id="canvas-view">
         <div id="canvas-container" >
           <canvas id="canvas-background" />
           <canvas id="canvas-images" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp} />
