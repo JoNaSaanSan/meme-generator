@@ -9,6 +9,8 @@ const db = require('monk')('mongodb+srv://memeAdmin:memeAdmin@memescluster.0vfqo
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var memesRouter = require('./routes/memes');
+var templatesRouter = require('./routes/templates');
+var draftsRouter = require('./routes/drafts');
 
 var app = express();
 /*
@@ -41,6 +43,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/memes', memesRouter);
+app.use('/templates', templatesRouter);
+app.use('/drafts', draftsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

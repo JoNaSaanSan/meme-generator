@@ -135,7 +135,7 @@ router.post("/login", upload.fields([]), (req, res) => {
       }, config.secret, {
         expiresIn: 86400 // 24 stunden
       });
-
+      console.log(`User ${user.username} logged in`);
       res.status(200).send({
         message: "Login successful!",
         username: user.username,
