@@ -23,6 +23,7 @@ var memes = [];
   memes document: _id, title, creatorId, imgstring, upvotes, downvotes, comments, private, dateCreated, private,tags(?)
 */
 
+
 /*
   Requests sample memes from the imgflip API.
   Returns an array of memes to the client.
@@ -147,7 +148,7 @@ router.get('/upvote', verifyToken, upload.fields([]), (req, res, next) => {
 
   //update user upvotes
   const users = req.db.get('users');
-  users.update({
+  users.findOneAndUpdate({
     _id: userId
   }, {
     $push: {
@@ -155,7 +156,7 @@ router.get('/upvote', verifyToken, upload.fields([]), (req, res, next) => {
     }
   }).then(() => {
     console.log("User upvotes updated!");
-    memes.update({
+    memes.findOneAndUpdate({
       _id: memeId
     }, {
       $inc: {
@@ -164,7 +165,8 @@ router.get('/upvote', verifyToken, upload.fields([]), (req, res, next) => {
     }).then(response => {
       console.log("Meme " + memeId + " upvoted!");
       res.status(200).send({
-        messsage: "Meme " + memeId + " upvoted!"
+        message: "Meme " + memeId + " upvoted!",
+        upvotes: response.upvotes
       })
     });
   }).catch(error => {
@@ -187,7 +189,8 @@ router.get('/downvote', verifyToken, (req, res, next) => {
   const memeId = req.query.memeId;
   const userId = req.userId;
 
-  users.update({
+  const users = req.db.get('users');
+  users.findOneAndUpdate({
     _id: userId
   }, {
     $push: {
@@ -195,7 +198,7 @@ router.get('/downvote', verifyToken, (req, res, next) => {
     }
   }).then(() => {
     console.log("User upvotes updated!");
-    memes.update({
+    memes.findOneAndUpdate({
       _id: memeId
     }, {
       $inc: {
@@ -204,7 +207,8 @@ router.get('/downvote', verifyToken, (req, res, next) => {
     }).then(response => {
       console.log("Meme " + memeId + " downvoted!");
       res.status(200).send({
-        messsage: "Meme " + memeId + " downvoted!"
+        messsage: "Meme " + memeId + " downvoted!",
+        downvotes: response.downvotes
       })
     });
   }).catch(error => {
@@ -247,6 +251,9 @@ router.get('/popularmemes', (req, res, next) => {
   });;
 });
 
+/*
+  Requests the memes by order given in the database aka sorted by creation date
+*/
 
 router.get("/browsememes", (req, res) => {
   const memes = req.db.get('memes');
@@ -382,6 +389,25 @@ router.post("/publishmeme", upload.fields([]), (req, res) => {
 router.post("/creatememefromurl", upload.fields([]), (res, req) => {
   let memes = req.db.get('memes');
   //TODO
+});
+
+
+/*
+  Requests a single meme by the _id of the database
+*/
+
+router.get("/:id", (req, res) => {
+  memes = req.db.get('memes');
+  let id = req.params.id;
+
+  memes.findOne({
+    _id: id
+  }).then(meme => {
+    res.status(200).send(meme);
+  }).catch(error => {
+    console.log(error);
+    res.status(400).send(error);
+  })
 });
 
 module.exports = router;
