@@ -12,10 +12,15 @@ class HeaderComponent extends React.Component {
         }
     }
 
+    componentDidMount() {
 
+        this.fetchImage()
+
+    }
 
 
     fetchImage() {
+        console.log("Fetch")
         const requestOptions = {
             method: 'GET',
             headers: {
@@ -23,14 +28,16 @@ class HeaderComponent extends React.Component {
             },
         };
 
-        fetch(url + this.props.match.params.id, requestOptions)
+        fetch(this.state.url + this.props.match.params.id, requestOptions)
             .then(async response => {
-                console.log(image)
-                fetch(image)
-            }).then(res => {
-                this.setState({
-                    imageData: res.base64
-                })
+              response.json().then(data =>
+
+                    this.setState({
+                        imageData: data.base64
+                    })
+
+                )
+
             }
             )
             .catch(error => {
