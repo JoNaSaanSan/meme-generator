@@ -111,16 +111,17 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
         message: "Error inserting meme to database"
       });
     } else {
-      users.update({
+      users.findAndUpdate({
         _id: userId
       }, {
         $push: {
           memes: obj._id
         }
-      }).then(writeResult => {
-        if (writeResult.nModified == 1) {
+      }).then(doc => {
+        if (doc._id != null) {
           res.status(200).send({
-            message: "Meme saved successfully"
+            message: "Meme saved successfully",
+            memeId: doc._id
           });
         } else {
           res.status(400).send({

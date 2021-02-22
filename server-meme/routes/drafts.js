@@ -15,7 +15,7 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
   let drawPaths = req.body.drawPaths;
   let inputBoxes = req.body.inputBoxes;
   let userId = req.userId;
-  darft = {
+  let darft = {
     title,
     base64,
     additionalImages,
