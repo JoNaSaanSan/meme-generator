@@ -1,5 +1,6 @@
 import MemeGenerator from './components/MemeGenerator/MemeGenerator';
 import HeaderComponent from './components/HeaderComponent';
+import MemeComponent from './components/MemeComponent';
 import ProfileViewComponent from './components/ProfileViewComponent';
 import BrowseViewComponent from './components/BrowseViewComponent';
 import { Switch, Route } from 'react-router-dom';
@@ -16,6 +17,7 @@ class App extends React.Component {
           <Route path="/" component={MemeGenerator} exact />
           <Route path="/browse" component={BrowseViewComponent} />
           <Route path="/profile" component={ProfileViewComponent} />
+          <Route path="/meme/:id" component={MemeComponent} />
           <Route component={Error} />
         </Switch>
 
