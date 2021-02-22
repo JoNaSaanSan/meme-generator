@@ -4,6 +4,7 @@ import comments from '../pictures/comments.png'
 import share from '../pictures/share.png'
 import download from '../pictures/download.png'
 import Store from '../redux/store';
+import { Link } from 'react-router-dom'
 const React = require('react');
 require('./ImageOptionsText.css');
 
@@ -83,6 +84,13 @@ class ImageOptionsText extends React.Component {
         )
     }
 
+    goToGallery(){
+        //<Link to="/gallery" className="menu-item"></Link>
+        console.log("zu gallery")
+     
+    }
+    
+
 
     render() {
         Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
@@ -105,7 +113,7 @@ class ImageOptionsText extends React.Component {
                     </div>
                 </div>
                 <div className="image_container">
-                    <img src={this.props.meme.base64} className="image" />
+                <Link to={{pathname: "/gallery", param1: "Par1" }}><img src={this.props.meme.base64} className="image" onClick={() => this.goToGallery()} /></Link>
                 </div>
                 <div className="points-commits">
                     <p className="voting-point">Points: {this.state.upvotes - this.state.downvotes} </p>

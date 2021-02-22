@@ -7,7 +7,10 @@ require('./GalleryViewComponent.css');
 
 class GalleryViewComponent extends React.Component {
 
-    state = {
+    constructor(props) {
+        super(props);
+        this.state = {
+        }
     }
 
     render() {
@@ -21,7 +24,7 @@ class GalleryViewComponent extends React.Component {
                         <p className="date">DATUM</p>
                     </div>
                     <div className= "g_above-image_container">
-                        <h1 className="g_image-titel">TIIITELLLL</h1>
+                        <h1 className="g_image-titel">{this.props.location.param1}</h1>
                         <div className="g_options-top_container">
                             <div className="g_share-download">
                                 <button className="option-button"> <img src= {download} className="icon"/> </button>
