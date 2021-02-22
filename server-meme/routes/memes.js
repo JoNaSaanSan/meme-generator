@@ -101,7 +101,7 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
     creatorId: ObjectId(userId),
     upvotes: 0,
     downvotes: 0,
-    private: false,
+    visibility: visibility,
     dateCreated: new Date().toLocaleString()
   }
 
@@ -111,7 +111,7 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
         message: "Error inserting meme to database"
       });
     } else {
-      users.findAndUpdate({
+      users.findOneAndUpdate({
         _id: userId
       }, {
         $push: {
