@@ -1,7 +1,8 @@
 import ControlsComponent from './MemeGeneratorComponents/ControlsComponent';
 import ImageComponent from './MemeGeneratorComponents/ImageComponent';
 import TextUIComponent from './MemeGeneratorComponents/TextUIComponent';
-import Store from '../../redux/store';
+import GenerateMemeComponent from './MemeGeneratorComponents/GenerateMemeComponent';
+import { textToSpeech } from '../../utils/TextToSpeech'
 import TextBoxes from './TextBoxes';
 require('./MemeGenerator.css');
 const React = require('react');
@@ -19,6 +20,10 @@ const initializeText = {
   outlineColor: '#000000',
   isItalic: false,
   isBold: false,
+  isVisible: true,
+  start: 0,
+  end: -1,
+  duration: 1,
 }
 
 
@@ -30,12 +35,10 @@ class MemeGenerator extends React.Component {
     super(props)
     this.state = {
       URL: 'http://localhost:3000',
-      currentMeme: '',
-      generatedMeme: '',
+      currentTemplate: '',
       inputBoxes: [],
       drawPaths: [],
       additionalImages: [],
-      isSignedIn: Store.getState().user.isSignedIn,
       inputBoxesUpdated: false,
       tmpInputTextBoxesArray: [],
       canvasWidth: 0,
@@ -43,9 +46,9 @@ class MemeGenerator extends React.Component {
       retrieveImageTrigger: false,
       memeCreationEvent: 0,
       memeVisibility: -1,
-      accessToken: null,
+      maxImageSize: '',
+      textToSpeechActive: false,
     }
-
 
     this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
     this.handleCanvasChange = this.handleCanvasChange.bind(this);
@@ -56,191 +59,31 @@ class MemeGenerator extends React.Component {
     this.undoDrawing = this.undoDrawing.bind(this);
     this.clearDrawing = this.clearDrawing.bind(this);
     this.clearImages = this.clearImages.bind(this);
-    this.shareMeme = this.shareMeme.bind(this);
-    this.downloadImage = this.downloadImage.bind(this);
-    this.generateMemeImageFlip = this.generateMemeImageFlip.bind(this);
-    this.imageRetrieved = this.imageRetrieved.bind(this)
-    this.createMeme = this.createMeme.bind(this);
+    this.createMeme = this.createMeme.bind(this);;
 
   }
 
-
-  imageRetrieved(data) {
-    switch (this.state.memeCreationEvent) {
-      case 'download':
-        //download
-        this.downloadImage(data);
-        break;
-      case 'publish':
-        this.publishMeme(data, this.state.memeVisibility)
-        break;
-      case 2:
-        //public
-        break;
-      default:
-    }
-  }
-
-  createMeme(event, memeVisibility) {
-    if (event === undefined)
-      return;
-    console.log(event)
-    console.log("Creation Event: " + event.target.name + memeVisibility)
-    //this.retrieveImage();
-
-    this.setState({
-      memeCreationEvent: event.target.name,
-      memeVisibility: memeVisibility
-    }, () => {
-      if (event.target.name === "imgFlipGenerate") {
-        this.generateMemeImageFlip();
-      }
-
-      if (event.target.name === "download") {
-        this.retrieveImage();
-      }
-      if (event.target.name === "publish") {
-        this.retrieveImage();
-      }
-    }
-    )
-  }
-
-
-  retrieveImage() {
-    this.setState(
-      prevState => ({
-        retrieveImageTrigger: !prevState.retrieveImageTrigger
-      }))
+  componentDidMount(){
+    var voices = window.speechSynthesis.getVoices();
   }
 
   /**
-   * Handles download image button presses via a boolean that is passed to the child
+   * 
+   * @param {*} event 
+   * @param {*} memeVisibility 
+   * @param {*} maxImageSize 
+   * Handle event triggers of the meme creation buttons
+   * 
    */
-  downloadImage(data) {
-
-    let canvasdata = data.replace("image/png", "image/octet-stream");
-    const a = document.createElement("a");
-    a.download = this.state.currentMeme.name + '.png';
-    a.href = canvasdata;
-    document.body.appendChild(a);
-    a.click();
+  createMeme(event, memeVisibility, maxImageSize) {
+    if (event === undefined)
+      return;
+    this.setState({
+      memeCreationEvent: event,
+      memeVisibility: memeVisibility,
+      maxImageSize: maxImageSize,
+    })
   }
-
-  publishMeme(data, memeVisibility) {
-    var object2Publish = {};
-    object2Publish.accessToken = this.state.accessToken;
-    object2Publish.name = this.state.currentMeme.name;
-    object2Publish.data = data
-    object2Publish.visibility = memeVisibility
-
-    // Title
-    // Token
-    // Base64
-    // private Unlisted Public
-
-    console.log(object2Publish)
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(object2Publish)
-    };
-    fetch(this.state.URL + '/memes/publishMeme', requestOptions)
-      .then(async response => {
-        const data = await response.json();
-        console.log(data);
-        // check for error response
-        if (!response.ok) {
-          // get error message from body or default to response status
-          const error = (data && data.message) || response.status;
-          return Promise.reject(error);
-        }
-
-      })
-      .catch(error => {
-        this.setState({
-          errorMessage: error.toString()
-        });
-        console.error('There was an error!', error);
-      });
-  }
-
-  saveDraft() {
-
-
-    // POST request using fetch with error handling
-    /*
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(this.state.generatedMeme)
-    };
-    fetch(this.props.URL + '/memes/saveMeme', requestOptions)
-      .then(async response => {
-        const data = await response.json();
-        console.log(data);
-        // check for error response
-        if (!response.ok) {
-          // get error message from body or default to response status
-          const error = (data && data.message) || response.status;
-          return Promise.reject(error);
-        }
-      })
-      .catch(error => {
-        this.setState({
-          errorMessage: error.toString()
-        });
-        console.error('There was an error!', error);
-      });*/
-
-  }
-
-  shareMeme() {
-    //this.setState(prevState => ({ downloadImageTrigger: !prevState.downloadImageTrigger }))
-  }
-
-  generateMemeImageFlip() {
-    var object2Generate = {};
-    object2Generate.id = this.state.currentMeme.id;
-    object2Generate.inputBoxes = this.state.inputBoxes
-
-    console.log(object2Generate)
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(object2Generate)
-    };
-    fetch(this.state.URL + '/memes/generateMeme', requestOptions)
-      .then(async response => {
-        const data = await response.json();
-        console.log(data);
-        // check for error response
-        if (!response.ok) {
-          // get error message from body or default to response status
-          const error = (data && data.message) || response.status;
-          return Promise.reject(error);
-        }
-
-        var tmp = {};
-        tmp.url = data.data.url;
-        window.open(tmp.url, "_blank")
-
-
-      })
-      .catch(error => {
-        this.setState({
-          errorMessage: error.toString()
-        });
-        console.error('There was an error!', error);
-      });
-  }
-
 
   /**
    * 
@@ -252,8 +95,8 @@ class MemeGenerator extends React.Component {
     var wrh = currentMemeFromChild.width / currentMemeFromChild.height;
     var newWidth = currentMemeFromChild.width;
     var newHeight = currentMemeFromChild.height;
-    var maxWidth = 700;
-    var maxHeight = 700;
+    var maxWidth = 500;
+    var maxHeight = 500;
     if (newWidth > maxWidth) {
       newWidth = maxWidth;
       newHeight = newWidth / wrh;
@@ -263,14 +106,19 @@ class MemeGenerator extends React.Component {
       newHeight = maxHeight;
       newWidth = newHeight * wrh;
     }
+    console.log(currentMemeFromChild)
     this.setState({
-      currentMeme: currentMemeFromChild,
+      currentTemplate: currentMemeFromChild,
       inputBoxes: currentMemeFromChild.inputBoxes,
       canvasWidth: newWidth,
       canvasHeight: newHeight,
-    }, () => this.assignNewText2Textboxes(this.state.tmpInputTextBoxesArray))
-
-    console.log(this.state.currentMeme)
+      drawPaths: currentMemeFromChild.drawPaths,
+      additionalImages: currentMemeFromChild.additionalImages,
+    }, () => {
+      var voices = window.speechSynthesis.getVoices();
+      this.assignNewText2Textboxes(this.state.tmpInputTextBoxesArray)
+      textToSpeech(this.state.currentTemplate.name,voices[13],this.state.textToSpeechActive);
+    })
   }
 
   /**
@@ -294,7 +142,14 @@ class MemeGenerator extends React.Component {
   }
 
 
+  /**
+   * 
+   * @param {*} path Array of position objects with x and y coordinates
+   * Adds a new array of positions to the draw path arrau
+   * 
+   */
   addPath(path) {
+    console.log(path)
     if (path.length > 0) {
       this.setState(prevState => ({
         drawPaths: [...prevState.drawPaths, path]
@@ -302,12 +157,18 @@ class MemeGenerator extends React.Component {
     }
   }
 
+  /**
+   *  Removes last added path
+   */
   undoDrawing() {
     let drawPaths = [...this.state.drawPaths];
     drawPaths.pop();
     this.setState({ drawPaths });
   }
 
+  /**
+   * Removes all paths
+   */
   clearDrawing() {
     this.setState({
       drawPaths: [],
@@ -315,28 +176,35 @@ class MemeGenerator extends React.Component {
   }
 
 
+  /**
+   * 
+   * @param {*} image
+   * Add additional images
+   *  
+   */
   addAdditionalImages(image) {
     this.setState(prevState => ({
       additionalImages: [...prevState.additionalImages, image]
     }))
   }
 
-
-  imageAdded(image) {
-    this.loadImage(image.url).then(result => {
-      this.setState(prevState => ({
-        currentImages: [...prevState.currentImages, result]
-      }))
-    })
-  }
-
-
+  /**
+   * Clear Additional Images
+   */
   clearImages() {
     this.setState({
       additionalImages: [],
     })
   }
 
+
+  /**
+   * 
+   * @param {*} event 
+   * Handle changes in canvas setting such as height and width of canvas
+   * 
+   * 
+   */
   handleCanvasChange(event) {
     console.log(parseInt(event.target.value))
     if (event.target.value !== '') {
@@ -345,6 +213,10 @@ class MemeGenerator extends React.Component {
       this.setState({ [event.target.name]: 0 })
     }
   }
+
+  /**
+   *  Handle changes of additional Images 
+   * */
   handleImageChange(image) {
     let additionalImages = [...this.state.additionalImages]
     Object.assign(this.state.additionalImages[image.id], image)
@@ -394,29 +266,31 @@ class MemeGenerator extends React.Component {
         initializeText.outlineWidth,
         initializeText.outlineColor,
         initializeText.isBold,
-        initializeText.isItalics,
+        initializeText.isItalic,
+        initializeText.isVisible,
+        initializeText.start,
+        initializeText.end,
+        initializeText.duration,
       )]
     }))
   }
 
   render() {
     // Redux: Update Signed in State
-    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
-
     return (
       <div className="generator-view">
         <ControlsComponent
           URL={this.state.URL}
           generateMeme={this.generateMeme}
-          currentMeme={this.state.currentMeme}
           handleCanvasChange={this.handleCanvasChange}
           setCurrentMeme={this.setCurrentMeme}
           createMeme={this.createMeme}
+          currentTemplate={this.state.currentTemplate}
           canvasWidth={this.state.canvasWidth}
           canvasHeight={this.state.canvasHeight} />
         <ImageComponent
           generateMeme={this.generateMeme}
-          currentMeme={this.state.currentMeme}
+          currentTemplate={this.state.currentTemplate}
           inputBoxes={this.state.inputBoxes}
           inputBoxesUpdated={this.state.inputBoxesUpdated}
           canvasWidth={this.state.canvasWidth}
@@ -430,8 +304,6 @@ class MemeGenerator extends React.Component {
           handleInputBoxesChange={this.handleInputBoxesChange}
           clearDrawing={this.clearDrawing}
           undoDrawing={this.undoDrawing}
-          retrieveImageTrigger={this.state.retrieveImageTrigger}
-          imageRetrieved={this.imageRetrieved}
         />
         <TextUIComponent
           handleInputBoxesChange={this.handleInputBoxesChange}
@@ -439,7 +311,19 @@ class MemeGenerator extends React.Component {
           setInputBoxes={this.setInputBoxes}
           addTextBoxes={this.addTextBoxes}
         />
-        
+        <GenerateMemeComponent
+          URL={this.state.URL}
+          inputBoxes={this.state.inputBoxes}
+          drawPaths={this.state.drawPaths}
+          additionalImages={this.state.additionalImages}
+          memeCreationEvent={this.state.memeCreationEvent}
+          memeVisibility={this.state.memeVisibility}
+          maxImageSize={this.state.maxImageSize}
+          currentTemplate={this.state.currentTemplate}
+          canvasWidth={this.state.canvasWidth}
+          canvasHeight={this.state.canvasHeight}
+        />
+
       </div>
     )
   }

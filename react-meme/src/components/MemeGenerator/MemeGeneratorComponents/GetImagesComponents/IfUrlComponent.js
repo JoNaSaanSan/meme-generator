@@ -1,3 +1,4 @@
+import { getFormat, getImageDimensions, getVideoDimensions } from '../../../../utils/ImageUtils';
 const React = require('react')
 // This component enables the user to upload images from the local device
 class IfUrlComponent extends React.Component {
@@ -36,30 +37,38 @@ class IfUrlComponent extends React.Component {
      */
     submitUrl() {
 
-        const dimensions = new Promise((resolve, reject) => {
-            var src = this.state.inputUrl;
-            var img = new Image();
-            img.onload = () => {
-                resolve({ width: img.width, height: img.height });
-            };
-            img.src = src;
-        });
+        console.log(this.state.inputUrl)
+        // console.log( URL.createObjectURL(this.state.inputUrl))
+        const formatType = getFormat(this.state.inputUrl);
+        let dimension = {}
+        if (formatType === 'image' || formatType === 'gif') {
+            dimension = getImageDimensions(this.state.inputUrl);
+        } else if (formatType === 'video') {
+            dimension = getVideoDimensions(this.state.inputUrl);;
+        } else {
+            return
+        }
 
-        dimensions.then((dims) => {
-            console.log(dimensions.width)
+        console.log(dimension)
+
+        dimension.then((dims) => {
+            console.log(dimension.width)
             var tmpArr = [];
             tmpArr.push({
                 id: 1,
-                name:'URL',
+                name: 'URL',
                 box_count: 2,
                 width: dims.width,
                 height: dims.height,
                 url: this.state.inputUrl,
+                formatType: getFormat(this.state.inputUrl),
             })
             this.setState({
                 isFetching: false
-            }, () =>
-            this.props.setImagesArray(tmpArr, this.state.isFetching))
+            }, () => {
+                console.log(tmpArr);
+                this.props.setImagesArray(tmpArr, this.state.isFetching)
+            })
         })
 
     }

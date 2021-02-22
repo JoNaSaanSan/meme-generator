@@ -10,9 +10,9 @@
     background-color: #363636;
     border: none;
     color: white;
-    padding: 16px 16px;
+    padding: 10px;
     text-decoration: none;
-    margin: 6px 6px;
+    margin: 3px;
     cursor: pointer;
     border-radius: 5px;
     display: inline-block;
@@ -28,9 +28,9 @@
     background-color: #363636;
     border: none;
     color: white;
-    padding: 16px 16px;
+    padding: 10px;
     text-decoration: none;
-    margin: 6px 6px;
+    margin: 3px;
     border-radius: 5px;
 }
 
@@ -38,23 +38,23 @@
     background-color: #363636;
     border: none;
     color: white;
-    padding: 16px 16px;
+    padding: 10px;
     text-decoration: none;
-    margin: 6px 6px;
+    margin: 3px;
     border-radius: 5px;
-    width: 15px;
+    width: 23px;
 }
 
 .toggle-button {
     background-color: #363636;
     cursor: pointer;
-    padding: 16px 16px;
-    margin: 6px 6px;
+    padding: 10px;
+    margin: 3px;
     border-radius: 5px;
     color: white;
     border: none;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     font-size: 20px;
     display: flex;
     justify-content: center;
@@ -65,13 +65,13 @@
 .toggle-button-pressed {
     background-color: #252525;
     cursor: pointer;
-    padding: 16px 16px;
+    padding: 10px;
     border-radius: 5px;
-    margin: 6px 6px;
+    margin: 3px;
     color: white;
-    border: none;
-    width: 40px;
-    height: 40px;
+    border: 1px solid rgb(184, 184, 184);
+    width: 35px;
+    height: 35px;
     font-size: 20px;
     display: flex;
     justify-content: center;
@@ -86,21 +86,24 @@
     font-weight: bold;
 }
 
+.visible-button {
+    width: 80px;
+    font-size: 15px;
+}
+
+p {
+    margin: 0;
+}
+
 .dimension-input-box {
     background-color: #363636;
     border: none;
     color: white;
-    padding: 16px 16px;
+    padding: 10px;
     text-decoration: none;
-    margin: 6px 6px;
+    margin: 3px;
     border-radius: 5px;
     width: 55px;
-}
-
-.text-styling-container {
-    display: flex;
-    align-items: center;
-    justify-content: left;
 }
 
 input[type="file"] {

@@ -1,8 +1,6 @@
 import Store from '../../../../redux/store';
+import { getImageDimensions } from '../../../../utils/ImageUtils';
 const React = require('react');
-
-
-
 
 // This component fetches an array of images from the server
 class IfServerBase64Component extends React.Component {
@@ -31,25 +29,28 @@ class IfServerBase64Component extends React.Component {
             tmpUrl = 'https://' + this.state.inputUrl
         }
 
-        fetch(url + '?url=' + tmpUrl + '?token=' + this.state.accessToken)
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-access-token': this.state.accessToken,
+            },
+        };
+
+        fetch(url, requestOptions)
             .then(async response => {
 
                 const data = await response.json();
                 const image = 'data:image/png;base64,' + data.base64_img;
-                const inputBoxes = data.inputBoxes
+                const inputBoxes = data.inputBoxes;
+                const drawPaths = data.drawPaths;
+                const additionalImages = data.additionalImages;
+                const currentMeme = data.currentMeme;
                 console.log(image)
                 fetch(image)
                     .then(res => res.blob()).then(res => {
 
-                        const dimensions = new Promise((resolve, reject) => {
-                            var src = URL.createObjectURL(res);
-                            var img = new Image();
-                            img.onload = () => {
-                                resolve({ width: img.width, height: img.height });
-                                URL.revokeObjectURL(src);
-                            };
-                            img.src = src;
-                        });
+                        const dimensions = getImageDimensions(res);
 
  
                         dimensions.then((dims) => {
@@ -58,11 +59,13 @@ class IfServerBase64Component extends React.Component {
                             tmpArr.push({
                                 id: 1,
                                 name: this.props.getImagesButtonName,
-                                box_count: 2,
+                                box_count: currentMeme.box_count,
                                 width: dims.width,
                                 height: dims.height,
                                 url: URL.createObjectURL(res),
                                 inputBoxes: inputBoxes,
+                                drawPaths: drawPaths,
+                                additionalImages: additionalImages,
                             })
                             this.setState({
                                 isFetching: false

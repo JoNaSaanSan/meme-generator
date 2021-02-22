@@ -49,9 +49,15 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
       });
     }
   }).catch(error => {
+<<<<<<< HEAD
     console.log(error);
     res.status(400).send(error);
 
+=======
+      console.log(error);
+      res.status(400).send(error
+      );
+>>>>>>> ac26188babfe3b3a7809130225d32aa3c5b90a47
   });
 });
 

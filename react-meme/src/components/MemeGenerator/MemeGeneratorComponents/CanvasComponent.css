@@ -1,10 +1,14 @@
 #canvas-container {
-  padding: 50px;
+  height: 500px;
   display: flex;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
 }
 
 #canvas-container>canvas {
   display: block;
   position: absolute;
-  overflow: hidden;
 }
+

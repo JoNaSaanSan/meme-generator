@@ -1,4 +1,5 @@
 import Camera from 'react-html5-camera-photo';
+import { getImageDimensions } from '../../../../utils/ImageUtils';
 import 'react-html5-camera-photo/build/css/index.css';
 const React = require('react')
 // This component enables the user to upload images from the local s
@@ -39,20 +40,18 @@ class IfUrlComponent extends React.Component {
         })
     }
 
+    /**
+     * 
+     * @param {*} uri 
+     * Called whenever user takes a photo
+     * 
+     */
     handleTakePhoto(uri) {
         fetch(uri)
             .then(res => res.blob()).then(
                 res => {
 
-                    const dimensions = new Promise((resolve, reject) => {
-                        var src = URL.createObjectURL(res);
-                        var img = new Image();
-                        img.onload = () => {
-                            resolve({ width: img.width, height: img.height });
-                            URL.revokeObjectURL(src);
-                        };
-                        img.src = src;
-                    });
+                    const dimensions = getImageDimensions(res);
 
                     dimensions.then((dims) => {
                         console.log(dimensions.width)

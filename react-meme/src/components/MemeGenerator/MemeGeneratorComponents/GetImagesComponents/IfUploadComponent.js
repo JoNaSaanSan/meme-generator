@@ -1,3 +1,5 @@
+import Store from '../../../../redux/store';
+import { getFormat, getImageDimensions, getVideoDimensions } from '../../../../utils/ImageUtils';
 const React = require('react')
 
 // This component enables the user to upload images from the local s
@@ -8,6 +10,7 @@ class IfUploadComponent extends React.Component {
             filesArray: null,
             isFetching: false,
             fileData: null,
+            accessToken: '',
         }
         this.handleChange = this.handleChange.bind(this)
     }
@@ -23,33 +26,43 @@ class IfUploadComponent extends React.Component {
             isFetching: true,
         })
         var files = event.target.files;
-        var dimensions = [];
+        let dimensions = []
         for (var i = 0; i < files.length; ++i) {
             const file = files[i];
-            if (!file.type.match('image'))
-                continue;
-            dimensions.push(new Promise((resolve, reject) => {
-                var src = URL.createObjectURL(file);
-                var img = new Image();
-                img.onload = () => {
-                    resolve({ width: img.width, height: img.height });
-                    URL.revokeObjectURL(src);
-                };
-                img.src = src;
-            }));
+            let dim;
+            const formatType = getFormat(file.name);
+            console.log(formatType)
+            if (formatType === 'image' ||  formatType === 'gif') {
+                dim = getImageDimensions(file);
+            } else if (formatType === 'video') {
+                dim = getVideoDimensions(file);
+            } else {
+                return
+            }
+            console.log(dim)
+
+            dimensions.push(dim);
+
+            try {
+                this.uploadImagesToServer(file);
+            } catch (e) {
+                console.log(e)
+            }
         }
 
         Promise.all(dimensions).then((dims) => {
             let data = []
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
+                const formatType = getFormat(file.name);
                 data.push({
                     id: i,
-                    name: 'URL',
+                    name: file.name,
                     box_count: 2,
                     width: dims[i].width, //Todo: User width and height from image
                     height: dims[i].height,
                     url: URL.createObjectURL(file),
+                    formatType: formatType,
                 });
             }
             this.setState({
@@ -62,13 +75,68 @@ class IfUploadComponent extends React.Component {
     }
 
 
+    /**
+     * 
+     * @param {*} file
+     * Upload uploaded image to server
+     *  
+     */
+    uploadImagesToServer(file) {
+        console.log(file)
+        const reader = new FileReader();
+
+        reader.addEventListener("load", () => {
+
+            var object2Publish = {};
+            //object2Publish.accessToken = this.state.accessToken;
+            object2Publish.title = file.name
+            object2Publish.base_64 = reader.result
+
+
+            // convert image file to base64 string
+            console.log(reader.result)
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': this.state.accessToken,
+                },
+                body: JSON.stringify(object2Publish)
+            };
+            //   /memes/uploadtemplate
+            fetch(this.props.URL, requestOptions)
+                .then(async response => {
+                    const data = await response.json();
+                    console.log(data);
+                    // check for error response
+                    if (!response.ok) {
+                        // get error message from body or default to response status
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    }
+
+                })
+                .catch(error => {
+                    this.setState({
+                        errorMessage: error.toString()
+                    });
+                    console.error('There was an error!', error);
+                });
+
+        }, false);
+
+        reader.readAsDataURL(file);
+    }
+
+
     render() {
+        Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
 
         return (
             <div>
                 <div id="upload-button" className="button" >
                     <label htmlFor="file-upload">
-                        Upload Image</label></div>
+                        Upload Images</label></div>
                 <input type="file" id="file-upload" onChange={this.handleChange} multiple />
                 <div className="sample-image-container">
                     <img src={this.state.filesArray} id="previewImage" alt="" className="sample-images" />
