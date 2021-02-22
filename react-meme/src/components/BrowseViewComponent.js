@@ -9,20 +9,26 @@ class BrowseViewComponent extends React.Component {
     this.state = {
       allMemes: [],
       popularMemes: [],
-      items: Array.from({ length: 1 })
+      items: Array.from({ length: 1 }),
+      hasMoreToLoad: true
     }
   }
 
 
   fetchMoreData = () => {
     // a fake async api call like which sends
-    // 3 more records in 0.2 secs
-    if( this.state.items.length < this.state.allMemes.length){
+    // 3 more records in 0.05 
+    console.log("items length: "+ this.state.items.length)
+    console.log("allMemes length: "+ this.state.allMemes.length)
+    if( this.state.items.length < this.state.allMemes.length-1){
+      
         setTimeout(() => {
           this.setState({
             items: this.state.items.concat(Array.from({ length: 2 }))
           });
-        }, 200);
+        }, 50);
+    }else{
+      this.setState({hasMoreToLoad: false})
     }
   };
 
@@ -89,9 +95,13 @@ class BrowseViewComponent extends React.Component {
         <InfiniteScroll
           dataLength={this.state.items.length}
           next={this.fetchMoreData}
-          hasMore={true}
+          hasMore={this.state.hasMoreToLoad}
           loader={<h4>Loading...</h4>}
-        >
+          endMessage={
+            <p style={{ textAlign: 'center' }}>
+              <b>Yay! You have seen it all</b>
+            </p>
+          }>
           {this.createMemes()}
 
         </InfiniteScroll>

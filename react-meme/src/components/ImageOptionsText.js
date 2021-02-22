@@ -98,13 +98,6 @@ class ImageOptionsText extends React.Component {
                 </div>
 
 
-                <div className="comments">
-                    <input className="input-text" placeholder="Leave a comment" />
-                    <button className="send">Send</button>
-                    <div className="commets_container"></div>
-                </div>
-
-
             </div>
         );
     }
