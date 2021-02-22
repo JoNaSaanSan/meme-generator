@@ -23,6 +23,9 @@ var memes = [];
   memes document: _id, title, creatorId, imgstring, upvotes, downvotes, comments, private, dateCreated, private,tags(?)
 */
 
+/*
+  Requests a single meme by the _id of the database
+*/
 
 router.get("/:id", (req, res) => {
   memes = req.db.get('memes');
