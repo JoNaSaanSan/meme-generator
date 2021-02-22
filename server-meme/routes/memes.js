@@ -23,6 +23,22 @@ var memes = [];
   memes document: _id, title, creatorId, imgstring, upvotes, downvotes, comments, private, dateCreated, private,tags(?)
 */
 
+
+router.get("/:id", (req, res) => {
+  memes = req.db.get('memes');
+  let id = req.params.id;
+
+  memes.findOne({
+    _id: id
+  }).then(meme => {
+    res.status(200).send(meme);
+  }).catch(error => {
+    console.log(error);
+    res.status(400).send(error);
+  })
+});
+
+
 /*
   Requests sample memes from the imgflip API.
   Returns an array of memes to the client.
@@ -247,6 +263,9 @@ router.get('/popularmemes', (req, res, next) => {
   });;
 });
 
+/*
+  Requests the memes by order given in the database aka sorted by creation date
+*/
 
 router.get("/browsememes", (req, res) => {
   const memes = req.db.get('memes');
