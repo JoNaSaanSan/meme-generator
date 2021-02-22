@@ -90,7 +90,7 @@ class IfUploadComponent extends React.Component {
             var object2Publish = {};
             //object2Publish.accessToken = this.state.accessToken;
             object2Publish.title = file.name
-            object2Publish.base_64 = reader.result
+            object2Publish.base64 = reader.result
 
 
             // convert image file to base64 string
