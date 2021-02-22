@@ -4,42 +4,49 @@ const React = require('react');
 require('./BrowseViewComponent.css');
 
 class BrowseViewComponent extends React.Component {
-  
-  state = {
-    allMemes: [],
-    popularMemes: [],
-    items: Array.from({ length: 20 })
+  constructor(props) {
+    super(props);
+    this.state = {
+      allMemes: [],
+      popularMemes: [],
+      items: Array.from({ length: 1 })
+    }
   }
+
 
   fetchMoreData = () => {
     // a fake async api call like which sends
-    // 20 more records in 1.5 secs
-    setTimeout(() => {
-      this.setState({
-        items: this.state.items.concat(Array.from({ length: 100 }))
-      });
-    }, 1500);
+    // 3 more records in 0.2 secs
+    if( this.state.items.length < this.state.allMemes.length){
+        setTimeout(() => {
+          this.setState({
+            items: this.state.items.concat(Array.from({ length: 2 }))
+          });
+        }, 200);
+    }
   };
 
 
-  componentWillMount() {
+  componentDidMount() {
     this.getAllMemes(); 
     this.getPupularMemes();
   }
 
   createMemes(){
-    console.log("ALL MEMES "+this.state.allMemes)
-    if(this.state.allMemes !== undefined){
-    return(
-      this.state.allMemes.map((object, i) =>
-          <div><ImageOptionsText meme={this.state.allMemes[i]}/></div>
-      )
-    )}
-    else{
-      return (
-        <p>nicht gefunden</p>
-      )
+    if(this.state.allMemes.length > 0){
+      console.log("test1")
+        
+        return(
+          this.state.items.map((i, index) => (
+          <div  key={index}>
+            <div><ImageOptionsText meme={this.state.allMemes[index]}/></div>
+          </div>
+        )))
+          
+     
     }
+      
+
   }
 
   /**
@@ -85,17 +92,9 @@ class BrowseViewComponent extends React.Component {
           hasMore={true}
           loader={<h4>Loading...</h4>}
         >
-          
-
-        <div id= "test">
           {this.createMemes()}
-        </div>
 
         </InfiniteScroll>
-
-
-
-
 
       </div>
     );
