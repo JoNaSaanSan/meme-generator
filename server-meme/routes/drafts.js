@@ -15,7 +15,7 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
   let drawPaths = req.body.drawPaths;
   let inputBoxes = req.body.inputBoxes;
   let userId = req.userId;
-  let darft = {
+  let draft = {
     title,
     base64,
     additionalImages,
@@ -27,7 +27,7 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
   drafts.find({
     title: title
   }).then(found => {
-    if (found != []) {
+    if (found.length > 0) {
       console.log("Title already existing");
       res.status(400).send({
         message: "Title already existing, choose another one"
@@ -43,7 +43,8 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
           //User draft array updaten? Oder nciht?
           console.log(`Saved draft with it ${draft._id}`);
           res.status(200).send({
-            message: "Draft saved"
+            message: "Draft saved",
+            draftId: draft._id
           });
         }
       });
