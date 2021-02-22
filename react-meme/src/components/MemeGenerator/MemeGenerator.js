@@ -47,7 +47,7 @@ class MemeGenerator extends React.Component {
       memeCreationEvent: 0,
       memeVisibility: -1,
       maxImageSize: '',
-      textToSpeechActive: true,
+      textToSpeechActive: false,
     }
 
     this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
@@ -67,6 +67,14 @@ class MemeGenerator extends React.Component {
     var voices = window.speechSynthesis.getVoices();
   }
 
+  /**
+   * 
+   * @param {*} event 
+   * @param {*} memeVisibility 
+   * @param {*} maxImageSize 
+   * Handle event triggers of the meme creation buttons
+   * 
+   */
   createMeme(event, memeVisibility, maxImageSize) {
     if (event === undefined)
       return;

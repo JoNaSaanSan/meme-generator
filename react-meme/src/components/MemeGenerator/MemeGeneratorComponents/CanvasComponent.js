@@ -60,6 +60,7 @@ class CanvasComponent extends React.Component {
         width: newWidth,
         height: newHeight,
         wrh: wrh,
+
       }
     }, () => {
       this.drawBackground();
@@ -130,7 +131,11 @@ class CanvasComponent extends React.Component {
     canvas.width = this.state.canvasDimensions.width;
     canvas.height = this.state.canvasDimensions.height;
     var context = canvas.getContext('2d');
-    console.log(this.props.currentTemplate)
+
+    this.setState({
+      formatType: this.props.currentTemplate.formatType,
+    })
+
     if (this.props.currentTemplate.formatType === 'image') {
       if (this.props.currentTemplate.image !== undefined)
         this.drawImage(this.props.currentTemplate.image, 0, 0, canvas.width, canvas.height, context)
@@ -408,21 +413,30 @@ class CanvasComponent extends React.Component {
 
 
   video2Canvas(videoObject, posX, posY, width, height, context) {
+    console.log(videoObject)
     var video = document.getElementById('video-input');
+
     video.src = videoObject.url;
-    video.play();
-    video.addEventListener('play', () => {
+    video.onplaying = () => {
       let displayVideo = () => {
         if (video.paused || video.ended) {
           return;
         }
+        if (this.state.formatType === 'video')
         this.computeFrame(video, context, width, height);
-        setTimeout(() => {
-          displayVideo();
+        let timeout = setTimeout(() => {
+          if (this.state.formatType === 'video') {
+            displayVideo();
+          } else {
+            clearTimeout(timeout);
+            return;
+          }
         }, 0);
       }
       displayVideo();
-    }, false);
+    };
+
+
   }
 
   gif2Canvas(gifObject, posX, posY, width, height, context) {
@@ -430,17 +444,28 @@ class CanvasComponent extends React.Component {
     myGif.src = gifObject.url;
     myGif.onload = (e) => {
       const gif = e.gif;
-      
+
       // Display loop
       let displayGif = () => {
+        if (this.state.formatType === 'gif')
         this.computeFrame(gif.image, context, width, height);
-        requestAnimationFrame(displayGif);
+        let timeout = setTimeout(() => {
+          if (this.state.formatType === 'gif') {
+            requestAnimationFrame(displayGif);
+          } else {
+            clearTimeout(timeout);
+            return;
+          }
+        }, 0);
       }
       requestAnimationFrame(displayGif);    // start displaying the gif.
     }
   }
 
   computeFrame(obj, context, width, height) {
+    if (!this.state.formatType === 'video' && !this.state.formatType === 'gif')
+      return;
+
     context.clearRect(0, 0, width, height); // Clear in case the video/gif is transparent
     context.drawImage(obj, 0, 0, width, height);  // The current frame    
     return;
@@ -458,7 +483,7 @@ class CanvasComponent extends React.Component {
           <canvas id="canvas-draw" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp} />
           <canvas id="canvas-text" onMouseDown={this.handleMouseDown} onMouseMove={this.handleMouseMove} onMouseOut={this.handleMouseOut} onMouseUp={this.handleMouseUp} />
         </div>
-      </div> 
+      </div>
     )
   }
 }

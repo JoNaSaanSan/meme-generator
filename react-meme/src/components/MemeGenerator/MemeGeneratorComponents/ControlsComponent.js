@@ -1,9 +1,19 @@
 import GetImagesComponents from './GetImagesComponent';
-import PreviewComponent from './PreviewComponent'
+import PreviewComponent from './PreviewComponent';
+import { connect } from 'react-redux';
+import { toggleSpeech }  from '../../../redux/action';
 import Store from '../../../redux/store';
 import GraphComponent from './GraphComponent';
 const React = require('react');
 require('./ControlsComponent.css');
+
+
+function mapDispatchToProps(dispatch) {
+  return {
+      toggleSpeech: speech => dispatch(toggleSpeech(speech))
+  };
+}
+
 
 class ControlsComponent extends React.Component {
 
@@ -29,6 +39,7 @@ class ControlsComponent extends React.Component {
     this.updateText = this.updateText.bind(this);
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
     this.createMeme = this.createMeme.bind(this);
+    this.toggleSpeech = this.toggleSpeech.bind(this);
   }
 
   /**
@@ -165,6 +176,10 @@ class ControlsComponent extends React.Component {
     }
   }
 
+  toggleSpeech(event){
+    this.props.authenticateUser({speechActive: true })
+  }
+
 
   render() {
     Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
@@ -210,10 +225,13 @@ class ControlsComponent extends React.Component {
             <button name="save" onClick={this.createMeme} id="save-button" className="button" > Save as Draft </button> </div> : <a className="button" href="#login">Sign in to publish or save!</a>}
         <a name="share" href="#share" onClick={this.createMeme} id="share-button" className="button" > Share Meme</a>
         <button name="download" onClick={this.createMeme} id="download-button" className="button">Download Image!</button>
+
+        <button name="speechOn" onClick={this.toggleSpeech} id="speech-button" className="button">Turn Speech On</button>
+        <button name="speechOff" onClick={this.toggleSpeech} id="speech-button" className="button">Turn Speech Off</button>
         <PreviewComponent samplesMemeArray={this.state.imageMemeArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />
       </div>
     )
   }
 }
 
-export default ControlsComponent;
+export default connect(null, mapDispatchToProps)(ControlsComponent);

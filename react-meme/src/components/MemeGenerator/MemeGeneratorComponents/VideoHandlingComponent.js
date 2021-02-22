@@ -13,6 +13,7 @@ class VideoHandlingComponent extends React.Component {
             currentTime: 0,
             recordingState: 'Not recording',
             videoData: null,
+            gifData: null,
         }
     }
 
@@ -21,6 +22,9 @@ class VideoHandlingComponent extends React.Component {
     componentDidUpdate(prevProps, prevState) {
     }
 
+    /**
+     * Record Gif using an encorder
+     */
     recordGif() {
         const canvas = document.createElement("canvas");
         canvas.width = this.props.canvasWidth;
@@ -61,6 +65,9 @@ class VideoHandlingComponent extends React.Component {
             const buffer = encoder.out.getData()
             const blob = new Blob([buffer], { 'type': 'image/gif' });
             const url = URL.createObjectURL(blob);
+            this.setState({
+                gifData: url,
+            })
             const img = document.getElementById('gifimg');
             img.width = this.props.canvasWidth;
             img.height = this.props.canvasHeight;
@@ -103,7 +110,9 @@ class VideoHandlingComponent extends React.Component {
 
 
 
-
+    /**
+     * Records Video 
+     */
     recordVideo() {
         const canvas = document.createElement("canvas");
         canvas.setAttribute("id", "canvas");
@@ -124,9 +133,13 @@ class VideoHandlingComponent extends React.Component {
         outputVideo.src = null;
 
         let draw = () => {
-            if (this.state.recordingState === 'Not recording') {
+            if (this.state.recordingState === 'Not recording')  {
                 clearInterval(interval);
+                try {
                 mediaRecorder.stop();
+                } catch (e) {
+                    console.log(e)
+                }
             }
             context.drawImage(canvasBackground, 0, 0);
             context.drawImage(canvasImages, 0, 0);
@@ -213,6 +226,8 @@ class VideoHandlingComponent extends React.Component {
             })
         } else if (event.target.name === 'renderVideo') {
             this.downloadVideo();
+        } else if (event.target.name === 'renderGIF') {
+            this.downloadGif();
         }
     }
 
@@ -244,6 +259,22 @@ class VideoHandlingComponent extends React.Component {
 
         }
     }
+
+
+    downloadGif() {
+        const a = document.createElement("a");
+        try {
+            a.download = this.props.currentTemplate.name + '.gif';
+            a.href = this.state.gifData;
+            document.body.appendChild(a);
+            a.click();
+        }
+        catch (e) {
+
+        }
+    }
+
+
     render() {
 
 
@@ -252,9 +283,9 @@ class VideoHandlingComponent extends React.Component {
             <div> <div> Time </div>
                 {this.state.currentTime}</div>
             <button name="recordVideo" onClick={this.handleChange.bind(this)} id="record-button" className="button">Record Video</button>
-            <button name="renderVideo" onClick={this.handleChange.bind(this)} id="render-button" className="button">Render Video</button>
+            <button name="renderVideo" onClick={this.handleChange.bind(this)} id="render-button" className="button">Download Video</button>
             <button name="recordGIF" onClick={this.handleChange.bind(this)} id="record-button" className="button">Record GIF</button>
-            <button name="renderGIF" onClick={this.handleChange.bind(this)} id="render-button" className="button">Render GIF</button>
+            <button name="renderGIF" onClick={this.handleChange.bind(this)} id="render-button" className="button">Download GIF</button>
 
             <button name="stop" onClick={this.handleChange.bind(this)} id="stop-button" className="button">Stop Record</button>
 
@@ -264,7 +295,7 @@ class VideoHandlingComponent extends React.Component {
 
             {//(this.props.currentTemplate.formatType === 'video' || ) ?
                 <div id="video-container">
-                    <video id="video-input" controls="true" crossorigin="anonymous" />
+                    <video id="video-input" controls="true" crossorigin="anonymous" autoPlay='true' />
                     <div> Video Output </div>
                     <video id="video-output" controls="true" crossorigin="anonymous" />
                     <div> GIF Output </div>
