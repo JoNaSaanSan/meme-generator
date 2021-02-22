@@ -250,6 +250,7 @@ router.get('/popularmemes', (req, res, next) => {
 
 router.get("/browsememes", (req, res) => {
   const memes = req.db.get('memes');
+  console.log("browsemems");
   memes.find({
     private: false
   }).then(docs => {
