@@ -12,6 +12,7 @@ class VideoHandlingComponent extends React.Component {
             videoDuration: 0,
             currentTime: 0,
             recordingState: 'Not recording',
+            videoData: null,
         }
     }
 
@@ -120,7 +121,7 @@ class VideoHandlingComponent extends React.Component {
         var outputVideo = document.getElementById('video-output');
         var chunks = [];
 
-
+        outputVideo.src = null;
 
         let draw = () => {
             if (this.state.recordingState === 'Not recording') {
@@ -145,8 +146,12 @@ class VideoHandlingComponent extends React.Component {
             var blob = new Blob(chunks, { 'type': 'video/mp4' });
             chunks = [];
             var videoURL = URL.createObjectURL(blob);
-            if (outputVideo !== null)
+            if (outputVideo !== null) {
                 outputVideo.src = videoURL;
+                this.setState({
+                    videoData: videoURL,
+                })
+            }
         };
         mediaRecorder.ondataavailable = function (e) {
             chunks.push(e.data);
@@ -158,7 +163,12 @@ class VideoHandlingComponent extends React.Component {
             var interval = setInterval(draw, 30);
 
             var duration = (this.state.duration * 1000) || inputVideo.duration * 1000 || 5000;
-            setTimeout(function () { mediaRecorder.stop(); clearInterval(interval); }, duration);
+            setTimeout(() => {
+                if (this.state.recordingState === 'Recording Video') {
+                    mediaRecorder.stop();
+                    clearInterval(interval);
+                }
+            }, duration);
             this.props.inputBoxes.map((el, i) => {
                 this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: false } });
                 return new Promise((resolve, reject) => {
@@ -201,6 +211,8 @@ class VideoHandlingComponent extends React.Component {
             this.setState({
                 duration: event.target.value,
             })
+        } else if (event.target.name === 'renderVideo') {
+            this.downloadVideo();
         }
     }
 
@@ -217,6 +229,19 @@ class VideoHandlingComponent extends React.Component {
                     </div>
                 </div>
             )
+        }
+    }
+
+    downloadVideo() {
+        const a = document.createElement("a");
+        try {
+            a.download = this.props.currentTemplate.name + '.mp4';
+            a.href = this.state.videoData;
+            document.body.appendChild(a);
+            a.click();
+        }
+        catch (e) {
+
         }
     }
     render() {
@@ -239,7 +264,7 @@ class VideoHandlingComponent extends React.Component {
 
             {//(this.props.currentTemplate.formatType === 'video' || ) ?
                 <div id="video-container">
-                    <video id="video-input" controls="true" crossorigin="anonymous" autoplay="autoplay" />
+                    <video id="video-input" controls="true" crossorigin="anonymous" />
                     <div> Video Output </div>
                     <video id="video-output" controls="true" crossorigin="anonymous" />
                     <div> GIF Output </div>

@@ -410,6 +410,7 @@ class CanvasComponent extends React.Component {
   video2Canvas(videoObject, posX, posY, width, height, context) {
     var video = document.getElementById('video-input');
     video.src = videoObject.url;
+    video.play();
     video.addEventListener('play', () => {
       let displayVideo = () => {
         if (video.paused || video.ended) {

@@ -47,7 +47,7 @@ class MemeGenerator extends React.Component {
       memeCreationEvent: 0,
       memeVisibility: -1,
       maxImageSize: '',
-      textToSpeechActive: false,
+      textToSpeechActive: true,
     }
 
     this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
@@ -109,7 +109,7 @@ class MemeGenerator extends React.Component {
     }, () => {
       var voices = window.speechSynthesis.getVoices();
       this.assignNewText2Textboxes(this.state.tmpInputTextBoxesArray)
-      textToSpeech(this.state.currentTemplate.name,voices[5],this.state.textToSpeechActive);
+      textToSpeech(this.state.currentTemplate.name,voices[13],this.state.textToSpeechActive);
     })
   }
 

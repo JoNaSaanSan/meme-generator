@@ -43,9 +43,6 @@ class GenerateMemeComponent extends React.Component {
             if (this.props.memeCreationEvent.target.name === "share") {
                 this.shareMeme();
             }
-            if (this.props.memeCreationEvent.target.name === "record") {
-                this.recordVideo();
-            }
         }
     }
 
@@ -236,56 +233,6 @@ class GenerateMemeComponent extends React.Component {
                 console.error('There was an error!', error);
             });
     }
-
-    recordVideo() {
-
-        const canvas = document.createElement("canvas");
-        canvas.setAttribute("id", "canvas");
-        canvas.width = this.props.canvasWidth;
-        canvas.height = this.props.canvasHeight
-        const context = canvas.getContext("2d");
-
-        const canvasBackground = document.getElementById("canvas-background");
-        const canvasImages = document.getElementById("canvas-images");
-        const canvasDraw = document.getElementById("canvas-draw");
-        const canvasText = document.getElementById("canvas-text");
-
-        function draw() {
-
-            context.drawImage(canvasBackground, 0, 0);
-            context.drawImage(canvasImages, 0, 0);
-            context.drawImage(canvasDraw, 0, 0);
-            context.drawImage(canvasText, 0, 0);
-
-        }
-        var videoStream = canvas.captureStream(30);
-        var mediaRecorder = new MediaRecorder(videoStream);
-
-        var chunks = [];
-        mediaRecorder.ondataavailable = (e) => {
-            chunks.push(e.data);
-        };
-
-
-        var video = document.getElementById('video-output');
-        console.log(video)
-        mediaRecorder.onstop = (e) => {
-            var blob = new Blob(chunks, { 'type': 'video/mp4' });
-            chunks = [];
-            var videoURL = URL.createObjectURL(blob);
-            if (video !== null)
-                video.src = videoURL;
-        };
-        mediaRecorder.ondataavailable = function (e) {
-            chunks.push(e.data);
-        };
-
-        mediaRecorder.start();
-        setInterval(draw, 30);
-        setTimeout(function () { mediaRecorder.stop(); }, 15000);
-    }
-
-
 
 
 
