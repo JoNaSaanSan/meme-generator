@@ -1,4 +1,5 @@
 import ImageOptionsText from './ImageOptionsText';
+import InfiniteScroll from "react-infinite-scroll-component";
 const React = require('react');
 require('./BrowseViewComponent.css');
 
@@ -6,8 +7,20 @@ class BrowseViewComponent extends React.Component {
   
   state = {
     allMemes: [],
-    popularMemes: []
+    popularMemes: [],
+    items: Array.from({ length: 20 })
   }
+
+  fetchMoreData = () => {
+    // a fake async api call like which sends
+    // 20 more records in 1.5 secs
+    setTimeout(() => {
+      this.setState({
+        items: this.state.items.concat(Array.from({ length: 100 }))
+      });
+    }, 1500);
+  };
+
 
   componentWillMount() {
     this.getAllMemes(); 
@@ -15,7 +28,7 @@ class BrowseViewComponent extends React.Component {
   }
 
   createMemes(){
-    console.log(this.state.allMemes)
+    console.log("ALL MEMES "+this.state.allMemes)
     if(this.state.allMemes !== undefined){
     return(
       this.state.allMemes.map((object, i) =>
@@ -66,9 +79,24 @@ class BrowseViewComponent extends React.Component {
     return (
 
       <div className="imageOptions_container">
+        <InfiniteScroll
+          dataLength={this.state.items.length}
+          next={this.fetchMoreData}
+          hasMore={true}
+          loader={<h4>Loading...</h4>}
+        >
+          
+
         <div id= "test">
           {this.createMemes()}
         </div>
+
+        </InfiniteScroll>
+
+
+
+
+
       </div>
     );
   }

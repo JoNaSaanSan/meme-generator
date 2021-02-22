@@ -14,6 +14,7 @@ class HeaderComponent extends React.Component {
                 <div id="menu-view">
                     <Link to="/" className="menu-item"> Generator </Link>
                     <Link to="/browse" className="menu-item"> Browse </Link>
+                    <Link to="/gallery" className="menu-item"> Gallery </Link>
                 </div>
                 <div id="title-view">MemeLab</div>
                 <div id="account-view">
