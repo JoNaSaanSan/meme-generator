@@ -43,7 +43,7 @@ class BrowseViewComponent extends React.Component {
         return(
           this.state.items.map((i, index) => (
           <div  key={index}>
-            <div><ImageOptionsText meme={this.state.allMemes[index]}/></div>
+            <div><ImageOptionsText meme={this.state.allMemes[index]} index = {index}/></div>
           </div>
         )))
           
@@ -96,7 +96,7 @@ class BrowseViewComponent extends React.Component {
           hasMore={this.state.hasMoreToLoad}
           loader={<h4>Loading...</h4>}
           endMessage={
-            <p style={{ textAlign: 'center' }}>
+            <p style={{ textAlign: 'center', marginBottom: '50px' }}>
               <b>Yay! You have seen it all</b>
             </p>
           }>

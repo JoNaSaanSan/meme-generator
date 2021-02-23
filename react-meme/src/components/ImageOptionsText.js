@@ -18,6 +18,8 @@ class ImageOptionsText extends React.Component {
             isSignedIn: Store.getState().user.isSignedIn,
             upvotes: this.props.meme.upvotes,
             downvotes: this.props.meme.downvotes,
+            currentMeme: this.props.meme,
+            index: this.props.index
         };
     }
 
@@ -84,12 +86,6 @@ class ImageOptionsText extends React.Component {
         )
     }
 
-    goToGallery(){
-        //<Link to="/gallery" className="menu-item"></Link>
-        console.log("zu gallery")
-     
-    }
-    
 
 
     render() {
@@ -113,7 +109,7 @@ class ImageOptionsText extends React.Component {
                     </div>
                 </div>
                 <div className="image_container">
-                <Link to={{pathname: "/gallery", param1: "Par1" }}><img src={this.props.meme.base64} className="image" onClick={() => this.goToGallery()} /></Link>
+                <Link to={{pathname: "/gallery", index: this.state.index}}><img src={this.props.meme.base64} className="image" /></Link>
                 </div>
                 <div className="points-commits">
                     <p className="voting-point">Points: {this.state.upvotes - this.state.downvotes} </p>
@@ -122,7 +118,7 @@ class ImageOptionsText extends React.Component {
                 <div className="option_container">
                     <button className="option-button"><img src={upvote} className="icon" onClick={() => this.upvote()} /></button>
                     <button className="option-button"><img src={downvote} className="icon" onClick={() => this.downvote()} /></button>
-                    <button className="option-button"><img src={comments} className="icon" onClick={() => this.commit()} /></button>
+                    <Link to={{pathname: "/gallery", index: this.state.index}}><button className="option-button"><img src={comments} className="icon" onClick={() => this.commit()} /></button></Link>
                 </div>
 
 

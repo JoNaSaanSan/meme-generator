@@ -63,10 +63,22 @@
 
 .g_option_container{
     margin-left: -0.5rem;
+    margin-top: 6%;
 }
 
 .g_points-commits{
     display: flex;
     float: left;
     width: 100%;
+}
+
+.comment_username{
+    font-weight: bold;
+}
+
+.comments_user-date_container{
+    display: flex;
+    float: left;
+    width: 100%;
+    margin-top: 5%;
 }

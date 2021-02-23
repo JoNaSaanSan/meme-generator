@@ -1,6 +1,7 @@
 .container{
     width: 100%;
     margin-bottom: 10%;
+    margin-top: 5%;
 }
 
 .user-date_container{
@@ -73,6 +74,7 @@
 
 .option_container{
     margin-left: -0.5rem;
+    margin-top: 4.5%;
 }
 
 .option-button{
