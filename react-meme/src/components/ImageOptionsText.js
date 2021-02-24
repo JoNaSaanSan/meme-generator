@@ -39,7 +39,7 @@ class ImageOptionsText extends React.Component {
         fetch('http://localhost:3000/memes/upvote' + "?memeId=" + memeId, requestOptions)
             .then(async response => {
                 const data = await response.json()
-                console.log(data)
+                //console.log(data)
                 //return response.json();
                 this.setState({ upvotes: data.upvotes});
             })
@@ -78,7 +78,6 @@ class ImageOptionsText extends React.Component {
 
     commit() {
         console.log("make a commit")
-
         //var newD  = document.createElement('img');
         //document.querySelector('.commets_container').appendChild(newD);
         return (

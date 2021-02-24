@@ -9,7 +9,8 @@ class BrowseViewComponent extends React.Component {
     this.state = {
       allMemes: [],
       popularMemes: [],
-      items: Array.from({ length: 1 }),
+      shownByTime: true,
+      items: Array.from({ length: 2 }), // initial load -> 2 Memes
       hasMoreToLoad: true
     }
   }
@@ -22,7 +23,7 @@ class BrowseViewComponent extends React.Component {
       
         setTimeout(() => {
           this.setState({
-            items: this.state.items.concat(Array.from({ length: 2 }))
+            items: this.state.items.concat(Array.from({ length: 2 })) // 2 Memes are loaded
           });
         }, 50);
     }else{
@@ -32,13 +33,17 @@ class BrowseViewComponent extends React.Component {
 
 
   componentDidMount() {
-    this.getAllMemes(); 
-    this.getPupularMemes();
+    this.getMemesByTime(); 
+    this.getMemesByUpvotes();
   }
 
+  /**
+   * create Memes in InfinityScroll based on if "hot"(popularMemes) or "fresh"(allMemes sorted by time) is clicked
+   * the initial state is that allMemes are shown sorted by time
+   */
   createMemes(){
-    if(this.state.allMemes.length > 0){
-      console.log("test1")
+    if(this.state.shownByTime === true){
+      if(this.state.allMemes.length > 0){
         
         return(
           this.state.items.map((i, index) => (
@@ -46,17 +51,28 @@ class BrowseViewComponent extends React.Component {
             <div><ImageOptionsText meme={this.state.allMemes[index]} index = {index}/></div>
           </div>
         )))
-          
-     
+      }
+    }
+
+    if(this.state.shownByTime === false){
+      if(this.state.popularMemes.length > 0){
+
+        return(
+          this.state.items.map((i, index) => (
+          <div  key={index}>
+            <div><ImageOptionsText meme={this.state.popularMemes[index]} index = {index}/></div>
+          </div>
+        )))
+      }
     }
       
 
   }
 
   /**
-   * Memes Array sorted by time of creation
+   * get Memes Array sorted by time of creation
    */
-  getAllMemes(){
+  getMemesByTime(){
     fetch('http://localhost:3000/memes/browsememes').then(response => {
       return response.json();
     })
@@ -69,9 +85,9 @@ class BrowseViewComponent extends React.Component {
   }
 
   /**
-   * Memes Array sorted by number of upvotes
+   * get Memes Array sorted by number of upvotes
    */
-  getPupularMemes(){
+  getMemesByUpvotes(){
     fetch('http://localhost:3000/memes/popularmemes').then(response => {
       return response.json();
     })
@@ -84,26 +100,46 @@ class BrowseViewComponent extends React.Component {
   }
 
 
+  showMemesByTime(){
+    this.setState({shownByTime: true})
+    document.querySelector(".option1-button").setAttribute("style", "background-color: #252525;")
+    document.querySelector(".option2-button").setAttribute("style", "background-color: #363636;") //background color
+  }
+
+  showMemesByUpvotes(){
+    this.setState({shownByTime: false})
+    document.querySelector(".option2-button").setAttribute("style", "background-color: #252525;")
+    document.querySelector(".option1-button").setAttribute("style", "background-color: #363636;") //background color
+  }
+
+
 
 
   render() {
     return (
+      <div className="browse_container">
+          <div className="imageOptions">
+ 
+            <div className="option1-button" onClick={() => this.showMemesByTime()}>FRESH</div>
+            <div className="option2-button" onClick={() => this.showMemesByUpvotes()}>HOT</div>
+            
+          </div>
+          <div className="infiniteScroll_container">
+            <InfiniteScroll
+              dataLength={this.state.items.length}
+              next={this.fetchMoreData}
+              hasMore={this.state.hasMoreToLoad}
+              loader={<h4>Loading...</h4>}
+              endMessage={
+                <p style={{ textAlign: 'center', marginBottom: '50px' }}>
+                  <b>Yay! You have seen it all</b>
+                </p>
+              }>
+              {this.createMemes()}
 
-      <div className="imageOptions_container">
-        <InfiniteScroll
-          dataLength={this.state.items.length}
-          next={this.fetchMoreData}
-          hasMore={this.state.hasMoreToLoad}
-          loader={<h4>Loading...</h4>}
-          endMessage={
-            <p style={{ textAlign: 'center', marginBottom: '50px' }}>
-              <b>Yay! You have seen it all</b>
-            </p>
-          }>
-          {this.createMemes()}
-
-        </InfiniteScroll>
-
+            </InfiniteScroll>
+          </div>
+       
       </div>
     );
   }
