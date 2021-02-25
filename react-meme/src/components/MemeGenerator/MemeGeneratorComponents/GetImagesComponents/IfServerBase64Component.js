@@ -1,5 +1,5 @@
 import Store from '../../../../redux/store';
-import { getImageDimensions } from '../../../../utils/ImageUtils';
+import { b64toBlob } from '../../../../utils/ImageUtils';
 const React = require('react');
 
 // This component fetches an array of images from the server
@@ -49,14 +49,16 @@ class IfServerBase64Component extends React.Component {
                     for (var i = 0; i < drafts.length; i++) {
                         var draft = drafts[i];
                         console.log(draft)
-                        const image = 'data:image/png;base64,' + draft.base64;
+    
+                        var base64result = draft.base64.split(',');
+
                         data.push({
                             id: i,
                             name: draft.name,
                             box_count: 2,
                             width: draft.currentMeme.width, //Todo: User width and height from image
                             height: draft.currentMeme.height,
-                            url: URL.createObjectURL(image),
+                            url: URL.createObjectURL(b64toBlob(base64result[1], base64result[0])),
                             inputBoxes: draft.inputBoxes,
                             drawPaths: draft.drawPaths,
                             additionalImages: draft.additionalImages,
