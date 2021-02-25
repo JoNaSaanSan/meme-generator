@@ -139,7 +139,7 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
         } else {
           res.status(400).send({
             message: "Error updating user document"
-          })
+          });
         }
       });
     }
