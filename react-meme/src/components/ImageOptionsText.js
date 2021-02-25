@@ -23,6 +23,16 @@ class ImageOptionsText extends React.Component {
         };
     }
 
+    componentDidUpdate(prevProps){
+        console.log("upvotes "+ this.state.upvotes)
+        if(this.props.meme.upvotes !== prevProps.meme.upvotes)
+        this.setState({
+            upvotes: this.props.meme.upvotes,
+            downvotes: this.props.meme.downvotes,
+        })
+    }
+
+
     upvote() {
         console.log("upvote");
 

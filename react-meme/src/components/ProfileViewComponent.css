@@ -103,4 +103,8 @@ margin-top: 5%;
 
 .tab{
     float: left;
+    background-color: red;
+    width: 200px;
+    height: 50px;
+    margin-right: 10px;
 }

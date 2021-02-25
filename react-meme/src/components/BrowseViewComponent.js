@@ -89,7 +89,7 @@ class BrowseViewComponent extends React.Component {
     })
     .then(data => {
       //console.log("data: " + JSON.stringify(data))
-      this.setState({allMemes: data})//, () => this.createMemes(this.state.allMemes))
+      this.setState({allMemes: data.reverse()})//, () => this.createMemes(this.state.allMemes))
     }).catch(error => {
       console.log(error);
     });
@@ -113,12 +113,14 @@ class BrowseViewComponent extends React.Component {
 
   showMemesByTime(){
     this.setState({shownByTime: true})
+    this.getMemesByTime()
     document.querySelector(".option1-button").setAttribute("style", "background-color: #252525;")
     document.querySelector(".option2-button").setAttribute("style", "background-color: #363636;") //background color
   }
 
   showMemesByUpvotes(){
     this.setState({shownByTime: false})
+    this.getMemesByUpvotes()
     document.querySelector(".option2-button").setAttribute("style", "background-color: #252525;")
     document.querySelector(".option1-button").setAttribute("style", "background-color: #363636;") //background color
   }
