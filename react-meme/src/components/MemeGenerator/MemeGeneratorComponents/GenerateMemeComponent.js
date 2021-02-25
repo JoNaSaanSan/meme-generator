@@ -1,5 +1,5 @@
 import Store from '../../../redux/store';
-import { b64toBlob } from '../../../utils/ImageUtils';
+import { blobToBase64 } from '../../../utils/ImageUtils';
 import { retrieveImage } from '../../../utils/CanvasUtils';
 import {
     EmailShareButton,
@@ -15,6 +15,7 @@ class GenerateMemeComponent extends React.Component {
         this.state = {
             accessToken: null,
             isSignedIn: Store.getState().user.isSignedIn,
+            shareURL: '',
         }
     }
 
@@ -65,46 +66,60 @@ class GenerateMemeComponent extends React.Component {
     }
 
     publishImage = () => {
-        return new Promise((resolve, reject) => {
+        console.log(this.props.currentTemplate.formatType)
+        if (this.props.currentTemplate.formatType === 'image') {
             retrieveImage('all', this.props.canvasWidth, this.props.canvasHeight).then((imageData) => {
-                var object2Publish = {};
-                object2Publish.title = this.props.currentTemplate.name;
-                object2Publish.base_64 = imageData;
-                object2Publish.visibility = this.props.memeVisibility;
-
-                // Title
-                // Token
-                // Base64
-                // unlisted private Public
-
-                console.log(object2Publish)
-                const requestOptions = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-access-token': this.state.accessToken
-                    },
-                    body: JSON.stringify(object2Publish)
-                };
-                fetch(this.props.URL + '/memes/publishMeme', requestOptions)
-                    .then(async response => {
-                        const data = await response.json();
-                        resolve(data);
-                        // check for error response
-                        if (!response.ok) {
-                            // get error message from body or default to response status
-                            const error = (data && data.message) || response.status;
-                            return Promise.reject(error);
-                        }
-
-                    })
-                    .catch(error => {
-                        this.setState({
-                            errorMessage: error.toString()
-                        });
-                        console.error('There was an error!', error);
-                    });
+                this.sendCreatedMemeToServer(imageData)
             })
+        } else if (this.props.currentTemplate.formatType === 'video') {
+            try {
+                console.log(this.props.dynamicBlob)
+                blobToBase64(this.props.dynamicBlob).then((objData) => {
+                    this.sendCreatedMemeToServer(objData)
+                })
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    }
+
+
+    sendCreatedMemeToServer(data) {
+        return new Promise((resolve, reject) => {
+            var object2Publish = {};
+            object2Publish.title = this.props.currentTemplate.name;
+            object2Publish.memeTemplate = this.props.currentTemplate;
+            object2Publish.base64 = data;
+            object2Publish.visibility = this.props.memeVisibility;
+
+
+            console.log(object2Publish)
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': this.state.accessToken
+                },
+                body: JSON.stringify(object2Publish)
+            };
+            fetch(this.props.URL + '/memes/publishMeme', requestOptions)
+                .then(async response => {
+                    const data = await response.json();
+
+                    resolve(data);
+                    // check for error response
+                    if (!response.ok) {
+                        // get error message from body or default to response status
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    }
+                })
+                .catch(error => {
+                    this.setState({
+                        errorMessage: error.toString()
+                    });
+                    console.error('There was an error!', error);
+                });
         })
     }
 
@@ -116,9 +131,10 @@ class GenerateMemeComponent extends React.Component {
             var object2Save = {};
             object2Save.title = this.props.currentTemplate.name;
             object2Save.currentMeme = this.props.currentTemplate;
-            object2Save.base_64 = imageData;
+            object2Save.base64 = imageData;
             object2Save.inputBoxes = this.props.inputBoxes;
             object2Save.drawPaths = this.props.drawPaths;
+            console.log(this.props.additionalImages);
             object2Save.additionalImages = this.props.additionalImages;
 
             console.log(object2Save)
@@ -133,7 +149,7 @@ class GenerateMemeComponent extends React.Component {
                 },
                 body: JSON.stringify(object2Save)
             };
-            fetch(this.props.URL + '/memes/saveDraft', requestOptions)
+            fetch(this.props.URL + '/drafts/savedraft', requestOptions)
                 .then(async response => {
                     const data = await response.json();
                     console.log(data);
@@ -159,36 +175,13 @@ class GenerateMemeComponent extends React.Component {
     shareMeme() {
         console.log("share")
         this.publishImage().then(data => {
-
+            console.log(data)
+            const url = 'http://localhost:3006/meme/' + data.memeId;
+            console.log(url)
+            this.setState({
+                shareURL: url
+            })
         });
-        /*  retrieveImage('background', this.props.canvasWidth, this.props.canvasHeight).then((imageData) => {
-              const base64ImageData = imageData;
-              const contentType = 'image/png';
-  
-              const byteCharacters = atob(base64ImageData.substr(`data:${contentType};base64,`.length));
-              const byteArrays = [];
-  
-              for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
-                  const slice = byteCharacters.slice(offset, offset + 1024);
-  
-                  const byteNumbers = new Array(slice.length);
-                  for (let i = 0; i < slice.length; i++) {
-                      byteNumbers[i] = slice.charCodeAt(i);
-                  }
-  
-                  const byteArray = new Uint8Array(byteNumbers);
-  
-                  byteArrays.push(byteArray);
-              }
-              const blob = new Blob(byteArrays, { type: contentType });
-              const blobUrl = URL.createObjectURL(blob);
-  
-              window.open(blobUrl, '_blank');
-              // const file = URL.createObjectURL(b64toBlob(imageData));
-              // console.log(file)
-              //<Route exact path=`/product/${item.id}` component={Product} />
-              //this.setState(prevState => ({ downloadImageTrigger: !prevState.downloadImageTrigger }))
-          })*/
     }
 
     /**
@@ -239,16 +232,14 @@ class GenerateMemeComponent extends React.Component {
 
 
     render() {
-        const shareUrl = 'http://github.com';
-        const title = 'GitHub';
 
         return <div>
             <div id="share" className="modal-window">
                 <div>
                     <a href="/#" title="Close" id="share-window-close" className="modal-close">Close</a>
                     <FacebookShareButton
-                        url={shareUrl}
-                        quote={title}
+                        url={this.state.shareURL}
+                        quote={this.props.currentTemplate.name}
                         className="Demo__some-network__share-button"
                     >
                         <FacebookIcon size={32} round />

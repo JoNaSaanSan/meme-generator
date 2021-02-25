@@ -1,5 +1,5 @@
 import Store from '../../../../redux/store';
-import { getImageDimensions } from '../../../../utils/ImageUtils';
+import { b64toBlob } from '../../../../utils/ImageUtils';
 const React = require('react');
 
 // This component fetches an array of images from the server
@@ -18,7 +18,7 @@ class IfServerBase64Component extends React.Component {
 
     // Fetch all images from /samplememes and store them into a state array
     fetchImageFromUrl(url) {
-        Store.subscribe(() => this.setState({ accessToken: Store.getState().user.accessToken }))
+
 
         this.setState({
             isFetching: true
@@ -39,55 +39,37 @@ class IfServerBase64Component extends React.Component {
 
         fetch(url, requestOptions)
             .then(async response => {
+                response.json().then(fetchedData => {
+                    const drafts = fetchedData.drafts;
+                    console.log(fetchedData.drafts)
 
-                const data = await response.json();
-                const image = 'data:image/png;base64,' + data.base64_img;
-                const inputBoxes = data.inputBoxes;
-                const drawPaths = data.drawPaths;
-                const additionalImages = data.additionalImages;
-                const currentMeme = data.currentMeme;
-                console.log(image)
-                fetch(image)
-                    .then(res => res.blob()).then(res => {
+                    let data = []
 
-                        const dimensions = getImageDimensions(res);
 
- 
-                        dimensions.then((dims) => {
-                            console.log(dimensions.width)
-                            var tmpArr = [];
-                            tmpArr.push({
-                                id: 1,
-                                name: this.props.getImagesButtonName,
-                                box_count: currentMeme.box_count,
-                                width: dims.width,
-                                height: dims.height,
-                                url: URL.createObjectURL(res),
-                                inputBoxes: inputBoxes,
-                                drawPaths: drawPaths,
-                                additionalImages: additionalImages,
-                            })
-                            this.setState({
-                                isFetching: false
-                            }, () =>
-                            this.props.setImagesArray(tmpArr, this.state.isFetching))
-                        })
-                    })
+                    for (var i = 0; i < drafts.length; i++) {
+                        var draft = drafts[i];
+                        console.log(draft)
+    
+                        var base64result = draft.base64.split(',');
 
-                // check for error response
-                if (!response.ok) {
-                    // get error message from body or default to response status
-                    const error = (data && data.message) || response.status;
-                    return Promise.reject(error);
-                }
-
+                        data.push({
+                            id: i,
+                            name: draft.name,
+                            box_count: 2,
+                            width: draft.currentMeme.width, //Todo: User width and height from image
+                            height: draft.currentMeme.height,
+                            url: URL.createObjectURL(b64toBlob(base64result[1], base64result[0])),
+                            inputBoxes: draft.inputBoxes,
+                            drawPaths: draft.drawPaths,
+                            additionalImages: draft.additionalImages,
+                            formatType: draft.formatType,
+                        });
+                    }
+                    this.setState({
+                        isFetching: false,
+                    }, () => this.props.setImagesArray(data, this.state.isFetching))
+                })
             })
-            .catch(error => {
-                this.setState({
-                    errorMessage: error.toString()
-                });
-                console.error('There was an error!', error);
-            });
     }
 
     /**
@@ -110,10 +92,12 @@ class IfServerBase64Component extends React.Component {
 
 
     render() {
+        Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
+
         return (
             <div>
                 <button onClick={() => this.fetchImageFromUrl(this.props.URL)} id="fetch-button" className="button" > {this.props.getImagesButtonName} </button>
-            </div>
+            </div >
         )
     }
 }

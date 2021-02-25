@@ -10,24 +10,26 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
   let drafts = req.db.get('drafts');
   let title = req.body.title;
   let base64 = req.body.base64; //Template! ohne schrift etc
-  //let currentMeme = req.body.currentMeme;
+  let currentMeme = req.body.currentMeme;
   let additionalImages = req.body.additionalImages; //eingefügte bilder
   let drawPaths = req.body.drawPaths;
   let inputBoxes = req.body.inputBoxes;
   let userId = req.userId;
-  darft = {
+  let draft = {
     title,
     base64,
     additionalImages,
     drawPaths,
     inputBoxes,
-    userId
+    userId,
+    currentMeme,
+    visibility: 1
   };
 
   drafts.find({
     title: title
   }).then(found => {
-    if (found != []) {
+    if (found.length > 0) {
       console.log("Title already existing");
       res.status(400).send({
         message: "Title already existing, choose another one"
@@ -43,7 +45,8 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
           //User draft array updaten? Oder nciht?
           console.log(`Saved draft with it ${draft._id}`);
           res.status(200).send({
-            message: "Draft saved"
+            message: "Draft saved",
+            draftId: draft._id
           });
         }
       });
@@ -51,7 +54,6 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
   }).catch(error => {
     console.log(error);
     res.status(400).send(error);
-
   });
 });
 

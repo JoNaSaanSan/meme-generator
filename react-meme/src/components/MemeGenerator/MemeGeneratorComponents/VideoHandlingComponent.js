@@ -12,8 +12,8 @@ class VideoHandlingComponent extends React.Component {
             videoDuration: 0,
             currentTime: 0,
             recordingState: 'Not recording',
-            videoData: null,
-            gifData: null,
+            videoBlobUrl: null,
+            gifBlobUrl: null,
         }
     }
 
@@ -66,7 +66,7 @@ class VideoHandlingComponent extends React.Component {
             const blob = new Blob([buffer], { 'type': 'image/gif' });
             const url = URL.createObjectURL(blob);
             this.setState({
-                gifData: url,
+                gifBlobUrl: url,
             })
             const img = document.getElementById('gifimg');
             img.width = this.props.canvasWidth;
@@ -157,12 +157,13 @@ class VideoHandlingComponent extends React.Component {
 
         mediaRecorder.onstop = (e) => {
             var blob = new Blob(chunks, { 'type': 'video/mp4' });
+            this.props.setDynamicBlob(blob)
             chunks = [];
             var videoURL = URL.createObjectURL(blob);
             if (outputVideo !== null) {
                 outputVideo.src = videoURL;
                 this.setState({
-                    videoData: videoURL,
+                    videoBlobUrl: videoURL,
                 })
             }
         };
@@ -251,7 +252,7 @@ class VideoHandlingComponent extends React.Component {
         const a = document.createElement("a");
         try {
             a.download = this.props.currentTemplate.name + '.mp4';
-            a.href = this.state.videoData;
+            a.href = this.state.videoBlobUrl;
             document.body.appendChild(a);
             a.click();
         }
@@ -265,7 +266,7 @@ class VideoHandlingComponent extends React.Component {
         const a = document.createElement("a");
         try {
             a.download = this.props.currentTemplate.name + '.gif';
-            a.href = this.state.gifData;
+            a.href = this.state.gifBlobUrl;
             document.body.appendChild(a);
             a.click();
         }

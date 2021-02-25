@@ -48,11 +48,12 @@ class UserAuth extends React.Component {
                 isLoginMode: false,
             })
             this.register();
-        } else {
+        } else { 
             this.setState({
                 isRegisterMode: false,
                 isLoginMode: false,
             })
+            this.logout();
         }
     }
 
@@ -74,6 +75,9 @@ class UserAuth extends React.Component {
         fetch(this.state.URL + '/users/login', requestOptions)
             .then(async response => {
                 const data = await response.json();
+                localStorage.setItem('token', data.accessToken);
+                localStorage.setItem('email', data.email);
+                localStorage.setItem('username', data.username);
                 this.props.authenticateUser({ username: data.username, email: data.email, accessToken: data.accessToken, isSignedIn: true })
                 console.log(data);
                 document.getElementById("login-close").click();
@@ -128,6 +132,15 @@ class UserAuth extends React.Component {
         }
     }
 
+    logout() {
+        this.props.authenticateUser({ username: '', email: '', accessToken: '', isSignedIn: false })
+        localStorage.setItem('token', '');
+        localStorage.setItem('email', '');
+        localStorage.setItem('username', '');
+        document.getElementById("login-close").click();
+             
+    }
+
     render() {
 
         Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn }))
@@ -164,6 +177,7 @@ class UserAuth extends React.Component {
                         <div>
                             <button className="button" name="loginMode" onClick={this.handleOnClick.bind(this)}> Login</button>
                             <button className="button" name="registerMode" onClick={this.handleOnClick.bind(this)}> Register</button>
+                            <button className="button" name="logoutrMode" onClick={this.handleOnClick.bind(this)}> Logout </button>
                         </div>
                 }
 

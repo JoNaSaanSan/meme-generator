@@ -102,6 +102,7 @@ class ImageComponent extends React.Component {
                     width: result[i].width / 10,
                     height: result[i].height / 10,
                     url: URL.createObjectURL(file),
+                  //x  base64: 
                     image: result[i],
                 });
 
@@ -181,7 +182,9 @@ class ImageComponent extends React.Component {
                     inputBoxes={this.props.inputBoxes}
                     handleInputBoxesChange={this.handleInputBoxesChange}
                     canvasWidth={this.props.canvasWidth}
-                    canvasHeight={this.props.canvasHeight} />
+                    canvasHeight={this.props.canvasHeight}
+                    setDynamicBlob={this.props.setDynamicBlob}
+                    />
             </div >)
     }
 }
