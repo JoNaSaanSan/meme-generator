@@ -2,6 +2,7 @@ import upvote from '../pictures/upvote.png'
 import downvote from '../pictures/downvote.png'
 import share from '../pictures/share.png'
 import download from '../pictures/download.png'
+import Store from '../redux/store';
 const React = require('react');
 require('./GalleryViewComponent.css');
 
@@ -15,7 +16,8 @@ class GalleryViewComponent extends React.Component {
             //currentmeme: this.props.location.meme,
             currentMeme: {},
             title: "",
-            index: this.props.location.index
+            index: this.props.location.index,
+            accessToken: Store.getState().user.accessToken, 
         }
     }
 
@@ -86,8 +88,29 @@ class GalleryViewComponent extends React.Component {
                 </div>))
             )
         }
+    }
 
-        //
+    sendComment(){
+        var comment2Publish = {};
+                comment2Publish.memeId = this.state.currentMeme._id;;
+                //comment2Publish.userId = 
+                comment2Publish.comment = document.querySelector(".input-text").value;
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-access-token': this.state.accessToken
+            },
+            body: JSON.stringify(comment2Publish)
+        };
+        fetch('http://localhost:3000/memes/comment', requestOptions)
+            .then(async response => {
+                const data = await response.json();
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
     }
 
     /**
@@ -148,7 +171,7 @@ class GalleryViewComponent extends React.Component {
                 <div className="right_container">
                     <div className="g_comments">
                         <input className="input-text" placeholder="Leave a comment"/>
-                        <button className="send">Send</button>
+                        <button className="send" onClick={() => this.sendComment()}>Send</button>
                         <div className="commets_container"></div>
                     </div>
                     {this.showComments()}
