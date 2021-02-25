@@ -81,6 +81,7 @@ router.post('/generateMeme', upload.fields([]), (req, res, next) => {
 router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
   const memes = req.db.get('memes');
   const users = req.db.get('users');
+  const templates = req.db.get('templates');
 
   let url = req.body.url;
   let base64 = req.body.base64;
@@ -121,13 +122,15 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
         }
       }).then(doc => {
         console.log(doc);
-        templates.findOneAndUpdate({
-          _id: templateId
+        templates.update({
+          _id: memeTemplate.id;
         }, {
           $inc: {
             used: 1
-          }
+          },
+          upsert = true
         });
+        console.log(memeTemplate);
         if (doc._id != null) {
           res.status(200).send({
             message: "Meme saved successfully",
