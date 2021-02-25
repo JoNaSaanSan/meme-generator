@@ -100,7 +100,7 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
     url: url,
     base64: base64,
     title: title,
-    creatorId: ObjectId(userId),
+    creatorId: userId,
     upvotes: 0,
     downvotes: 0,
     visibility: Number(visibility),
@@ -121,26 +121,27 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
           memes: obj._id
         }
       }).then(doc => {
-        console.log(doc);
+        memeTemplateId = memeTemplate.id.toString().length == 24 ? memeTemplate.id : "000000000000000000000000";
         templates.update({
-          _id: memeTemplate.id
+          _id: memeTemplateId
         }, {
           $inc: {
             used: 1
-          },
+          }
+        }, {
           upsert: true
-        });
-
-        if (doc._id != null) {
-          res.status(200).send({
-            message: "Meme saved successfully",
-            memeId: doc._id
-          });
-        } else {
-          res.status(400).send({
-            message: "Error updating user document"
-          });
-        }
+        }).then(template => {
+          if (doc._id != null) {
+            res.status(200).send({
+              message: "Meme saved successfully",
+              memeId: doc._id
+            });
+          } else {
+            res.status(400).send({
+              message: "Error updating user document"
+            });
+          }
+        }).catch(error => console.log(error));
       });
     }
   }).catch(error => {

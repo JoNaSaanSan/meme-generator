@@ -65,6 +65,10 @@ router.get('/:templateId/:textboxes', (req, res) => {
   });
 });
 
+/*router.get("/multitext/:texts", (req, res) => {
+
+});*/
+
 
 
 module.exports = router;
