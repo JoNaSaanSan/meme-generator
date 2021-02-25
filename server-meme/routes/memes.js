@@ -128,7 +128,9 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
           $inc: {
             used: 1
           },
-          upsert = true
+          {
+            upsert: true
+          }
         });
         console.log(memeTemplate);
         if (doc._id != null) {
