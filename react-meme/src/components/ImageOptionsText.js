@@ -16,20 +16,21 @@ class ImageOptionsText extends React.Component {
         this.state = {
             accessToken: Store.getState().user.accessToken,
             isSignedIn: Store.getState().user.isSignedIn,
-            upvotes: this.props.meme.upvotes,
-            downvotes: this.props.meme.downvotes,
+            //upvotes: this.props.meme.upvotes,
+            //downvotes: this.props.meme.downvotes,
             currentMeme: this.props.meme,
             index: this.props.index
         };
     }
 
     componentDidUpdate(prevProps){
-        console.log("upvotes "+ this.state.upvotes)
-        if(this.props.meme.upvotes !== prevProps.meme.upvotes)
+        //console.log("upvotes "+ this.state.upvotes)
+        /*if(this.props.meme.upvotes !== prevProps.meme.upvotes)
         this.setState({
             upvotes: this.props.meme.upvotes,
             downvotes: this.props.meme.downvotes,
-        })
+        })*/
+        console.log("upvotes profile" + this.props.meme.upvotes)
     }
 
 
@@ -95,6 +96,18 @@ class ImageOptionsText extends React.Component {
         )
     }
 
+    selectFormat(){
+        if(true){
+            return(
+                <img src={this.props.meme.base64} className="image"/>
+            )
+        }
+        else{
+            return(
+                <video src={this.props.meme.base64} className="image" autoplay="true"/>
+            )
+        }
+    }
 
 
     render() {
