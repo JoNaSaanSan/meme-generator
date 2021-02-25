@@ -31,6 +31,7 @@
     border: none;
     text-align:left;
     background-color: #252525;
+    border-radius: 5px;
 }
 
 .option2-button{
@@ -41,6 +42,7 @@
     background:transparent; 
     border: none;
     text-align:left;
+    border-radius: 5px;
 }
 
 .option1-button:hover { 

@@ -139,7 +139,7 @@ class GalleryViewComponent extends React.Component {
         
         return (
             <div className="gallery_container">
-            <button className="button" onClick={() => this.goLeft()}>&lsaquo;</button>
+            <button className="myButton" onClick={() => this.goLeft()}>&lsaquo;</button>
             <div className= "g_container">
                 <div className="left_container">
                     <div className= "g_user-date_container">
@@ -178,7 +178,7 @@ class GalleryViewComponent extends React.Component {
                 </div>
                 
             </div>
-            <button className="button" onClick={() => this.goRight()}>&rsaquo;</button>
+            <button className="myButton" onClick={() => this.goRight()}>&rsaquo;</button>
             </div>
         );
     }

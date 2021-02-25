@@ -82,3 +82,14 @@
     width: 100%;
     margin-top: 5%;
 }
+
+.myButton{
+    height: 100px;
+    width: 30px;
+    border-radius: 5px;
+    margin-right: 1em;
+    margin-left: 1em;
+    background-color: #252525;
+    border: none;
+    color: white;
+}
