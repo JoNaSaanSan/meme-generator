@@ -20,7 +20,7 @@ const password = "onlinemultimedia2020";
 
 var memes = [];
 /*
-  memes document: _id, title, creatorId, imgstring, upvotes, downvotes, comments, private, dateCreated, private,tags(?)
+  memes document: _id, title, creatorId, imgstring, upvotes, downvotes, comments, private, dateCreated, visibility(0=unlisted, 1=private, 2=public) ,tags(?)
 */
 
 
@@ -272,7 +272,9 @@ router.get('/downvote', verifyToken, (req, res, next) => {
 */
 router.get('/newmemes', (req, res, next) => {
   const memes = req.db.get('memes');
-  memes.find({}).then(memes => {
+  memes.find({
+    visibility: 2
+  }).then(memes => {
     memes.sort((b, a) => dateHelper.stringToDateObj(a["dateCreated"]) - dateHelper.stringToDateObj(b["dateCreated"]));
     res.send(memes);
   });
@@ -284,7 +286,7 @@ router.get('/newmemes', (req, res, next) => {
 router.get('/popularmemes', (req, res, next) => {
   const memes = req.db.get('memes');
   memes.find({
-    private: false
+    visibility: 2
   }, {
     sort: {
       upvotes: -1
@@ -307,7 +309,7 @@ router.get("/browsememes", (req, res) => {
   const memes = req.db.get('memes');
   console.log("browsemems");
   memes.find({
-    private: false
+    visibility: 2
   }).then(docs => {
     res.status(200).send(docs);
   }).catch(error => {
@@ -362,18 +364,6 @@ router.post("/comment", verifyToken, upload.fields([]), (req, res) => {
       message: error
     });
   });
-});
-
-/*
-router.post("/publishmeme", upload.fields([]), (req, res) => {
-  let title = req.body.name;
-  let base64 = req.body.base64;
-  let visibility = req.body.visibility; //0=unlisted, 1=private, 2=public
-});*/
-
-router.post("/creatememefromurl", upload.fields([]), (res, req) => {
-  let memes = req.db.get('memes');
-  //TODO
 });
 
 

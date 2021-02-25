@@ -22,7 +22,8 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
     drawPaths,
     inputBoxes,
     userId,
-    currentMeme
+    currentMeme,
+    visibility: 1
   };
 
   drafts.find({
