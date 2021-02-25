@@ -81,12 +81,11 @@ router.get("/multitext/:templateId/:textboxes", (req, res) => {
 
   var zip = new JSZip();
 
-
   templates.findOne({
     _id: templateId
   }).then(template => {
 
-    //trennung für ilder durch ;
+    //trennung für bilder durch ;
     textboxesParams.split(";").map((text, i) => {
       let textboxes = text.split("_").map((item, i) => {
         let itemSplit = item.split(".");
@@ -119,20 +118,18 @@ router.get("/multitext/:templateId/:textboxes", (req, res) => {
         ctx.fillText(box.text, box.xPos, box.yPos)
       });
 
+      //den anfang wegschneiden, sonst kapierts zip nicht
       let dataURL = mycanvas.toDataURL().split('base64,')[1];
-      console.log(dataURL);
+
       zip.file("meme" + i + ".png", dataURL, {
         base64: true
       });
     });
 
-    console.log("test");
-    console.log(zip);
-
-    // Set the name of the zip file in the download
+    // header für die zip setzen
     res.setHeader('Content-Disposition', 'attachment; filename="memes.zip"')
 
-    // Send the zip file
+    // zip senden
     zip.generateNodeStream({
         type: 'nodebuffer',
         streamFiles: true
