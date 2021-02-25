@@ -118,8 +118,11 @@ class GetImagesComponents extends React.Component {
                     }
                 }
                 var formatType = data[i].formatType || 'image';
-
-                var tmp = new Meme(data[i].url, data[i].id, data[i].width, data[i].height, data[i].name, data[i].box_count, tmpInputBoxes, tmpDrawPaths, tmpAdditionalImages, formatType);
+                var stats = null;
+                if(data[i].statistics !== null){
+                    stats = data[i].statistics
+                }
+                var tmp = new Meme(data[i].url, data[i].id, data[i].width, data[i].height, data[i].name, data[i].box_count, tmpInputBoxes, tmpDrawPaths, tmpAdditionalImages, formatType, stats);
                 memeArray.push(tmp)
             }
             this.props.setImagesArray(memeArray)

@@ -36,10 +36,8 @@ class GraphComponent extends React.Component {
   componentDidMount() {
     this.setState({
       data: [
-        { category: 'viewed', popularity: 12 },
-        { category: 'chosen', popularity: 4 },
-        { category: 'generated', popularity: 4 },
-        { category: 'published', popularity: 12 }
+        { category: 'viewed', popularity: 0 },
+        { category: 'used', popularity: 0 },
       ]
     })
   }
@@ -47,7 +45,19 @@ class GraphComponent extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     //console.log(this.props.currentTemplate);
     if (this.props.currentTemplate !== prevProps.currentTemplate) {
-      console.log(this.props.currentTemplate);
+      try {
+        if (this.props.currentTemplate.statistics != undefined) {
+          var used = this.props.currentTemplate.statistics.used || 0
+          this.setState({
+            data: [
+              { category: 'viewed', popularity: 2 },
+              { category: 'used', popularity: used },
+            ]
+          })
+        }
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 

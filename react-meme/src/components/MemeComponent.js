@@ -27,19 +27,16 @@ class HeaderComponent extends React.Component {
                 'Content-Type': 'application/json',
             },
         };
-
+        console.log(this.state.url + this.props.match.params.id)
         fetch(this.state.url + this.props.match.params.id, requestOptions)
-            .then(async response => {
-              response.json().then(data =>
-
-                    this.setState({
-                        imageData: data.base64
-                    })
-
-                )
-
-            }
-            )
+            .then(response => {
+                return response.json();
+            }).then(data => {
+                console.log(data)
+                this.setState({
+                    imageData: data.base64
+                })
+            })
             .catch(error => {
                 this.setState({
                     errorMessage: error.toString()

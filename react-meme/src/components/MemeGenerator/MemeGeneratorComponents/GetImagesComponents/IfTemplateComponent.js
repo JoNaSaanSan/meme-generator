@@ -52,10 +52,11 @@ class IfTemplateComponent extends React.Component {
                                 id: 0,
                                 name: template.title,
                                 box_count: 2,
-                                width: template.width || 400,//Todo: User width and height from image
-                                height: template.height || 400,
+                                width: template.width,//Todo: User width and height from image
+                                height: template.height,
                                 url: URL.createObjectURL(b64toBlob(base64result[1], base64result[0])),
                                 formatType: template.formatType,
+                                statistics: {used: template.used}
                             });
                         }
                         this.setState({

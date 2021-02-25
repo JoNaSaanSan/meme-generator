@@ -1,6 +1,6 @@
 // Meme Class
 class Meme {
-    constructor(url, id, width, height, name, boxCount, inputBoxes, drawPaths, additionalImages, formatType) {
+    constructor(url, id, width, height, name, boxCount, inputBoxes, drawPaths, additionalImages, formatType, statistics) {
       this.url = url;
       this.id = id;
       this.width = width;
@@ -11,6 +11,7 @@ class Meme {
       this.drawPaths = drawPaths;
       this.additionalImages = additionalImages;
       this.formatType = formatType;
+      this.statistics = statistics;
     }
   }
 
