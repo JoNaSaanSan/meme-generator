@@ -39,12 +39,10 @@ class IfUploadComponent extends React.Component {
             } else {
                 return
             }
-            console.log(dim)
-
             dimensions.push(dim);
 
             try {
-                this.uploadImagesToServer(file);
+                this.uploadImagesToServer(file, dim);
             } catch (e) {
                 console.log(e)
             }
@@ -56,7 +54,7 @@ class IfUploadComponent extends React.Component {
                 var file = files[i];
                 const formatType = getFormat(file.name);
                 data.push({
-                    id: i,
+                    id: 0,
                     name: file.name,
                     box_count: 2,
                     width: dims[i].width, //Todo: User width and height from image
@@ -81,7 +79,7 @@ class IfUploadComponent extends React.Component {
      * Upload uploaded image to server
      *  
      */
-    uploadImagesToServer(file) {
+    uploadImagesToServer(file, dim) {
         console.log(file)
         const reader = new FileReader();
 
@@ -89,9 +87,11 @@ class IfUploadComponent extends React.Component {
 
             var object2Publish = {};
             //object2Publish.accessToken = this.state.accessToken;
-            object2Publish.title = file.name
-            object2Publish.base64 = reader.result
-
+            object2Publish.title = file.name;
+            object2Publish.base64 = reader.result;
+            object2Publish.width = dim.width;
+            object2Publish.heigth = dim.heigth;
+            object2Publish.fileType = getFormat(file.name);
 
             // convert image file to base64 string
             console.log(reader.result)

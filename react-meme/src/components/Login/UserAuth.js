@@ -48,7 +48,7 @@ class UserAuth extends React.Component {
                 isLoginMode: false,
             })
             this.register();
-        } else { 
+        } else {
             this.setState({
                 isRegisterMode: false,
                 isLoginMode: false,
@@ -75,18 +75,19 @@ class UserAuth extends React.Component {
         fetch(this.state.URL + '/users/login', requestOptions)
             .then(async response => {
                 const data = await response.json();
+                // check for error response
+                if (!response.ok) {
+                    alert('user does not exist')
+                    // get error message from body or default to response status
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
                 localStorage.setItem('token', data.accessToken);
                 localStorage.setItem('email', data.email);
                 localStorage.setItem('username', data.username);
                 this.props.authenticateUser({ username: data.username, email: data.email, accessToken: data.accessToken, isSignedIn: true })
                 console.log(data);
                 document.getElementById("login-close").click();
-                // check for error response
-                if (!response.ok) {
-                    // get error message from body or default to response status
-                    const error = (data && data.message) || response.status;
-                    return Promise.reject(error);
-                }
             })
             .catch(error => {
                 console.error('There was an error!', error);
@@ -138,7 +139,7 @@ class UserAuth extends React.Component {
         localStorage.setItem('email', '');
         localStorage.setItem('username', '');
         document.getElementById("login-close").click();
-             
+
     }
 
     render() {

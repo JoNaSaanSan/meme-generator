@@ -55,7 +55,7 @@ class IfUrlComponent extends React.Component {
             console.log(dimension.width)
             var tmpArr = [];
             tmpArr.push({
-                id: 1,
+                id: 0,
                 name: 'URL',
                 box_count: 2,
                 width: dims.width,

@@ -1,7 +1,7 @@
 import GetImagesComponents from './GetImagesComponent';
 import PreviewComponent from './PreviewComponent';
 import { connect } from 'react-redux';
-import { toggleSpeech }  from '../../../redux/action';
+import { toggleSpeech } from '../../../redux/action';
 import Store from '../../../redux/store';
 import GraphComponent from './GraphComponent';
 const React = require('react');
@@ -10,7 +10,7 @@ require('./ControlsComponent.css');
 
 function mapDispatchToProps(dispatch) {
   return {
-      toggleSpeech: speech => dispatch(toggleSpeech(speech))
+    toggleSpeech: speech => dispatch(toggleSpeech(speech))
   };
 }
 
@@ -27,8 +27,9 @@ class ControlsComponent extends React.Component {
       index: 0,
       searchText: '',
       titleText: '',
-      memeVisibility: 0,
+      memeVisibility: 2,
       maxImageSize: '',
+      speechActive: false,
     };
 
     // Binds
@@ -65,19 +66,18 @@ class ControlsComponent extends React.Component {
    * 
    */
   setCurrentMemeState(index) {
-    if (this.state.imageMemeArray !== undefined && this.state.imageMemeArray !== null) {
-      this.setState({
-        index: index,
-        width: this.state.imageMemeArray[index].width,
-        height: this.state.imageMemeArray[index].height,
-      }, () => {
-        try {
+    try {
+      if (this.state.imageMemeArray !== undefined && this.state.imageMemeArray !== null) {
+        this.setState({
+          index: index,
+          width: this.state.imageMemeArray[index].width,
+          height: this.state.imageMemeArray[index].height,
+        }, () => {
           this.props.setCurrentMeme(this.state.imageMemeArray[this.state.index]);
-        } catch (e) {
-          console.log(e);
-        }
-        //this.props.setInputBoxes(this.state.imageMemeArray[this.state.index].inputBoxes);
-      })
+        })
+      }
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -172,12 +172,23 @@ class ControlsComponent extends React.Component {
     if (event.target.name === 'publish') {
       this.props.createMeme(event, this.state.memeVisibility, this.state.maxImageSize);
     } else {
-      this.props.createMeme(event, -1, this.state.maxImageSize);
+      this.props.createMeme(event, 2, this.state.maxImageSize);
     }
   }
 
-  toggleSpeech(event){
-    this.props.authenticateUser({speechActive: true })
+  toggleSpeech(event) {
+    if (event.target.name === 'speechOn') {
+      this.props.toggleSpeech({ speechActive: true })
+      this.setState({
+        speechActive: true,
+      })
+    }
+    if (event.target.name === 'speechOff') {
+      this.props.toggleSpeech({ speechActive: false })
+      this.setState({
+        speechActive: false,
+      })
+    }
   }
 
 
@@ -185,6 +196,9 @@ class ControlsComponent extends React.Component {
     Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
     return (
       <div className="control-view">
+         {(!this.state.speechActive) ? <button name="speechOn" onClick={this.toggleSpeech} id="speech-button" className="button">Turn Speech On</button> :
+          <button name="speechOff" onClick={this.toggleSpeech} id="speech-button" className="button">Turn Speech Off</button>
+        }
         <div>
           <GetImagesComponents setImagesArray={this.setImagesArray} URL={this.props.URL} />
         </div>
@@ -225,9 +239,6 @@ class ControlsComponent extends React.Component {
             <button name="save" onClick={this.createMeme} id="save-button" className="button" > Save as Draft </button> </div> : <a className="button" href="#login">Sign in to publish or save!</a>}
         <a name="share" href="#share" onClick={this.createMeme} id="share-button" className="button" > Share Meme</a>
         <button name="download" onClick={this.createMeme} id="download-button" className="button">Download Image!</button>
-
-        <button name="speechOn" onClick={this.toggleSpeech} id="speech-button" className="button">Turn Speech On</button>
-        <button name="speechOff" onClick={this.toggleSpeech} id="speech-button" className="button">Turn Speech Off</button>
         <PreviewComponent samplesMemeArray={this.state.imageMemeArray} indexPos={this.state.index} setCurrentMemeState={this.setCurrentMemeState} />
       </div>
     )

@@ -1,4 +1,3 @@
-import { b64toBlob } from '../../../utils/ImageUtils';
 import GIFEncoder from 'gif-encoder-2'
 
 
@@ -64,6 +63,7 @@ class VideoHandlingComponent extends React.Component {
             encoder.finish()
             const buffer = encoder.out.getData()
             const blob = new Blob([buffer], { 'type': 'image/gif' });
+            this.props.setDynamicBlob(blob)
             const url = URL.createObjectURL(blob);
             this.setState({
                 gifBlobUrl: url,

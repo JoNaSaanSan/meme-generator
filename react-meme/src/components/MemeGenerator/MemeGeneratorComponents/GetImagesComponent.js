@@ -2,11 +2,13 @@ import IfServerComponent from './GetImagesComponents/IfServerComponent'
 import IfUrlComponent from './GetImagesComponents/IfUrlComponent'
 import IfUploadComponent from './GetImagesComponents/IfUploadComponent'
 import IfCameraComponent from './GetImagesComponents/IfCameraComponent'
-import IfServerBase64Component from './GetImagesComponents/IfServerBase64Component'
+import IfDraftComponent from './GetImagesComponents/IfDraftComponent'
+import IfTemplateComponent from './GetImagesComponents/IfTemplateComponent'
 import IfScreenshotFromUrlComponent from './GetImagesComponents/IfScreenshotFromUrlComponent'
 import BlankComponent from './GetImagesComponents/BlankComponent'
 import Meme from '../Meme';
 import TextBoxes from '../TextBoxes';
+
 
 const React = require('react')
 require('./GetImagesComponent.css');
@@ -134,8 +136,8 @@ class GetImagesComponents extends React.Component {
                         <a href="/#" title="Close" id="upload-image-close" className="modal-close">Close</a>
                         <div className="get-images-container">
                         <div> Saved Templates and Drafts </div>
-                        <IfServerBase64Component setImagesArray={this.setImagesArray} URL={this.props.URL + '/drafts/loaddrafts'} getImagesButtonName={"Load Drafts"} />
-                        <IfServerBase64Component setImagesArray={this.setImagesArray} URL={this.props.URL + '/templates/loadtemplates'} getImagesButtonName={"Load Saved Templates"} />
+                        <IfDraftComponent setImagesArray={this.setImagesArray} URL={this.props.URL + '/drafts/loaddrafts'} getImagesButtonName={"Load Drafts"} />
+                        <IfTemplateComponent setImagesArray={this.setImagesArray} URL={this.props.URL + '/templates/loadtemplates'} getImagesButtonName={"Load Saved Templates"} />
                          
                         <div> Images </div>
                             <BlankComponent setImagesArray={this.setImagesArray} />

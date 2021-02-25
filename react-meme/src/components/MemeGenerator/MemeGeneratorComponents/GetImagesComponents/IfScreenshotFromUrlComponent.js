@@ -41,7 +41,7 @@ class IfScreenshotFromUrlComponent extends React.Component {
                             console.log(dimensions.width)
                             var tmpArr = [];
                             tmpArr.push({
-                                id: 1,
+                                id: 0,
                                 name: this.props.getImagesButtonName,
                                 box_count: 2,
                                 width: dims.width,

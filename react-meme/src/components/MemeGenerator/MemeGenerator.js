@@ -6,6 +6,7 @@ import { textToSpeech } from '../../utils/TextToSpeech'
 import { authenticateUser } from './../../redux/action'
 import { connect } from 'react-redux';
 import TextBoxes from './TextBoxes';
+import Store from './../../redux/store';
 require('./MemeGenerator.css');
 const React = require('react');
 
@@ -53,7 +54,7 @@ class MemeGenerator extends React.Component {
       canvasHeight: 0,
       retrieveImageTrigger: false,
       memeCreationEvent: 0,
-      memeVisibility: -1,
+      memeVisibility: 2,
       maxImageSize: '',
       textToSpeechActive: false,
       dynamicBlob: null,
@@ -297,6 +298,8 @@ class MemeGenerator extends React.Component {
   }
 
   render() {
+    Store.subscribe(() => this.setState({ textToSpeechActive: Store.getState().speech.speechActive}))
+  
     // Redux: Update Signed in State
     return (
       <div className="generator-view">

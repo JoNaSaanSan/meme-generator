@@ -21,7 +21,7 @@ class BlankComponent extends React.Component {
         let data = []
         for (var i = 0; i < 1; i++) {
             data.push({
-                id: i,
+                id: 0,
                 name: 'Blank',
                 box_count: 2,
                 width: 1200, 

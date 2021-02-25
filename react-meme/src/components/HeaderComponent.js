@@ -1,5 +1,4 @@
 import LoginComponent from './Login/LoginComponent';
-import Store from '../redux/store';
 import { Link } from 'react-router-dom'
 const React = require('react');
 require('./HeaderComponent.css');

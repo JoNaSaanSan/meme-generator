@@ -51,7 +51,7 @@ class HeaderComponent extends React.Component {
     render() {
         return (
             <div>
-                <img src={this.state.imageData} />
+                <img src={this.state.imageData} alt='' />
 
             </div >
         );

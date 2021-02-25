@@ -66,25 +66,28 @@ class GenerateMemeComponent extends React.Component {
     }
 
     publishImage = () => {
-        console.log(this.props.currentTemplate.formatType)
-        if (this.props.currentTemplate.formatType === 'image') {
-            retrieveImage('all', this.props.canvasWidth, this.props.canvasHeight).then((imageData) => {
-                this.sendCreatedMemeToServer(imageData)
-            })
-        } else if (this.props.currentTemplate.formatType === 'video') {
-            try {
+        return new Promise((resolve, reject) => {
+            if (this.props.currentTemplate.formatType === 'image') {
+                retrieveImage('all', this.props.canvasWidth, this.props.canvasHeight).then((imageData) => {
+                    this.sendCreatedMemeToServer(imageData).then(result => {
+                        console.log(result)
+                        resolve(result)
+                    })
+                })
+            } else if (this.props.currentTemplate.formatType === 'video' || this.props.currentTemplate.formatType === 'gif') {
                 console.log(this.props.dynamicBlob)
                 blobToBase64(this.props.dynamicBlob).then((objData) => {
-                    this.sendCreatedMemeToServer(objData)
+                    this.sendCreatedMemeToServer(objData).then(result => {
+                        console.log(result)
+                        resolve(result)
+                    })
                 })
-            } catch (e) {
-                console.log(e)
             }
-        }
+        })
     }
 
 
-    sendCreatedMemeToServer(data) {
+    sendCreatedMemeToServer = (data) => {
         return new Promise((resolve, reject) => {
             var object2Publish = {};
             object2Publish.title = this.props.currentTemplate.name;
@@ -105,7 +108,7 @@ class GenerateMemeComponent extends React.Component {
             fetch(this.props.URL + '/memes/publishMeme', requestOptions)
                 .then(async response => {
                     const data = await response.json();
-
+                    console.log(data)
                     resolve(data);
                     // check for error response
                     if (!response.ok) {
