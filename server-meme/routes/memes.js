@@ -120,7 +120,7 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
         $push: {
           memes: obj._id
         }
-      }).then(doc => {
+      }).then(user => {
         memeTemplateId = memeTemplate.id.toString().length == 24 ? memeTemplate.id : "000000000000000000000000";
         templates.update({
           _id: memeTemplateId
@@ -131,10 +131,11 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
         }, {
           upsert: true
         }).then(template => {
-          if (doc._id != null) {
+          if (obj._id != null) {
+            console.log(obj._id);
             res.status(200).send({
               message: "Meme saved successfully",
-              memeId: doc._id
+              memeId: obj._id
             });
           } else {
             res.status(400).send({
@@ -395,6 +396,7 @@ router.get("/:id", (req, res) => {
   memes.findOne({
     _id: id
   }).then(meme => {
+    console.log(meme);
     res.status(200).send(meme);
   }).catch(error => {
     console.log(error);
