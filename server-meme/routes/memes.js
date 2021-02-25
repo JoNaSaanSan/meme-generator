@@ -103,7 +103,7 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
     creatorId: ObjectId(userId),
     upvotes: 0,
     downvotes: 0,
-    visibility: visibility,
+    visibility: Number(visibility),
     dateCreated: new Date().toLocaleString(),
     memeTemplate
   }
@@ -123,14 +123,14 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
       }).then(doc => {
         console.log(doc);
         templates.update({
-          _id: memeTemplate.id;
+          _id: memeTemplate.id
         }, {
           $inc: {
             used: 1
           },
-          {
-            upsert: true
-          }
+
+          upsert: true
+
         });
         console.log(memeTemplate);
         if (doc._id != null) {
@@ -307,8 +307,8 @@ router.get('/popularmemes', (req, res, next) => {
       upvotes: -1
     }
   }).then(docs => {
-    docs.sort((a, b) => (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes));
-    res.status(200).send(docs);
+    memesSorted = docs.sort((a, b) => (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes));
+    res.status(200).send(memesSorted);
   }).catch(error => {
     console.log(error);
     res.status(400).send({
