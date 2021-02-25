@@ -15,6 +15,7 @@ class GenerateMemeComponent extends React.Component {
         this.state = {
             accessToken: null,
             isSignedIn: Store.getState().user.isSignedIn,
+            currentMeme: null,
         }
     }
 
@@ -69,7 +70,7 @@ class GenerateMemeComponent extends React.Component {
             retrieveImage('all', this.props.canvasWidth, this.props.canvasHeight).then((imageData) => {
                 var object2Publish = {};
                 object2Publish.title = this.props.currentTemplate.name;
-                object2Publish.base_64 = imageData;
+                object2Publish.base64 = imageData;
                 object2Publish.visibility = this.props.memeVisibility;
 
                 // Title
@@ -89,6 +90,9 @@ class GenerateMemeComponent extends React.Component {
                 fetch(this.props.URL + '/memes/publishMeme', requestOptions)
                     .then(async response => {
                         const data = await response.json();
+                        this.setState({
+                            currentMeme: data.memeID
+                        })
                         resolve(data);
                         // check for error response
                         if (!response.ok) {
@@ -116,7 +120,7 @@ class GenerateMemeComponent extends React.Component {
             var object2Save = {};
             object2Save.title = this.props.currentTemplate.name;
             object2Save.currentMeme = this.props.currentTemplate;
-            object2Save.base_64 = imageData;
+            object2Save.base64 = imageData;
             object2Save.inputBoxes = this.props.inputBoxes;
             object2Save.drawPaths = this.props.drawPaths;
             object2Save.additionalImages = this.props.additionalImages;
@@ -133,7 +137,7 @@ class GenerateMemeComponent extends React.Component {
                 },
                 body: JSON.stringify(object2Save)
             };
-            fetch(this.props.URL + '/memes/saveDraft', requestOptions)
+            fetch(this.props.URL + '/drafts/savedraft', requestOptions)
                 .then(async response => {
                     const data = await response.json();
                     console.log(data);
