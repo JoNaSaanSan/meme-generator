@@ -15,7 +15,8 @@ router.post("/uploadtemplate", verifyToken, upload.fields([]), (req, res) => {
   let template = {
     title,
     userId,
-    base64
+    used: 0,
+    base64,
   };
 
   templates.insert(template).then(obj => {
