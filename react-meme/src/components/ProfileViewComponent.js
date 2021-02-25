@@ -42,7 +42,11 @@ class ProfileViewComponent extends React.Component {
       
 
         
-
+      <div className="tab_container">
+        <div className="tab">TAB 1</div>
+        <div className="tab">TAB 2</div>
+        <div className="tab">TAB 3</div>
+      </div>
     </div>
     )
   }

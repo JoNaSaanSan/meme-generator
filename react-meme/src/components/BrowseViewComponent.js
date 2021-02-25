@@ -1,7 +1,16 @@
 import ImageOptionsText from './ImageOptionsText';
 import InfiniteScroll from "react-infinite-scroll-component";
+import { authenticateUser } from './../redux/action'
+import { connect } from 'react-redux';
 const React = require('react');
 require('./BrowseViewComponent.css');
+
+// Redux: AUTHENTICATE USER
+function mapDispatchToProps(dispatch) {
+  return {
+    authenticateUser: user => dispatch(authenticateUser(user))
+  };
+}
 
 class BrowseViewComponent extends React.Component {
   constructor(props) {
@@ -35,6 +44,8 @@ class BrowseViewComponent extends React.Component {
   componentDidMount() {
     this.getMemesByTime(); 
     this.getMemesByUpvotes();
+    this.props.authenticateUser({ username: localStorage.getItem('username'), email: localStorage.getItem('email'), accessToken: localStorage.getItem('token'), isSignedIn: true })
+
   }
 
   /**
@@ -148,4 +159,4 @@ class BrowseViewComponent extends React.Component {
 
 
 
-export default BrowseViewComponent;
+export default connect(null, mapDispatchToProps)(BrowseViewComponent);

@@ -96,3 +96,11 @@ margin-top: 5%;
 
 
 */
+
+.tab_container{
+    display: flex;
+}
+
+.tab{
+    float: left;
+}
