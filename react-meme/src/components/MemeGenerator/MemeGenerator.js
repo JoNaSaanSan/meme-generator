@@ -3,10 +3,18 @@ import ImageComponent from './MemeGeneratorComponents/ImageComponent';
 import TextUIComponent from './MemeGeneratorComponents/TextUIComponent';
 import GenerateMemeComponent from './MemeGeneratorComponents/GenerateMemeComponent';
 import { textToSpeech } from '../../utils/TextToSpeech'
+import { authenticateUser } from './../../redux/action'
+import { connect } from 'react-redux';
 import TextBoxes from './TextBoxes';
 require('./MemeGenerator.css');
 const React = require('react');
 
+// Redux: AUTHENTICATE USER
+function mapDispatchToProps(dispatch) {
+  return {
+    authenticateUser: user => dispatch(authenticateUser(user))
+  };
+}
 
 const initializeText = {
   textID: 0,
@@ -48,6 +56,7 @@ class MemeGenerator extends React.Component {
       memeVisibility: -1,
       maxImageSize: '',
       textToSpeechActive: false,
+      dynamicBlob: null,
     }
 
     this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
@@ -59,12 +68,15 @@ class MemeGenerator extends React.Component {
     this.undoDrawing = this.undoDrawing.bind(this);
     this.clearDrawing = this.clearDrawing.bind(this);
     this.clearImages = this.clearImages.bind(this);
-    this.createMeme = this.createMeme.bind(this);;
+    this.createMeme = this.createMeme.bind(this);
+    this.setDynamicBlob = this.setDynamicBlob.bind(this);
 
   }
 
-  componentDidMount(){
+  componentDidMount() {
     var voices = window.speechSynthesis.getVoices();
+    this.props.authenticateUser({ username: localStorage.getItem('username'), email: localStorage.getItem('email'), accessToken: localStorage.getItem('token'), isSignedIn: true })
+
   }
 
   /**
@@ -82,6 +94,15 @@ class MemeGenerator extends React.Component {
       memeCreationEvent: event,
       memeVisibility: memeVisibility,
       maxImageSize: maxImageSize,
+    })
+  }
+
+  /**
+   * retrieves Blob when a gif or video has been created
+   */
+  setDynamicBlob(blob) {
+    this.setState({
+      dynamicBlob: blob,
     })
   }
 
@@ -117,7 +138,7 @@ class MemeGenerator extends React.Component {
     }, () => {
       var voices = window.speechSynthesis.getVoices();
       this.assignNewText2Textboxes(this.state.tmpInputTextBoxesArray)
-      textToSpeech(this.state.currentTemplate.name,voices[13],this.state.textToSpeechActive);
+      textToSpeech(this.state.currentTemplate.name, voices[13], this.state.textToSpeechActive);
     })
   }
 
@@ -304,6 +325,7 @@ class MemeGenerator extends React.Component {
           handleInputBoxesChange={this.handleInputBoxesChange}
           clearDrawing={this.clearDrawing}
           undoDrawing={this.undoDrawing}
+          setDynamicBlob={this.setDynamicBlob}
         />
         <TextUIComponent
           handleInputBoxesChange={this.handleInputBoxesChange}
@@ -322,6 +344,7 @@ class MemeGenerator extends React.Component {
           currentTemplate={this.state.currentTemplate}
           canvasWidth={this.state.canvasWidth}
           canvasHeight={this.state.canvasHeight}
+          dynamicBlob={this.state.dynamicBlob}
         />
 
       </div>
@@ -329,4 +352,4 @@ class MemeGenerator extends React.Component {
   }
 }
 
-export default MemeGenerator;
+export default connect(null, mapDispatchToProps)(MemeGenerator);

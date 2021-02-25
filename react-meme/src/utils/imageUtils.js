@@ -48,7 +48,17 @@ export const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
     return blob;
   }
 
-/**
+  export const blobToBase64 = (blob) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    return new Promise(resolve => {
+      reader.onloadend = () => {
+        resolve(reader.result);
+      };
+    });
+  };
+
+/**W
  Returns the dimensions of a video asynchrounsly.
  @param {String} url Url of the video to get dimensions from.
  @return {Promise} Promise which returns the dimensions of the video in 'width' and 'height' properties.
