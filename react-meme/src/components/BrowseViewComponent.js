@@ -58,8 +58,8 @@ class BrowseViewComponent extends React.Component {
         
         return(
           this.state.items.map((i, index) => (
-          <div  key={index}>
-            <div><ImageOptionsText meme={this.state.allMemes[index]} index = {index}/></div>
+          <div key={index}>
+            <div><ImageOptionsText meme={this.state.allMemes[index]} index = {index} /></div>
           </div>
         )))
       }

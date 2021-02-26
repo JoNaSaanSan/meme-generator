@@ -28,7 +28,7 @@ class GalleryViewComponent extends React.Component {
     }
 
     componentDidUpdate(){
-        if(this.state.autoplay===true){
+        if(this.state.autoplay=== true){
             if(this.state.orderedPlay === true){
                 var newIndex = (this.state.index + 1 + this.state.allMemes.length) % this.state.allMemes.length
                 setTimeout(() => {
@@ -57,7 +57,8 @@ class GalleryViewComponent extends React.Component {
                 const data = await response.json();
                 resolve(data)
                 console.log("data: " + JSON.stringify(data))
-                this.setState({allMemes: data, title: data[0].title}, () => this.setInfo())
+                var reversedData = data.reverse()
+                this.setState({allMemes: reversedData, title: reversedData[0].title}, () => this.setInfo())
         
             }).catch(error => {
             console.log(error);
