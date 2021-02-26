@@ -135,8 +135,6 @@ class ProfileViewComponent extends React.Component {
       <div className="container_second-field">
         <div className="tab_container">
           <div className="tab" id="self-created" onClick={()=> this.showCreatedMemes()}>Self Created</div>
-          <div className="tab" id="drafts" onClick={()=> this.showDraftMemes()}>Drafts</div>
-          <div className="tab">Templates</div>
           <div className="tab">Love</div>
           <div className="tab">Comments</div>
         </div> 

@@ -5,6 +5,7 @@ import share from '../pictures/share.png'
 import download from '../pictures/download.png'
 import Store from '../redux/store';
 import { Link } from 'react-router-dom'
+import { b64toBlob } from '../utils/ImageUtils';
 const React = require('react');
 require('./ImageOptionsText.css');
 
@@ -18,18 +19,27 @@ class ImageOptionsText extends React.Component {
             isSignedIn: Store.getState().user.isSignedIn,
             upvotes: this.props.meme.upvotes,
             //downvotes: this.props.meme.downvotes,
-            currentMeme: this.props.meme,
+            currentMeme: null,
+            base64: this.props.meme.base64,
+            formatType: this.props.meme.memeTemplate.formatType,
             index: this.props.index
         };
     }
 
     componentDidUpdate(prevProps){
+        /*
         //console.log("upvotes "+ this.state.upvotes)
-        /*if(this.props.meme.upvotes !== prevProps.meme.upvotes)
+        if(this.props.meme.upvotes !== prevProps.meme.upvotes)
         this.setState({
             upvotes: this.props.meme.upvotes,
             downvotes: this.props.meme.downvotes,
         })*/
+
+        if(this.props.meme !== prevProps.meme){
+            this.setState({
+                currentMeme: this.props.meme
+            })
+        }
         console.log("upvotes profile" + this.props.meme.upvotes)
     }
 
@@ -97,14 +107,19 @@ class ImageOptionsText extends React.Component {
     }
 
     selectFormat(){
-        if(true){
+        
+        if(this.state.formatType === "video"){
+            
+            var base64result = this.state.base64.split(',');
+            var base64blob = URL.createObjectURL(b64toBlob(base64result[1], base64result[0]))
+                            
             return(
-                <img src={this.props.meme.base64} className="image"/>
+                <video src={base64blob} className="image" autoplay= "true" loop= "true"/>
             )
         }
         else{
             return(
-                <video src={this.props.meme.base64} className="image" autoplay="true"/>
+                <img src={this.state.base64} className="image"/>
             )
         }
     }
@@ -131,7 +146,7 @@ class ImageOptionsText extends React.Component {
                     </div>
                 </div>
                 <div className="image_container">
-                <Link to={{pathname: "/gallery", index: this.state.index}}><img src={this.props.meme.base64} className="image" /></Link>
+                <Link to={{pathname: "/gallery", index: this.state.index}}>{this.selectFormat()}</Link>
                 </div>
                 <div className="points-commits">
                     <p className="voting-point">Points: {this.state.upvotes} </p>
@@ -142,6 +157,8 @@ class ImageOptionsText extends React.Component {
                     <button className="option-button"><img src={downvote} className="icon" onClick={() => this.downvote()} /></button>
                     <Link to={{pathname: "/gallery", index: this.state.index}}><button className="option-button"><img src={comments} className="icon" onClick={() => this.commit()} /></button></Link>
                 </div>
+
+                <div>{this.state.formatType}</div>
 
 
             </div>
