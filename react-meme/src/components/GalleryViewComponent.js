@@ -18,11 +18,31 @@ class GalleryViewComponent extends React.Component {
             title: "",
             index: this.props.location.index,
             accessToken: Store.getState().user.accessToken, 
+            autoplay: false,
+            orderedPlay: true,
         }
     }
 
     componentDidMount(){
         this.getAllMemes()                
+    }
+
+    componentDidUpdate(){
+        if(this.state.autoplay===true){
+            if(this.state.orderedPlay === true){
+                var newIndex = (this.state.index + 1 + this.state.allMemes.length) % this.state.allMemes.length
+                setTimeout(() => {
+                    this.setState({index: newIndex, currentMeme: this.state.allMemes[newIndex]});
+                }, 1000)
+    
+            }
+            else{
+                setTimeout(() => {
+                this.setState({index: this.randomIndex(), currentMeme: this.state.allMemes[this.randomIndex()]});
+                }, 1000)
+            }
+            
+        }
     }
 
 
@@ -36,7 +56,7 @@ class GalleryViewComponent extends React.Component {
             .then(async response => {
                 const data = await response.json();
                 resolve(data)
-                //console.log("data: " + JSON.stringify(data))
+                console.log("data: " + JSON.stringify(data))
                 this.setState({allMemes: data, title: data[0].title}, () => this.setInfo())
         
             }).catch(error => {
@@ -107,6 +127,14 @@ class GalleryViewComponent extends React.Component {
         fetch('http://localhost:3000/memes/comment', requestOptions)
             .then(async response => {
                 const data = await response.json();
+                this.getAllMemes() 
+                /*
+                const currentMeme = this.state.currentMeme
+                const comments = currentMeme.comments
+                comments.push({userId: , text: comment2Publish.comment})
+                Object.assign(currentMeme.comments, comments)
+                this.setState({currentMeme})
+                */
             })
             .catch(error => {
                 console.error('There was an error!', error);
@@ -133,12 +161,38 @@ class GalleryViewComponent extends React.Component {
         this.setState({index: newIndex, currentMeme: this.state.allMemes[newIndex]})
     }
 
-    randomMeme(){
+
+    randomIndex(){
         var max = this.state.allMemes.length -1
         var min = 0
-        var randomIndex = Math.floor(Math.random() * (max - min) ) + min;
-        console.log("randomIndex" + randomIndex)
-        this.setState({index: randomIndex, currentMeme: this.state.allMemes[randomIndex]})
+        return(Math.floor(Math.random() * (max - min) ) + min)
+    }
+
+    randomMeme(){
+        
+        //console.log("randomIndex" + randomIndex)
+        this.setState({index: this.randomIndex(), currentMeme: this.state.allMemes[this.randomIndex()]})
+    }
+
+    playMemes(){
+        console.log("play clicked")
+        this.setState({autoplay: true})/*, ()=>{
+            while(this.state.autoplay === true){
+            console.log("autoplay true")
+        }
+        })*/
+        if(document.querySelector('#order').value === "ordered"){
+            this.setState({orderedPlay: true})
+        }
+        else{
+            this.setState({orderedPlay: false})
+        }
+        console.log(document.querySelector('#order').value)    
+    }
+
+    stopMemes(){
+        console.log("stop clicked")
+        this.setState({autoplay: false}, ()=>{ console.log("autoplay false")})
     }
 
 
@@ -184,6 +238,13 @@ class GalleryViewComponent extends React.Component {
                     </div>
                     {this.showComments()}
                     <button className="random" onClick={() => this.randomMeme()}>Random Meme</button>
+                
+                    <select id="order">
+                        <option value="ordered">ordered</option>
+                        <option value="random">random order</option>
+                    </select>
+                    <button className="random" onClick={() => this.playMemes()}>Play</button>
+                    <button className="random" onClick={() => this.stopMemes()}>Stop</button>
                 </div>
                 
             </div>

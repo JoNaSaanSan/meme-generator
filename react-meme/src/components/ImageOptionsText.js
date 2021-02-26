@@ -16,7 +16,7 @@ class ImageOptionsText extends React.Component {
         this.state = {
             accessToken: Store.getState().user.accessToken,
             isSignedIn: Store.getState().user.isSignedIn,
-            //upvotes: this.props.meme.upvotes,
+            upvotes: this.props.meme.upvotes,
             //downvotes: this.props.meme.downvotes,
             currentMeme: this.props.meme,
             index: this.props.index
@@ -50,7 +50,7 @@ class ImageOptionsText extends React.Component {
         fetch('http://localhost:3000/memes/upvote' + "?memeId=" + memeId, requestOptions)
             .then(async response => {
                 const data = await response.json()
-                //console.log(data)
+                console.log("upvotes data"+ JSON.stringify(data))
                 //return response.json();
                 this.setState({ upvotes: data.upvotes});
             })
@@ -134,7 +134,7 @@ class ImageOptionsText extends React.Component {
                 <Link to={{pathname: "/gallery", index: this.state.index}}><img src={this.props.meme.base64} className="image" /></Link>
                 </div>
                 <div className="points-commits">
-                    <p className="voting-point">Points: {this.state.upvotes - this.state.downvotes} </p>
+                    <p className="voting-point">Points: {this.state.upvotes} </p>
                     <p className="voting-point">Comments: {this.numberOfComments()}</p>
                 </div>
                 <div className="option_container">
