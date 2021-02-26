@@ -93,3 +93,19 @@
     border: none;
     color: white;
 }
+
+.random{
+    border-radius: 5px;
+    background-color: #252525;
+    border: none;
+    color: white;
+    height: 35px;
+}
+
+.send{
+    border-radius: 5px;
+    background-color: #252525;
+    border: none;
+    color: white;
+    height: 35px;
+}

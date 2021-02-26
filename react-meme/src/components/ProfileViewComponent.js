@@ -18,10 +18,23 @@ class ProfileViewComponent extends React.Component {
       items: Array.from({ length: 2 }), // initial load -> 2 Memes
       hasMoreToLoad: true
     }
-    this.selectedImage = this.selectedImage.bind(this)
   }
+
+  /** 
+   * get users meme infos, show info if user is not logged in 
+   */
   componentDidMount() { 
     this.getUsersInfo()
+    document.getElementById("self-created").setAttribute("style", "color: #FFFFFF;")
+    if(this.state.accessToken !== undefined && this.state.accessToken !== null){
+      console.log("token there")
+      console.log("my access token" + this.state.accessToken)
+      document.querySelector(".not-loggedin-text").style.visibility = "hidden";
+    }
+    else{
+      console.log("token undefined")
+      document.querySelector(".not-loggedin-text").style.visibility = "inherit";
+    }
   }
 
   fetchMoreData = () => {
@@ -38,15 +51,6 @@ class ProfileViewComponent extends React.Component {
       this.setState({hasMoreToLoad: false})
     }
   };
-
-
-  selectedImage(index){
-    this.setState({index: index})
-  }
-
-  showCreatedMemes(){
-    console.log("showcreatedMemes")
-  }
 
 
 
@@ -96,6 +100,21 @@ class ProfileViewComponent extends React.Component {
   }
 
 
+
+  
+
+  showCreatedMemes(){
+    console.log("showcreatedMemes")
+    document.getElementById("drafts").setAttribute("style", "color: #757575;")
+    document.getElementById("self-created").setAttribute("style", "color: #FFFFFF;")
+  }
+
+  showDraftMemes(){
+    document.getElementById("self-created").setAttribute("style", "color: #757575;")
+    document.getElementById("drafts").setAttribute("style", "color: #FFFFFF;")
+  }
+
+
   render() {
 
     return (
@@ -115,14 +134,18 @@ class ProfileViewComponent extends React.Component {
 
       <div className="container_second-field">
         <div className="tab_container">
-          <div className="tab" onClick={()=> this.showCreatedMemes()}>Self Created</div>
-          <div className="tab">Drafts</div>
+          <div className="tab" id="self-created" onClick={()=> this.showCreatedMemes()}>Self Created</div>
+          <div className="tab" id="drafts" onClick={()=> this.showDraftMemes()}>Drafts</div>
           <div className="tab">Templates</div>
           <div className="tab">Love</div>
           <div className="tab">Comments</div>
         </div> 
       </div>
+      {/* <hr className="flex-line"/> */}
       <hr className="line"/>
+
+
+      <div className="not-loggedin-text">Log in to see your Profile ;)</div>
 
       <div className="container_infiniteScroll">
             <InfiniteScroll

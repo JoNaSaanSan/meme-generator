@@ -133,6 +133,14 @@ class GalleryViewComponent extends React.Component {
         this.setState({index: newIndex, currentMeme: this.state.allMemes[newIndex]})
     }
 
+    randomMeme(){
+        var max = this.state.allMemes.length -1
+        var min = 0
+        var randomIndex = Math.floor(Math.random() * (max - min) ) + min;
+        console.log("randomIndex" + randomIndex)
+        this.setState({index: randomIndex, currentMeme: this.state.allMemes[randomIndex]})
+    }
+
 
 
     render() {
@@ -175,6 +183,7 @@ class GalleryViewComponent extends React.Component {
                         <div className="commets_container"></div>
                     </div>
                     {this.showComments()}
+                    <button className="random" onClick={() => this.randomMeme()}>Random Meme</button>
                 </div>
                 
             </div>
