@@ -20,20 +20,27 @@ class GalleryViewComponent extends React.Component {
             accessToken: Store.getState().user.accessToken, 
             autoplay: false,
             orderedPlay: true,
-            orderedByTime: this.props.location.orderedByTime,
+            memesArray: this.props.location.memesArray,
         }
     }
 
+    /**
+     * if user comes from browse show the Gallery on the base of the array (already fetched in browse)
+     * else show Memes sorted by time 
+     */
     componentDidMount(){
-        if(this.props.location.orderedByTime === "true" || this.props.location.orderedByTime === undefined){
-            this.getMemesByTime() 
+        if(this.state.memesArray !== undefined){
+            this.setState({allMemes: this.state.memesArray}, () => this.setInfo())
         }
         else{
-            this.getMemesByUpvotes()
+            this.getMemesByTime()
         }
                       
     }
 
+    /**
+     * change index & currentMeme every second if user has clicked on Play
+     */
     componentDidUpdate(){
         if(this.state.autoplay=== true){
             if(this.state.orderedPlay === true){
@@ -73,20 +80,6 @@ class GalleryViewComponent extends React.Component {
         });
     }
 
-    /**
-     * get Memes Array sorted by number of upvotes
-     */
-    getMemesByUpvotes(){
-        fetch('http://localhost:3000/memes/popularmemes').then(response => {
-        return response.json();
-        })
-        .then(data => {
-        //console.log("data popularmemes: " + JSON.stringify(data))
-        this.setState({allMemes: data, title: data[0].title}, () => this.setInfo())//, () => this.createMemes(this.state.popularMemes))
-        }).catch(error => {
-        console.log(error);
-        });
-    }
 
     /**
      * change Meme info on the basis of where the user comes from 
@@ -105,6 +98,7 @@ class GalleryViewComponent extends React.Component {
         }
     }
 
+    
     numberOfComments() {
         if (this.state.currentMeme.comments != undefined) {
             return this.state.currentMeme.comments.length
@@ -114,7 +108,9 @@ class GalleryViewComponent extends React.Component {
         }
     }
 
-
+    /**
+     * create new div beside image/gif/video if there are comments
+     */
     showComments(){
         console.log("comments: "+ JSON.stringify(this.state.currentMeme.comments))
         
@@ -133,6 +129,10 @@ class GalleryViewComponent extends React.Component {
         }
     }
 
+
+    /**
+     * send new comment in input to database if Button Send is clicked
+     */
     sendComment(){
         var comment2Publish = {};
                 comment2Publish.memeId = this.state.currentMeme._id;;
@@ -164,6 +164,7 @@ class GalleryViewComponent extends React.Component {
             });
     }
 
+
     /**
      * after > was clicked
      */
@@ -192,18 +193,15 @@ class GalleryViewComponent extends React.Component {
     }
 
     randomMeme(){
-        
-        //console.log("randomIndex" + randomIndex)
         this.setState({index: this.randomIndex(), currentMeme: this.state.allMemes[this.randomIndex()]})
     }
 
+    /**
+     * start autoplay if play is clicked -> check dropdown selection (ordered/random order) 
+     */
     playMemes(){
-        console.log("play clicked")
-        this.setState({autoplay: true})/*, ()=>{
-            while(this.state.autoplay === true){
-            console.log("autoplay true")
-        }
-        })*/
+        this.setState({autoplay: true})
+
         if(document.querySelector('#order').value === "ordered"){
             this.setState({orderedPlay: true})
         }
@@ -213,8 +211,10 @@ class GalleryViewComponent extends React.Component {
         console.log(document.querySelector('#order').value)    
     }
 
+    /**
+     * stop autoplay
+     */
     stopMemes(){
-        console.log("stop clicked")
         this.setState({autoplay: false}, ()=>{ console.log("autoplay false")})
     }
 

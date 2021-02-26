@@ -23,7 +23,7 @@ class ImageOptionsText extends React.Component {
             base64: this.props.meme.base64,
             formatType: this.props.meme.memeTemplate.formatType,
             index: this.props.index,
-            orderedByTime: this.props.orderedByTime, // to inform GalleryViewComponent which filter option (fresh, hot) is selected
+            memesArray: this.props.memesArray, //memesArray from Browse (filter option hot/fresh) to show in Gallery
         };
     }
 
@@ -98,22 +98,12 @@ class ImageOptionsText extends React.Component {
         }
     }
 
-    commit() {
-        console.log("make a commit")
-        //var newD  = document.createElement('img');
-        //document.querySelector('.commets_container').appendChild(newD);
-        return (
-            <div>Testen</div>
-        )
-    }
 
     selectFormat(){
-        
         if(this.state.formatType === "video"){
             
             var base64result = this.state.base64.split(',');
-            var base64blob = URL.createObjectURL(b64toBlob(base64result[1], base64result[0]))
-                            
+            var base64blob = URL.createObjectURL(b64toBlob(base64result[1], base64result[0]))            
             return(
                 <video src={base64blob} className="image" autoplay= "true" loop= "true"/>
             )
@@ -147,7 +137,7 @@ class ImageOptionsText extends React.Component {
                     </div>
                 </div>
                 <div className="image_container">
-                <Link to={{pathname: "/gallery", index: this.state.index, orderedByTime: this.state.orderedByTime}}>{this.selectFormat()}</Link>
+                <Link to={{pathname: "/gallery", index: this.state.index, memesArray: this.state.memesArray}}>{this.selectFormat()}</Link>
                 </div>
                 <div className="points-commits">
                     <p className="voting-point">Points: {this.state.upvotes} </p>
@@ -156,7 +146,7 @@ class ImageOptionsText extends React.Component {
                 <div className="option_container">
                     <button className="option-button"><img src={upvote} className="icon" onClick={() => this.upvote()} /></button>
                     <button className="option-button"><img src={downvote} className="icon" onClick={() => this.downvote()} /></button>
-                    <Link to={{pathname: "/gallery", index: this.state.index, orderedByTime: this.state.orderedByTime}}><button className="option-button"><img src={comments} className="icon" onClick={() => this.commit()} /></button></Link>
+                    <Link to={{pathname: "/gallery", index: this.state.index, memesArray: this.state.memesArray}}><button className="option-button"><img src={comments} className="icon" /></button></Link>
                 </div>
 
                 <div>{this.state.formatType}</div>

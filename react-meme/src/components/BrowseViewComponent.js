@@ -59,7 +59,7 @@ class BrowseViewComponent extends React.Component {
         return(
           this.state.items.map((i, index) => (
           <div key={index}>
-            <div><ImageOptionsText meme={this.state.allMemes[index]} index = {index} orderedByTime = "true" memesArray = {this.state.allMemes}/></div>
+            <div><ImageOptionsText meme={this.state.allMemes[index]} index = {index} memesArray = {this.state.allMemes}/></div>
           </div>
         )))
       }
@@ -71,7 +71,7 @@ class BrowseViewComponent extends React.Component {
         return(
           this.state.items.map((i, index) => (
           <div  key={index}>
-            <div><ImageOptionsText meme={this.state.popularMemes[index]} index = {index} orderedByTime = "false" memesArray = {this.state.popularMemes}/></div>
+            <div><ImageOptionsText meme={this.state.popularMemes[index]} index = {index} memesArray = {this.state.popularMemes}/></div>
           </div>
         )))
       }
@@ -110,14 +110,15 @@ class BrowseViewComponent extends React.Component {
     });
   }
 
-
+  /**
+  * styling of tab bar if clicked
+  */
   showMemesByTime(){
     this.setState({shownByTime: true})
     this.getMemesByTime()
     document.querySelector(".option1-button").setAttribute("style", "background-color: #252525;")
     document.querySelector(".option2-button").setAttribute("style", "background-color: #363636;") //background color
   }
-
   showMemesByUpvotes(){
     this.setState({shownByTime: false})
     this.getMemesByUpvotes()

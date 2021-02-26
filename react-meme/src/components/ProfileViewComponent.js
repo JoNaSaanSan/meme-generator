@@ -53,7 +53,13 @@ class ProfileViewComponent extends React.Component {
   };
 
 
-
+/**
+ * get user infos + created memes
+ * {username.., email.., memes: 
+ * [{_id.., url.., base64.., title.., creatorId.., upvotes.., downvotes.., visibility.., dateCreated.., memeTemplate: 
+ *  {url.., id.., width.., height.., name.., boxCount.., inputBoxes: [{textID.., text.., textPosX.., textPosY.., fontColor..., fontFamily.., fontSize.., outlineWidth.., outlineColor.., isItalic.., isBold.., isVisible.., start.., end.., duration..},{..}]
+ * ,drawPaths.., additionalImages.., formatType..}},templates..}
+ */
   getUsersInfo(){
     var token = this.state.accessToken;
     const requestOptions = {
@@ -72,6 +78,7 @@ class ProfileViewComponent extends React.Component {
     })
   }
 
+  
   showMemes(){
     try{
     if(this.state.memes2display !== undefined && this.state.memes2display.length > 0){
@@ -85,18 +92,9 @@ class ProfileViewComponent extends React.Component {
         ))
       )
     }
-  }catch(e){
-    console.log(e)
-  }
-
-    /*
-    return(
-    this.state.items.map((i, index) => (
-      <div  key={index}>
-        div - #{index}
-      </div>
-    ))
-    )*/
+    }catch(e){
+      console.log(e)
+    }
   }
 
 
