@@ -20,11 +20,18 @@ class GalleryViewComponent extends React.Component {
             accessToken: Store.getState().user.accessToken, 
             autoplay: false,
             orderedPlay: true,
+            orderedByTime: this.props.location.orderedByTime,
         }
     }
 
     componentDidMount(){
-        this.getAllMemes()                
+        if(this.props.location.orderedByTime === "true" || this.props.location.orderedByTime === undefined){
+            this.getMemesByTime() 
+        }
+        else{
+            this.getMemesByUpvotes()
+        }
+                      
     }
 
     componentDidUpdate(){
@@ -50,7 +57,7 @@ class GalleryViewComponent extends React.Component {
      * Memes Array sorted by time of creation
      * reused -> here with Promise
      */
-    getAllMemes(){
+    getMemesByTime(){
         return new Promise((resolve, reject) => {
             fetch('http://localhost:3000/memes/browsememes')
             .then(async response => {
@@ -63,6 +70,21 @@ class GalleryViewComponent extends React.Component {
             }).catch(error => {
             console.log(error);
             });
+        });
+    }
+
+    /**
+     * get Memes Array sorted by number of upvotes
+     */
+    getMemesByUpvotes(){
+        fetch('http://localhost:3000/memes/popularmemes').then(response => {
+        return response.json();
+        })
+        .then(data => {
+        //console.log("data popularmemes: " + JSON.stringify(data))
+        this.setState({allMemes: data, title: data[0].title}, () => this.setInfo())//, () => this.createMemes(this.state.popularMemes))
+        }).catch(error => {
+        console.log(error);
         });
     }
 
@@ -128,7 +150,7 @@ class GalleryViewComponent extends React.Component {
         fetch('http://localhost:3000/memes/comment', requestOptions)
             .then(async response => {
                 const data = await response.json();
-                this.getAllMemes() 
+                this.getMemesByTime() 
                 /*
                 const currentMeme = this.state.currentMeme
                 const comments = currentMeme.comments

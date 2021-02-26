@@ -22,7 +22,8 @@ class ImageOptionsText extends React.Component {
             currentMeme: null,
             base64: this.props.meme.base64,
             formatType: this.props.meme.memeTemplate.formatType,
-            index: this.props.index
+            index: this.props.index,
+            orderedByTime: this.props.orderedByTime, // to inform GalleryViewComponent which filter option (fresh, hot) is selected
         };
     }
 
@@ -146,7 +147,7 @@ class ImageOptionsText extends React.Component {
                     </div>
                 </div>
                 <div className="image_container">
-                <Link to={{pathname: "/gallery", index: this.state.index}}>{this.selectFormat()}</Link>
+                <Link to={{pathname: "/gallery", index: this.state.index, orderedByTime: this.state.orderedByTime}}>{this.selectFormat()}</Link>
                 </div>
                 <div className="points-commits">
                     <p className="voting-point">Points: {this.state.upvotes} </p>
@@ -155,7 +156,7 @@ class ImageOptionsText extends React.Component {
                 <div className="option_container">
                     <button className="option-button"><img src={upvote} className="icon" onClick={() => this.upvote()} /></button>
                     <button className="option-button"><img src={downvote} className="icon" onClick={() => this.downvote()} /></button>
-                    <Link to={{pathname: "/gallery", index: this.state.index}}><button className="option-button"><img src={comments} className="icon" onClick={() => this.commit()} /></button></Link>
+                    <Link to={{pathname: "/gallery", index: this.state.index, orderedByTime: this.state.orderedByTime}}><button className="option-button"><img src={comments} className="icon" onClick={() => this.commit()} /></button></Link>
                 </div>
 
                 <div>{this.state.formatType}</div>
