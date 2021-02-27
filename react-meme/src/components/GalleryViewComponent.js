@@ -117,14 +117,15 @@ class GalleryViewComponent extends React.Component {
         if(this.state.currentMeme.comments !== undefined){
             return(
                 this.state.currentMeme.comments.map((object)=> (
-                <div>
+
+                <div className = "new_comment_container">
                     <div className= "comments_user-date_container">
                         <div className="comment_username">{object.userId}</div>
                         <div className="date">{object.date}</div>
                     </div>
-                
                 {object.text}
-                </div>))
+                </div>
+                ))
             )
         }
     }
@@ -259,7 +260,11 @@ class GalleryViewComponent extends React.Component {
                         <button className="send" onClick={() => this.sendComment()}>Send</button>
                         <div className="commets_container"></div>
                     </div>
-                    {this.showComments()}
+                    <div className="comments_container">
+                        <div>a comment</div>
+                        <div>a comment</div>
+                        {this.showComments()}
+                    </div>
                     <button className="random" onClick={() => this.randomMeme()}>Random Meme</button>
                 
                     <select id="order">
@@ -269,9 +274,11 @@ class GalleryViewComponent extends React.Component {
                     <button className="random" onClick={() => this.playMemes()}>Play</button>
                     <button className="random" onClick={() => this.stopMemes()}>Stop</button>
                 </div>
+
                 
             </div>
             <button className="myButton" onClick={() => this.goRight()}>&rsaquo;</button>
+
             </div>
         );
     }

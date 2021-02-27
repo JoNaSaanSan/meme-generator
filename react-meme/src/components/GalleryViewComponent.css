@@ -73,8 +73,15 @@
 }
 
 .commets_container{
-    height: 590px;
+    background-color: greenyellow;
+    height: 100px;
+    width: 200px;
     overflow-y: scroll;
+   
+}
+
+.new_comment_container{
+    background-color: red;
 }
 
 .comment_username{

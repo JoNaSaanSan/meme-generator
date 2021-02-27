@@ -32,7 +32,7 @@ class BrowseViewComponent extends React.Component {
       
         setTimeout(() => {
           this.setState({
-            items: this.state.items.concat(Array.from({ length: 2 })) // 2 Memes are loaded
+            items: this.state.items.concat(Array.from({ length: 1 })) // 2 Memes are loaded
           });
         }, 50);
     }else{
@@ -127,6 +127,13 @@ class BrowseViewComponent extends React.Component {
     document.querySelector(".option1-button").setAttribute("style", "background-color: #363636;") //background color
   }
 
+  /**
+   * filterArray
+   */
+  showOnly(array, type){
+    var filteredArray = array.filter(meme => meme.memeTemplate.formatType == type);
+    console.log("filterecArray "+filteredArray)
+  }
 
 
 
@@ -136,6 +143,12 @@ class BrowseViewComponent extends React.Component {
           <div className="imageOptions">
  
             <div className="option1-button" onClick={() => this.showMemesByTime()}>FRESH</div>
+            <div className="file-type">
+              <p>- all</p>
+              <p onClick={() => this.showOnly(this.state.allMemes, "image")}>- images</p>
+              <p>- gifs</p>
+              <p>- videos</p>
+            </div>
             <div className="option2-button" onClick={() => this.showMemesByUpvotes()}>HOT</div>
             
           </div>
