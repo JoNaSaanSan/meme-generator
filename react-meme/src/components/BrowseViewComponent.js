@@ -18,9 +18,11 @@ class BrowseViewComponent extends React.Component {
     this.state = {
       allMemes: [],
       popularMemes: [],
-      shownByTime: true,
+      
       items: Array.from({ length: 2 }), // initial load -> 1 Memes
-      hasMoreToLoad: true
+      hasMoreToLoad: true,
+      shownByTime: true,
+      memes2display: []
     }
   }
 
@@ -131,8 +133,14 @@ class BrowseViewComponent extends React.Component {
    * filterArray
    */
   showOnly(array, type){
+    if (array === this.props.allMemes){
+      this.setState({shownByTime: true})
+    }
+    else{
+      this.setState({shownByTime: false})
+    }
     var filteredArray = array.filter(meme => meme.memeTemplate.formatType == type);
-    console.log("filterecArray "+filteredArray)
+    console.log("filterecArray "+ filteredArray)
   }
 
 
@@ -145,9 +153,9 @@ class BrowseViewComponent extends React.Component {
             <div className="option1-button" onClick={() => this.showMemesByTime()}>FRESH</div>
             <div className="file-type">
               <p>- all</p>
-              <p onClick={() => this.showOnly(this.state.allMemes, "image")}>- images</p>
-              <p>- gifs</p>
-              <p>- videos</p>
+              <p onClick={() => this.showOnly(true, "image")}>- images</p>
+              <p onClick={() => this.showOnly(this.state.allMemes, "gif")}>- gifs</p>
+              <p onClick={() => this.showOnly(this.state.allMemes, "video")}>- videos</p>
             </div>
             <div className="option2-button" onClick={() => this.showMemesByUpvotes()}>HOT</div>
             
