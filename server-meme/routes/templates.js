@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 let multer = require("multer");
 let upload = multer();
+let puppeteer = require("puppeteer");
 const {
   ObjectId
 } = require("mongodb");
@@ -70,6 +71,7 @@ router.get("/loadtemplates", verifyToken, (req, res) => {
 */
 router.get("/templatefromurl", (req, res) => {
   const url = req.query.url;
+  console.log(url);
 
   //catch if url is empty
   if (url == "") {
@@ -93,6 +95,9 @@ router.get("/templatefromurl", (req, res) => {
       res.status(200).send({
         base64: pic64
       });
+    }).catch(error => {
+      console.log(error);
+      res.status(400).send(error);
     });
   }
 });
