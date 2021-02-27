@@ -4,9 +4,7 @@ export const textToSpeech = (message, voice, active) => {
     return;
 
     var utterance = new SpeechSynthesisUtterance();
-    utterance.default = false;
     utterance.text = message;
     utterance.voice = voice;
-    utterance.lang = 'en';
         window.speechSynthesis.speak(utterance);
 };

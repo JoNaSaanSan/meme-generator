@@ -74,7 +74,7 @@ class MemeGenerator extends React.Component {
   }
 
   componentDidMount() {
-    window.speechSynthesis.getVoices();
+    let voices = window.speechSynthesis.getVoices();
     this.props.authenticateUser({ username: localStorage.getItem('username'), email: localStorage.getItem('email'), accessToken: localStorage.getItem('token'), isSignedIn: true })
 
   }
@@ -138,7 +138,8 @@ class MemeGenerator extends React.Component {
     }, () => {
       var voices = window.speechSynthesis.getVoices();
       this.assignNewText2Textboxes(this.state.tmpInputTextBoxesArray)
-      textToSpeech(this.state.currentTemplate.name, voices[13], this.state.textToSpeechActive);
+      console.log(voices)
+      textToSpeech(this.state.currentTemplate.name, voices[1], this.state.textToSpeechActive);
     })
   }
 
@@ -263,6 +264,12 @@ class MemeGenerator extends React.Component {
       Object.assign(tmpInputTextBoxesArray[i], { [event.target.name]: event.target.value })
     } else {
       tmpInputTextBoxesArray[i] = { [event.target.name]: event.target.value }
+    }
+
+    //Text To Speech
+    if(event.target.name === 'text'){
+      var voices = window.speechSynthesis.getVoices();
+      textToSpeech( event.target.value, voices[1], this.state.textToSpeechActive);
     }
     this.setState({
       inputBoxes,
