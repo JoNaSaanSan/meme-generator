@@ -78,7 +78,6 @@ class ProfileViewComponent extends React.Component {
     })
   }
 
-  
   showMemes(){
     try{
     if(this.state.memes2display !== undefined && this.state.memes2display.length > 0){
@@ -87,7 +86,7 @@ class ProfileViewComponent extends React.Component {
       return(
         this.state.items.map((i, index) => (
           <div  key={index}>
-            <div><ImageOptionsText meme={this.state.memes2display[index]} index = {index} className="twoRows"/></div>
+            <div><ImageOptionsText meme={this.state.memes2display[index]} index = {index} className="twoRows" /></div>
           </div>
         ))
       )

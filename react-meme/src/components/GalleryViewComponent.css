@@ -72,6 +72,11 @@
     width: 100%;
 }
 
+.commets_container{
+    height: 590px;
+    overflow-y: scroll;
+}
+
 .comment_username{
     font-weight: bold;
 }

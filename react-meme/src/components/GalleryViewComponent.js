@@ -100,7 +100,7 @@ class GalleryViewComponent extends React.Component {
 
     
     numberOfComments() {
-        if (this.state.currentMeme.comments != undefined) {
+        if (this.state.currentMeme.comments !== undefined) {
             return this.state.currentMeme.comments.length
         }
         else {

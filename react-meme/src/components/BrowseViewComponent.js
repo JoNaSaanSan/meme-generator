@@ -19,7 +19,7 @@ class BrowseViewComponent extends React.Component {
       allMemes: [],
       popularMemes: [],
       shownByTime: true,
-      items: Array.from({ length: 2 }), // initial load -> 2 Memes
+      items: Array.from({ length: 2 }), // initial load -> 1 Memes
       hasMoreToLoad: true
     }
   }
@@ -59,6 +59,7 @@ class BrowseViewComponent extends React.Component {
         return(
           this.state.items.map((i, index) => (
           <div key={index}>
+           {console.log("browse  popularMemes" + JSON.stringify(this.state.popularMemes[index]) + "index :"+ index)}
             <div><ImageOptionsText meme={this.state.allMemes[index]} index = {index} memesArray = {this.state.allMemes}/></div>
           </div>
         )))
@@ -88,7 +89,7 @@ class BrowseViewComponent extends React.Component {
       return response.json();
     })
     .then(data => {
-      //console.log("data: " + JSON.stringify(data))
+      //console.log("browseMemes data: " + JSON.stringify(data))
       this.setState({allMemes: data.reverse()})//, () => this.createMemes(this.state.allMemes))
     }).catch(error => {
       console.log(error);
@@ -103,7 +104,7 @@ class BrowseViewComponent extends React.Component {
       return response.json();
     })
     .then(data => {
-      //console.log("data popularmemes: " + JSON.stringify(data))
+      console.log("data fromm popularmemes: " + JSON.stringify(data))
       this.setState({popularMemes: data})//, () => this.createMemes(this.state.popularMemes))
     }).catch(error => {
       console.log(error);

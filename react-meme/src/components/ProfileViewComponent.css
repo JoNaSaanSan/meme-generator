@@ -172,7 +172,6 @@ margin-top: 5%;
     justify-content: center;
     align-items: center;
     margin-bottom: 0px;
-    
 }
 .scroller{
     display: grid;
@@ -182,7 +181,6 @@ margin-top: 5%;
     grid-column-gap: 10em;
     width: 100%;
     float: left;
-    transform: scale(0.78);
 }
 
 

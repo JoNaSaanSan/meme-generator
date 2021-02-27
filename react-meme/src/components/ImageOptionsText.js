@@ -18,7 +18,8 @@ class ImageOptionsText extends React.Component {
             accessToken: Store.getState().user.accessToken,
             isSignedIn: Store.getState().user.isSignedIn,
             upvotes: this.props.meme.upvotes,
-            //downvotes: this.props.meme.downvotes,
+            //downvotes: null,
+            downvotes: this.props.meme.downvotes,
             currentMeme: null,
             base64: this.props.meme.base64,
             formatType: this.props.meme.memeTemplate.formatType,
@@ -27,18 +28,35 @@ class ImageOptionsText extends React.Component {
         };
     }
 
+  
+        
+    
     componentDidUpdate(prevProps){
         /*
         //console.log("upvotes "+ this.state.upvotes)
-        if(this.props.meme.upvotes !== prevProps.meme.upvotes)
+        if(this.props.meme.upvotes !== prevProps.meme.upvotes || this.props.meme.base64 !== prevProps.meme.base64 || this.props.meme.memeTemplate.formatType !== prevProps.meme.memeTemplate.formatType)
         this.setState({
             upvotes: this.props.meme.upvotes,
             downvotes: this.props.meme.downvotes,
+            base64: this.props.meme.base64,
+            formatType: this.props.meme.memeTemplate.formatType,
         })*/
-
+        
+        console.log("upvotes state: "+ this.state.upvotes)
+        //wenn z.B. in Browse andere filteroption gewählt wird
         if(this.props.meme !== prevProps.meme){
             this.setState({
-                currentMeme: this.props.meme
+                currentMeme: this.props.meme,
+                base64: this.props.meme.base64,
+                formatType: this.props.meme.memeTemplate.formatType,
+                upvotes: this.props.meme.upvotes,
+                downvotes: this.props.meme.downvotes,
+            })
+        }
+
+        if(this.props.memesArray !== prevProps.memesArray){
+            this.setState({
+                memesArray: this.props.memesArray
             })
         }
         console.log("upvotes profile" + this.props.meme.upvotes)
