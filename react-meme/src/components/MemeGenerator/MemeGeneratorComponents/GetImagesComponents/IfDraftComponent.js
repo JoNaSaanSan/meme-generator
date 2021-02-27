@@ -21,11 +21,6 @@ class IfDraftComponent extends React.Component {
         this.setState({
             isFetching: true
         });
-        var tmpUrl;
-
-        if (this.state.inputUrl.indexOf('://') === -1) {
-            tmpUrl = 'https://' + this.state.inputUrl
-        }
 
         const requestOptions = {
             method: 'GET',
@@ -50,6 +45,8 @@ class IfDraftComponent extends React.Component {
                             console.log(draft)
 
                             var base64result = draft.base64.split(',');
+                            if (base64result[1] === null || base64result[1] === '')
+                                continue;
 
                             data.push({
                                 id: 0,
@@ -61,8 +58,9 @@ class IfDraftComponent extends React.Component {
                                 inputBoxes: draft.inputBoxes || [],
                                 drawPaths: draft.drawPaths || [],
                                 additionalImages: draft.additionalImages || [],
-                                formatType: draft.formatType,
+                                formatType: draft.fileType,
                             });
+
                         }
                         this.setState({
                             isFetching: false,

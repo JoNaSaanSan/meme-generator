@@ -21,9 +21,10 @@ class IfScreenshotFromUrlComponent extends React.Component {
             isFetching: true
         });
         var tmpUrl;
-
         if (this.state.inputUrl.indexOf('://') === -1) {
             tmpUrl = 'https://' + this.state.inputUrl
+        } else {
+            tmpUrl = this.state.inputUrl
         }
 
         fetch(url + '?url=' + tmpUrl)
@@ -51,7 +52,7 @@ class IfScreenshotFromUrlComponent extends React.Component {
                             this.setState({
                                 isFetching: false
                             }, () =>
-                            this.props.setImagesArray(tmpArr, this.state.isFetching))
+                                this.props.setImagesArray(tmpArr, this.state.isFetching))
                         })
                     })
 

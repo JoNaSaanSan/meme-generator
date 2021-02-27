@@ -31,36 +31,6 @@ const initializeText = {
     duration: 1,
 }
 
-/**
- * 
- * @param {url} url 
- * @param {*} timeoutT 
- * function to check whether an image is able to be loaded
- * 
- */
-function testImage(url, timeoutT) {
-    return new Promise(function (resolve, reject) {
-        var timeout = timeoutT || 5000;
-        var timer, img = new Image();
-        img.onerror = img.onabort = function () {
-            clearTimeout(timer);
-            reject("error");
-        };
-        img.onload = function () {
-            clearTimeout(timer);
-            resolve("success");
-        };
-        timer = setTimeout(function () {
-            // reset .src to invalid URL so it stops previous
-            // loading, but doens't trigger new load
-            img.src = "//!!!!/noexist.jpg";
-            reject("timeout");
-        }, timeout);
-        img.src = url;
-    });
-}
-
-
 class GetImagesComponents extends React.Component {
 
     /**
@@ -107,14 +77,14 @@ class GetImagesComponents extends React.Component {
 
 
                 if (data[i].drawPaths !== undefined) {
-                    for (var b = 0; b < data[i].drawPaths.length; b++) {
-                        tmpDrawPaths.push(data[i].drawPaths[b])
+                    for (var p = 0; p < data[i].drawPaths.length; p++) {
+                        tmpDrawPaths.push(data[i].drawPaths[p])
                     }
                 }
 
                 if (data[i].tmpAdditionalImages !== undefined) {
-                    for (var b = 0; b < data[i].tmpAdditionalImages.length; b++) {
-                        tmpAdditionalImages.push(data[i].tmpAdditionalImages[b])
+                    for (var a = 0; a < data[i].tmpAdditionalImages.length; a++) {
+                        tmpAdditionalImages.push(data[i].tmpAdditionalImages[a])
                     }
                 }
                 var formatType = data[i].formatType || 'image';

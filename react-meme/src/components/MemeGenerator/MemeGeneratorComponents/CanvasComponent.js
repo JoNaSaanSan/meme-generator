@@ -411,7 +411,18 @@ class CanvasComponent extends React.Component {
   }
 
 
-
+/**
+ * 
+ * @param {*} videoObject the video object
+ * @param {*} posX position X of video
+ * @param {*} posY position Y of video
+ * @param {*} width width of video
+ * @param {*} height height of video
+ * @param {*} context context to which the video should be drawn to
+ * This function draws the video onto the canvas. It loads the video to a video div and then, when the video div is being played, 
+ * simulataniously draws each frame to the canvas 
+ * 
+ */
   video2Canvas(videoObject, posX, posY, width, height, context) {
     console.log(videoObject)
     var video = document.getElementById('video-input');
@@ -435,10 +446,20 @@ class CanvasComponent extends React.Component {
       }
       displayVideo();
     };
-
-
   }
 
+  /**
+ * 
+ * @param {*} gifObject the gif object
+ * @param {*} posX position X of gif
+ * @param {*} posY position Y of gif
+ * @param {*} width width of gif
+ * @param {*} height height of gif
+ * @param {*} context context to which the gif should be drawn to
+ * This function draws the gif onto the canvas. It loads the gif using GIFGroover which can be found in the utils folder. 
+ * It is basically a simple GIF decoder. It simulataniously draws the gif onto the context
+ * 
+ */
   gif2Canvas(gifObject, posX, posY, width, height, context) {
     const myGif = GIFGroover();
     myGif.src = gifObject.url;
@@ -462,6 +483,15 @@ class CanvasComponent extends React.Component {
     }
   }
 
+  /**
+   * 
+   * @param {*} obj the object which should be drawn to the context 
+   * @param {*} context the context which the object should be drawn to
+   * @param {*} width width and height of the drawn object
+   * @param {*} height 
+   * Actually draws each frame onto the context
+   * 
+   */
   computeFrame(obj, context, width, height) {
     if (!this.state.formatType === 'video' && !this.state.formatType === 'gif')
       return;
@@ -471,10 +501,7 @@ class CanvasComponent extends React.Component {
     return;
   }
 
-
-
   render() {
-
     return (
       <div id="canvas-view">
         <div id="canvas-container" >

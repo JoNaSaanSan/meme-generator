@@ -38,13 +38,21 @@ class IfUrlComponent extends React.Component {
     submitUrl() {
 
         console.log(this.state.inputUrl)
+        var tmpUrl;
+
+        if (this.state.inputUrl.indexOf('://') === -1) {
+            tmpUrl = 'https://' + this.state.inputUrl
+        } else {
+            tmpUrl = this.state.inputUrl
+        }
+
         // console.log( URL.createObjectURL(this.state.inputUrl))
-        const formatType = getFormat(this.state.inputUrl);
+        const formatType = getFormat(tmpUrl);
         let dimension = {}
         if (formatType === 'image' || formatType === 'gif') {
-            dimension = getImageDimensions(this.state.inputUrl);
+            dimension = getImageDimensions(tmpUrl);
         } else if (formatType === 'video') {
-            dimension = getVideoDimensions(this.state.inputUrl);;
+            dimension = getVideoDimensions(tmpUrl);;
         } else {
             return
         }
@@ -60,8 +68,8 @@ class IfUrlComponent extends React.Component {
                 box_count: 2,
                 width: dims.width,
                 height: dims.height,
-                url: this.state.inputUrl,
-                formatType: getFormat(this.state.inputUrl),
+                url: tmpUrl,
+                formatType: getFormat(tmpUrl),
             })
             this.setState({
                 isFetching: false
@@ -78,7 +86,7 @@ class IfUrlComponent extends React.Component {
         return (
             <div>
                 <input type="text" id="image-url-input" value={this.state.inputValue} className="input-box" onChange={this.updateUrl} />
-                <button id="image-url-input-button" className="button" onClick={this.submitUrl}> Get Image from URL </button>
+                <button id="image-url-input-button" className="button" onClick={this.submitUrl}> Get Image / Video / Gif from URL </button>
             </div>
         );
     }

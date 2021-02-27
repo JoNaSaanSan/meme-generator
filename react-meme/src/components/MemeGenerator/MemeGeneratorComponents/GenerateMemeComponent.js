@@ -1,11 +1,17 @@
 import Store from '../../../redux/store';
 import { blobToBase64 } from '../../../utils/ImageUtils';
 import { retrieveImage } from '../../../utils/CanvasUtils';
+/**
+ * react-share is a library which provides share buttons in addition to their respective icons of various platform. It allows us to
+ * share links and content
+ */
 import {
     EmailShareButton,
     FacebookShareButton,
     TwitterShareButton,
     FacebookIcon,
+    EmailIcon,
+    TwitterIcon,
 } from "react-share";
 const React = require('react');
 
@@ -24,14 +30,18 @@ class GenerateMemeComponent extends React.Component {
 
     }
 
-
+    /**
+     * 
+     * @param {*} prevProps 
+     * @param {*} prevState 
+     */
     componentDidUpdate(prevProps, prevState) {
 
+        // Checks for button presses
         if (this.props.memeCreationEvent !== prevProps.memeCreationEvent) {
             if (this.props.memeCreationEvent.target.name === "imgFlipGenerate") {
                 this.generateMemeImageFlip();
             }
-
             if (this.props.memeCreationEvent.target.name === "download") {
                 this.downloadImage();
             }
@@ -51,7 +61,7 @@ class GenerateMemeComponent extends React.Component {
      * Handles download image button presses via a boolean that is passed to the child
      */
     downloadImage() {
-        retrieveImage('all', this.props.canvasWidth, this.props.canvasHeight).then((imageData) => {
+        retrieveImage('all', this.props.canvasWidth, this.props.canvasHeight, parseInt(this.props.maxImageSize) * 1000, 1).then((imageData) => {
             let canvasdata = imageData.replace("image/png", "image/octet-stream");
             const a = document.createElement("a");
             a.download = this.props.currentTemplate.name + '.png';
@@ -65,10 +75,15 @@ class GenerateMemeComponent extends React.Component {
         this.publishImage();
     }
 
+    /**
+     * Publishes the meme depending on the format of the file
+     */
     publishImage = () => {
         return new Promise((resolve, reject) => {
+
             if (this.props.currentTemplate.formatType === 'image') {
-                retrieveImage('all', this.props.canvasWidth, this.props.canvasHeight).then((imageData) => {
+                retrieveImage('all', this.props.canvasWidth, this.props.canvasHeight, parseInt(this.props.maxImageSize) * 1000, 1).then((imageData) => {
+                    console.log(imageData)
                     this.sendCreatedMemeToServer(imageData).then(result => {
                         console.log(result)
                         resolve(result)
@@ -86,7 +101,12 @@ class GenerateMemeComponent extends React.Component {
         })
     }
 
-
+    /**
+     * 
+     * @param {*} data
+     * Sends the base 64 data in an object to the server
+     *  
+     */
     sendCreatedMemeToServer = (data) => {
         return new Promise((resolve, reject) => {
             var object2Publish = {};
@@ -130,7 +150,7 @@ class GenerateMemeComponent extends React.Component {
      * Sends a Post request to the server with the current meme state and etc
      */
     saveDraft() {
-        retrieveImage('background', this.props.canvasWidth, this.props.canvasHeight).then((imageData) => {
+        retrieveImage('background', this.props.canvasWidth, this.props.canvasHeight, -1, 1).then((imageData) => {
             var object2Save = {};
             object2Save.title = this.props.currentTemplate.name;
             object2Save.currentMeme = this.props.currentTemplate;
@@ -167,19 +187,22 @@ class GenerateMemeComponent extends React.Component {
                     this.setState({
                         errorMessage: error.toString()
                     });
+                    alert(error)
                     console.error('There was an error!', error);
                 });
         })
     }
 
 
-
-
+    /**
+     * Creates a shareable link
+     */
     shareMeme() {
         console.log("share")
         this.publishImage().then(data => {
             console.log(data)
             const url = 'http://localhost:3006/meme/' + data.memeId;
+            //  const url = 'http://github.com'
             console.log(url)
             this.setState({
                 shareURL: url
@@ -230,12 +253,7 @@ class GenerateMemeComponent extends React.Component {
             });
     }
 
-
-
-
-
     render() {
-
         return <div>
             <div id="share" className="modal-window">
                 <div>
@@ -243,16 +261,28 @@ class GenerateMemeComponent extends React.Component {
                     <FacebookShareButton
                         url={this.state.shareURL}
                         quote={this.props.currentTemplate.name}
-                        className="Demo__some-network__share-button"
+                        className="share-button"
                     >
                         <FacebookIcon size={32} round />
-                    </FacebookShareButton></div>
+                    </FacebookShareButton>
+                    <EmailShareButton
+                        url={this.state.shareURL}
+                        body={"Share Now"}
+                        subject={this.props.currentTemplate.name}
+                        className="share-button"
+                    >
+                        <EmailIcon size={32} round />
+                    </EmailShareButton>
+                    <TwitterShareButton
+                        url={this.state.shareURL}
+                        title={this.props.currentTemplate.name}
+                        className="share-button"
+                    >
+                        <TwitterIcon size={32} round />
+                    </TwitterShareButton>
+                </div>
             </div>
         </div>
-
-
     }
-
 }
-
 export default GenerateMemeComponent;

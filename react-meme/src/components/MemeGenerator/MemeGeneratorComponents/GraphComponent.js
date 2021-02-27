@@ -1,36 +1,16 @@
+// The recharts library provides several types of diagrams which can be filled with data
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
 const React = require('react');
 
 
+// Handles the visual graphs using the recharts library
 class GraphComponent extends React.Component {
-
   constructor(props) {
     super(props);
 
     this.state = {
       data: [],
     }
-
-
-    // Binds
-
-  }
-
-  fetchData() {
-
-    fetch(this.props.URL + '/templateStats?id=' + this.props.currentTemplate.id)
-      .then(response => {
-        return response.json();
-      })
-      .then(data => {
-        this.setState({
-          data: data,
-        })
-
-      }).catch(error => {
-        console.log(error);
-        // finish fetchnig
-      });
   }
 
   componentDidMount() {
@@ -41,12 +21,12 @@ class GraphComponent extends React.Component {
       ]
     })
   }
-  x
+  
   componentDidUpdate(prevProps, prevState) {
-    //console.log(this.props.currentTemplate);
+    // Fills in the statistics from Meme data
     if (this.props.currentTemplate !== prevProps.currentTemplate) {
       try {
-        if (this.props.currentTemplate.statistics != undefined) {
+        if (this.props.currentTemplate.statistics !== undefined) {
           var used = this.props.currentTemplate.statistics.used || 0
           this.setState({
             data: [
@@ -60,9 +40,6 @@ class GraphComponent extends React.Component {
       }
     }
   }
-
-
-
 
   render() {
     return (

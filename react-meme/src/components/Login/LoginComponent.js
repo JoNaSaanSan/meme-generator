@@ -1,4 +1,3 @@
-import GoogleAuth from './GoogleAuth';
 import UserAuth from './UserAuth';
 const React = require('react');
 require('./LoginComponent.css');

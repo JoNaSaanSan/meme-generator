@@ -41,11 +41,7 @@ class IfUploadComponent extends React.Component {
             }
             dimensions.push(dim);
 
-            try {
-                this.uploadImagesToServer(file, dim);
-            } catch (e) {
-                console.log(e)
-            }
+
         }
 
         Promise.all(dimensions).then((dims) => {
@@ -53,6 +49,11 @@ class IfUploadComponent extends React.Component {
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
                 const formatType = getFormat(file.name);
+                try {
+                    this.uploadImagesToServer(file, dims[i], formatType);
+                } catch (e) {
+                    console.log(e)
+                }
                 data.push({
                     id: 0,
                     name: file.name,
@@ -79,8 +80,7 @@ class IfUploadComponent extends React.Component {
      * Upload uploaded image to server
      *  
      */
-    uploadImagesToServer(file, dim) {
-        console.log(file)
+    uploadImagesToServer(file, dim, formatType) {
         const reader = new FileReader();
 
         reader.addEventListener("load", () => {
@@ -90,8 +90,8 @@ class IfUploadComponent extends React.Component {
             object2Publish.title = file.name;
             object2Publish.base64 = reader.result;
             object2Publish.width = dim.width;
-            object2Publish.heigth = dim.heigth;
-            object2Publish.fileType = getFormat(file.name);
+            object2Publish.height = dim.height;
+            object2Publish.fileType = formatType;
 
             // convert image file to base64 string
             console.log(reader.result)
@@ -136,7 +136,7 @@ class IfUploadComponent extends React.Component {
             <div>
                 <div id="upload-button" className="button" >
                     <label htmlFor="file-upload">
-                        Upload Images</label></div>
+                        Upload Images / Videos / Gifs</label></div>
                 <input type="file" id="file-upload" onChange={this.handleChange} multiple />
                 <div className="sample-image-container">
                     <img src={this.state.filesArray} id="previewImage" alt="" className="sample-images" />

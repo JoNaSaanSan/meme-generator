@@ -31,6 +31,7 @@ class ImageComponent extends React.Component {
 
     // When state is being updated
     componentDidUpdate(prevProps) {
+        // Preloads Image whenever the input url is changed (So the canvas doesn't have to reload the image everytime)
         if (this.props.currentTemplate.url !== prevProps.currentTemplate.url) {
             if (this.props.currentTemplate.formatType === 'image') {
                 loadImage(this.props.currentTemplate.url).then(result => {
@@ -39,6 +40,7 @@ class ImageComponent extends React.Component {
                         currentTemplate: { ...this.props.currentTemplate, image: result },
                     })
                 })
+                // Handles what happens when input source is a video and gif => just passes it on, as the draw on canvas is handled differently
             } else if (this.props.currentTemplate.formatType === 'video' || this.props.currentTemplate.formatType === 'gif') {
                 this.setState({
                     currentTemplate: { ...this.props.currentTemplate },

@@ -16,11 +16,6 @@ class VideoHandlingComponent extends React.Component {
         }
     }
 
-
-
-    componentDidUpdate(prevProps, prevState) {
-    }
-
     /**
      * Record Gif using an encorder
      */
@@ -55,6 +50,7 @@ class VideoHandlingComponent extends React.Component {
 
 
         const encoder = new GIFEncoder(this.props.canvasWidth, this.props.canvasHeight, 'octree', true, 500)
+        encoder.setDelay(0.1)
         encoder.start()
         inputVideo.play()
         var interval = setInterval(draw, 10);
@@ -86,24 +82,8 @@ class VideoHandlingComponent extends React.Component {
                 clearInterval(interval);
             }, duration);
 
-            this.props.inputBoxes.map((el, i) => {
-                this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: false } });
-                return new Promise((resolve, reject) => {
-                    setTimeout(resolve, this.props.inputBoxes[i].start * 1000);
-                }).then(() => {
-                    this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: true } });
-
-                    return new Promise((resolve, reject) => {
-                        if (this.props.inputBoxes[i].end > this.props.inputBoxes[i].start) {
-                            setTimeout(resolve, (this.props.inputBoxes[i].end - this.props.inputBoxes[i].start) * 1000);
-                        }
-                    }).then(() => {
-                        if (this.props.inputBoxes[i].end > 0) {
-                            this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: false } });
-                        }
-                    });
-                });
-            })
+            // Handles Text Boxes Timeline
+            this.handleTextBoxesTimeline();
         }
     }
 
@@ -111,15 +91,21 @@ class VideoHandlingComponent extends React.Component {
 
 
     /**
-     * Records Video 
+     * Records Video using the media MediaRecorder
+     * 1. Combines all canvases to one canvas
+     * 2. Records everything that happens in the canvas
+     * 3. Creates blob of recorded video
+     * Use of Interval and Timeouts to handle time events
+     * 
      */
     recordVideo() {
+
+        // initialize canvas and etc.
         const canvas = document.createElement("canvas");
         canvas.setAttribute("id", "canvas");
         canvas.width = this.props.canvasWidth;
         canvas.height = this.props.canvasHeight
         const context = canvas.getContext("2d");
-
         const canvasBackground = document.getElementById("canvas-background");
         const canvasImages = document.getElementById("canvas-images");
         const canvasDraw = document.getElementById("canvas-draw");
@@ -133,10 +119,10 @@ class VideoHandlingComponent extends React.Component {
         outputVideo.src = null;
 
         let draw = () => {
-            if (this.state.recordingState === 'Not recording')  {
+            if (this.state.recordingState === 'Not recording') {
                 clearInterval(interval);
                 try {
-                mediaRecorder.stop();
+                    mediaRecorder.stop();
                 } catch (e) {
                     console.log(e)
                 }
@@ -183,31 +169,55 @@ class VideoHandlingComponent extends React.Component {
                     clearInterval(interval);
                 }
             }, duration);
-            this.props.inputBoxes.map((el, i) => {
-                this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: false } });
-                return new Promise((resolve, reject) => {
-                    setTimeout(resolve, this.props.inputBoxes[i].start * 1000);
-                }).then(() => {
-                    this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: true } });
 
-                    return new Promise((resolve, reject) => {
-                        if (this.props.inputBoxes[i].end > this.props.inputBoxes[i].start) {
-                            setTimeout(resolve, (this.props.inputBoxes[i].end - this.props.inputBoxes[i].start) * 1000);
-                        }
-                    }).then(() => {
-                        if (this.props.inputBoxes[i].end > 0) {
-                            this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: false } });
-                        }
-                    });
-                });
-            })
+            // Handles Text Boxes Timeline
+            this.handleTextBoxesTimeline();
         }
     }
 
+    /**
+     * Handles Text at real time during record.
+     * Use of Timeout to make text appear and disappear at the right time.
+     */
+    handleTextBoxesTimeline() {
+        // Handles Text Boxes Timeline
+        this.props.inputBoxes.map((el, i) => {
+            this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: false } });
+            return new Promise((resolve, reject) => {
+                setTimeout(resolve, parseInt(el.start) * 1000);
+            }).then(() => {
+                this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: true } });
+
+                return new Promise((resolve, reject) => {
+                    if (parseInt(el.end) > parseInt(el.start)) {
+                        setTimeout(resolve, (parseInt(el.end) - parseInt(el.start)) * 1000);
+                    }
+                }).then(() => {
+                    if (parseInt(el.end) > 0) {
+                        this.props.handleInputBoxesChange(i, { target: { name: 'isVisible', value: false } });
+                    }
+                });
+            });
+        })
+    }
+
+    /**
+     * 
+     * @param {*} i 
+     * @param {*} event 
+     * Handles change of parameters of the visibility of text (Start // End of visibility)
+     * 
+     */
     handleTextChange(i, event) {
         this.props.handleInputBoxesChange(i, event);
     }
 
+    /**
+     * 
+     * @param {*} event of button clicks
+     * Handles button clicks
+     * 
+     */
     handleChange(event) {
         if (event.target.name === 'recordVideo') {
             this.setState({
@@ -248,6 +258,9 @@ class VideoHandlingComponent extends React.Component {
         }
     }
 
+    /**
+     * Called when download video button has been clicked - downloads video in mp4 format
+     */
     downloadVideo() {
         const a = document.createElement("a");
         try {
@@ -257,11 +270,13 @@ class VideoHandlingComponent extends React.Component {
             a.click();
         }
         catch (e) {
-
+            console.log(e)
         }
     }
 
-
+    /**
+     * Called when download gif button has been clicked - downloads media in gif format
+     */
     downloadGif() {
         const a = document.createElement("a");
         try {
@@ -271,14 +286,12 @@ class VideoHandlingComponent extends React.Component {
             a.click();
         }
         catch (e) {
-
+            console.log(e)
         }
     }
 
 
     render() {
-
-
         return <div className='video-view'>
             {this.state.recordingState}
             <div> <div> Time </div>
@@ -297,21 +310,17 @@ class VideoHandlingComponent extends React.Component {
             {//(this.props.currentTemplate.formatType === 'video' || ) ?
                 <div id="video-container">
                     <video id="video-input" controls="true" crossorigin="anonymous" autoPlay='true' />
-                    <div> Video Output </div>
-                    <video id="video-output" controls="true" crossorigin="anonymous" />
-                    <div> GIF Output </div>
-                    <img id='gifimg' height='300' width='500'></img>
-                </div>
-
-                // : <div></div>
-            }
-
-
-
+                    <div>
+                        <div> Video Output </div>
+                        <video id="video-output" controls="true" crossorigin="anonymous" />
+                    </div>
+                    <div>
+                        <div> GIF Output </div>
+                        <img id='gifimg' height='300' width='500' alt=''></img>
+                    </div>
+                </div>}
         </div>
-
     }
-
 }
 
 export default VideoHandlingComponent;

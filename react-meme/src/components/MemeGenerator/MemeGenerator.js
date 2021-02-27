@@ -52,7 +52,6 @@ class MemeGenerator extends React.Component {
       tmpInputTextBoxesArray: [],
       canvasWidth: 0,
       canvasHeight: 0,
-      retrieveImageTrigger: false,
       memeCreationEvent: 0,
       memeVisibility: 2,
       maxImageSize: '',
@@ -75,7 +74,7 @@ class MemeGenerator extends React.Component {
   }
 
   componentDidMount() {
-    var voices = window.speechSynthesis.getVoices();
+    window.speechSynthesis.getVoices();
     this.props.authenticateUser({ username: localStorage.getItem('username'), email: localStorage.getItem('email'), accessToken: localStorage.getItem('token'), isSignedIn: true })
 
   }
@@ -298,7 +297,7 @@ class MemeGenerator extends React.Component {
   }
 
   render() {
-    Store.subscribe(() => this.setState({ textToSpeechActive: Store.getState().speech.speechActive}))
+    Store.subscribe(() => this.setState({ textToSpeechActive: Store.getState().speech.textToSpeechActive}))
   
     // Redux: Update Signed in State
     return (
@@ -310,6 +309,7 @@ class MemeGenerator extends React.Component {
           setCurrentMeme={this.setCurrentMeme}
           createMeme={this.createMeme}
           currentTemplate={this.state.currentTemplate}
+          handleInputBoxesChange={this.handleInputBoxesChange}
           canvasWidth={this.state.canvasWidth}
           canvasHeight={this.state.canvasHeight} />
         <ImageComponent

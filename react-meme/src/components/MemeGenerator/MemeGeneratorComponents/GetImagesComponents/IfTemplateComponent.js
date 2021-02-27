@@ -2,7 +2,7 @@ import Store from '../../../../redux/store';
 import { b64toBlob} from '../../../../utils/ImageUtils';
 const React = require('react');
 
-// This component fetches an array of images from the server
+// This component fetches an array of templates from the server
 class IfTemplateComponent extends React.Component {
     constructor(props) {
         super(props)
@@ -17,16 +17,9 @@ class IfTemplateComponent extends React.Component {
 
     // Fetch all images from /samplememes and store them into a state array
     fetchImageFromUrl(url) {
-
-
         this.setState({
             isFetching: true
         });
-        var tmpUrl;
-
-        if (this.state.inputUrl.indexOf('://') === -1) {
-            tmpUrl = 'https://' + this.state.inputUrl
-        }
 
         const requestOptions = {
             method: 'GET',
@@ -55,7 +48,7 @@ class IfTemplateComponent extends React.Component {
                                 width: template.width,//Todo: User width and height from image
                                 height: template.height,
                                 url: URL.createObjectURL(b64toBlob(base64result[1], base64result[0])),
-                                formatType: template.formatType,
+                                formatType: template.fileType,
                                 statistics: {used: template.used}
                             });
                         }
@@ -71,7 +64,6 @@ class IfTemplateComponent extends React.Component {
 
     render() {
         Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
-
         return (
             <div>
                 <button onClick={() => this.fetchImageFromUrl(this.props.URL)} id="fetch-button" className="button" > {this.props.getImagesButtonName} </button>

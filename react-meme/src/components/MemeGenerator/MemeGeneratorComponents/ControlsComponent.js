@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { toggleSpeech } from '../../../redux/action';
 import Store from '../../../redux/store';
 import GraphComponent from './GraphComponent';
+import SpeechToText from '../../../utils/SpeechToText';
 const React = require('react');
 require('./ControlsComponent.css');
 
@@ -29,7 +30,9 @@ class ControlsComponent extends React.Component {
       titleText: '',
       memeVisibility: 2,
       maxImageSize: '',
-      speechActive: false,
+      textToSpeechActive: false,
+      speechToTextActive: false,
+      textBoxIndex: 0,
     };
 
     // Binds
@@ -41,6 +44,8 @@ class ControlsComponent extends React.Component {
     this.setCurrentMemeState = this.setCurrentMemeState.bind(this);
     this.createMeme = this.createMeme.bind(this);
     this.toggleSpeech = this.toggleSpeech.bind(this);
+    this.setCaption = this.setCaption.bind(this)
+    this.selectCaption = this.selectCaption.bind(this)
   }
 
   /**
@@ -172,23 +177,47 @@ class ControlsComponent extends React.Component {
     if (event.target.name === 'publish') {
       this.props.createMeme(event, this.state.memeVisibility, this.state.maxImageSize);
     } else {
-      this.props.createMeme(event, 2, this.state.maxImageSize);
+      this.props.createMeme(event, 2, this.state.maxImageSize, -1);
     }
   }
 
   toggleSpeech(event) {
-    if (event.target.name === 'speechOn') {
-      this.props.toggleSpeech({ speechActive: true })
+    if (event.target.name === 'textToSpeechOn') {
+      this.props.toggleSpeech({ textToSpeechActive: true })
       this.setState({
-        speechActive: true,
+        textToSpeechActive: true,
       })
     }
-    if (event.target.name === 'speechOff') {
-      this.props.toggleSpeech({ speechActive: false })
+    if (event.target.name === 'textToSpeechOff') {
+      this.props.toggleSpeech({ textToSpeechActive: false })
       this.setState({
-        speechActive: false,
+        textToSpeechActive: false,
       })
     }
+    if (event.target.name === 'speechToTextOn') {
+      this.props.toggleSpeech({ speechToTextActive: true })
+      this.setState({
+        speechToTextActive: true,
+      })
+    }
+    if (event.target.name === 'speechToTextOff') {
+      this.props.toggleSpeech({ speechToTextActive: false })
+      this.setState({
+        speechToTextActive: false,
+      })
+    }
+  }
+
+  selectCaption(index) {
+    console.log(index)
+    this.setState({
+      textBoxIndex: index
+    })
+  }
+
+  setCaption(text){
+    console.log(text)
+    this.props.handleInputBoxesChange(this.state.textBoxIndex, {target: {name: 'text', value: text}})
   }
 
 
@@ -196,9 +225,11 @@ class ControlsComponent extends React.Component {
     Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
     return (
       <div className="control-view">
-         {(!this.state.speechActive) ? <button name="speechOn" onClick={this.toggleSpeech} id="speech-button" className="button">Turn Speech On</button> :
-          <button name="speechOff" onClick={this.toggleSpeech} id="speech-button" className="button">Turn Speech Off</button>
+        <SpeechToText selectCaption={this.selectCaption} setCaption={this.setCaption} />
+        {(!this.state.textToSpeechActive) ? <button name="textToSpeechOn" onClick={this.toggleSpeech} id="speech-button" className="button">Turn text to speech on</button> :
+          <button name="textToSpeechOff" onClick={this.toggleSpeech} id="speech-button" className="button">Turn  text to speech off</button>
         }
+
         <div>
           <GetImagesComponents setImagesArray={this.setImagesArray} URL={this.props.URL} />
         </div>
@@ -224,7 +255,7 @@ class ControlsComponent extends React.Component {
           <input type="text" placeholder="400" name="canvasWidth" className="dimension-input-box" maxLength="3" value={this.props.canvasWidth} onChange={this.handleCanvasChange.bind(this)} />
           <input type="text" placeholder="400" name="canvasHeight" className="dimension-input-box" maxLength="3" value={this.props.canvasHeight} onChange={this.handleCanvasChange.bind(this)} />
         </div>
-        <div> <div> Max Image File Size</div>
+        <div> <div> Max Image File Size in KB (Leave empty for original)</div>
           <input type="text" name="maxImageSize" onChange={this.handleImageOutputChange.bind(this)} id="max-image-size-input-box" className="input-box" />
         </div>
         <button name="imgFlipGenerate" onClick={this.createMeme} id="generate-button" className="button" > Generate Meme with Imgflip </button>

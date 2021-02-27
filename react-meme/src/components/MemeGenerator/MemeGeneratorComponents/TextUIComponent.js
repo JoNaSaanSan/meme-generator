@@ -1,6 +1,7 @@
 const React = require('react');
 require('./TextUIComponent.css');
 
+
 class TextUIComponent extends React.Component {
 
   constructor(props) {
@@ -54,6 +55,10 @@ class TextUIComponent extends React.Component {
     } else {
       this.props.handleInputBoxesChange(i, event);
     }
+  }
+
+  setText(text){
+    console.log(text)
   }
 
   /**
