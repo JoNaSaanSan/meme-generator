@@ -183,7 +183,8 @@ router.get("/getprofile", verifyToken, (req, res) => {
             memes: userMemes,
             upvotes: userUpvotes,
             downvotes: userDownvotes,
-            templates: userTemplates
+            templates: userTemplates,
+            comments: user.comments
           });
         });
       });
