@@ -4,6 +4,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { authenticateUser } from './../redux/action';
 import { connect } from 'react-redux';
 import ImageOptionsText from './ImageOptionsText';
+import Comments from './Comments';
 const React = require('react');
 require('./ProfileViewComponent.css');
 
@@ -30,6 +31,7 @@ class ProfileViewComponent extends React.Component {
       createdMemes: [],
       favoriteMemes: [],
       commentedMemes: [],
+      showComments: false,  
 
 
       items: Array.from({ length: 2 }), // initial load -> 2 Memes
@@ -43,19 +45,20 @@ class ProfileViewComponent extends React.Component {
    * get users meme infos, show info if user is not logged in 
    */
   componentDidMount() {
-    if(this.state.isSignedIn === true){
-    this.getUsersInfo().then(() => {
-      this.setState({
-        memes2display: this.state.createdMemes,
-        hasLoaded: true,
+    if (this.state.isSignedIn === true) {
+      this.getUsersInfo().then(() => {
+        this.setState({
+          memes2display: this.state.createdMemes,
+          hasLoaded: true,
+        })
       })
-    })
-    console.log("user is logged in")
-    }else{console.log("user is noooot logged in")}
+      console.log("user is logged in")
+    } else { console.log("user is noooot logged in") }
 
 
     document.getElementById("self-created").setAttribute("style", "color: #FFFFFF;")
-   
+
+    //TODO change initial load of memes based on length 
     /*
         if(this.state.memes2display.length > 1){
           this.setState({items: Array.from({ length: 2 })})
@@ -125,13 +128,25 @@ class ProfileViewComponent extends React.Component {
       if (this.state.memes2display !== undefined && this.state.memes2display.length > 0) {
         console.log("memes2display  " + JSON.stringify(this.state.memes2display))
         console.log("memes2display2 " + this.state.memes2display.length)
-        return (
-          this.state.items.map((i, index) => (
-            <div key={index}>
-              <div><ImageOptionsText meme={this.state.memes2display[index]} index={index} className="twoRows" /></div>
-            </div>
-          ))
-        )
+        if (this.state.showComments === false) {
+          return (
+            this.state.items.map((i, index) => (
+              <div key={index}>
+                <div><ImageOptionsText meme={this.state.memes2display[index]} index={index} className="twoRows" /></div>
+              </div>
+            ))
+          )
+        }//
+        else{
+          return (
+            this.state.items.map((i, index) => (
+              <div key={index}>
+                {console.log(this.state.commentedMemes[index])}
+                <div><Comments text={this.state.commentedMemes[index].text} date={this.state.commentedMemes[index].date} /></div>
+              </div>
+            ))
+          )
+        }
       }
     } catch (e) {
       console.log(e)
@@ -141,22 +156,21 @@ class ProfileViewComponent extends React.Component {
 
 
 
-
+/**Tab bar */
   showCreatedMemes() {
     console.log("showcreatedMemes")
     document.getElementById("self-created").setAttribute("style", "color: #FFFFFF;")
     document.getElementById("favorite").setAttribute("style", "color: #757575;")
     document.getElementById("commented").setAttribute("style", "color: #757575;")
-    this.setState({ items: Array.from({ length: numberOfMemesToLoad }), memes2display: this.state.createdMemes })
+    this.setState({ items: Array.from({ length: numberOfMemesToLoad }), memes2display: this.state.createdMemes, showComments: false })
 
   }
-
 
   showFavoriteMemes() {
     document.getElementById("favorite").setAttribute("style", "color: #FFFFFF;")
     document.getElementById("self-created").setAttribute("style", "color: #757575;")
     document.getElementById("commented").setAttribute("style", "color: #757575;")
-    this.setState({ items: Array.from({ length: numberOfMemesToLoad }), memes2display: this.state.favoriteMemes })
+    this.setState({ items: Array.from({ length: numberOfMemesToLoad }), memes2display: this.state.favoriteMemes, showComments: false })
   }
 
   showCommentedMemes() {
@@ -164,15 +178,18 @@ class ProfileViewComponent extends React.Component {
     document.getElementById("self-created").setAttribute("style", "color: #757575;")
     document.getElementById("favorite").setAttribute("style", "color: #757575;")
     //this.setState({memes2display: this.state.commentedMemes})
+    this.setState({showComments: true})
   }
 
+  /**for future implementation 
   showDraftMemes() {
     document.getElementById("drafts").setAttribute("style", "color: #FFFFFF;")
     document.getElementById("self-created").setAttribute("style", "color: #757575;")
 
-  }
+  }*/
 
 
+  
   render() {
     Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
     return (
@@ -195,7 +212,6 @@ class ProfileViewComponent extends React.Component {
             <div className="tab" id="self-created" onClick={() => this.showCreatedMemes()}>Self Created</div>
             <div className="tab" id="favorite" onClick={() => this.showFavoriteMemes()}>Love</div>
             <div className="tab" id="commented" onClick={() => this.showCommentedMemes()}>Commented</div>
-            <div className="tab" id="drafts" onClick={() => this.showDraftMemes()}>Drafts</div>
           </div>
         </div>
         {/* <hr className="flex-line"/> */}
@@ -243,4 +259,4 @@ class ProfileViewComponent extends React.Component {
 
 
 
-export default connect(null, mapDispatchToProps) (ProfileViewComponent);
+export default connect(null, mapDispatchToProps)(ProfileViewComponent);

@@ -114,9 +114,6 @@ class ImageOptionsText extends React.Component {
         }      
     }
 
-    download(){
-
-    }
 
     /**
      * returns number of comments of an image
