@@ -7,58 +7,16 @@ var jwt = require("jsonwebtoken");
 const config = require("../config/authconfig.js");
 const verifyToken = require("../middlewares/authJWT.js");
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('users');
-});
-
 /*
-user document: _id, googleData, nickname, upvotes(?), downvotes(?), comments(?), templates, memes
+  Registers a new user to the db.
 */
-
-router.post("/setnickname", upload.fields([]), (req, res) => {
-  var users = req.db.get("users");
-  var nickname = req.body.nickname;
-  var googleId = Number(req.body.googleId);
-
-  //Check if nickname is already taken
-  users.findOne({
-    nickname: nickname
-  }).then(obj => {
-    if (obj != null) {
-      res.send("Nickname already taken, choose another one!");
-    } else {
-      //TODO googleid erst verify?
-      //find user via googleId and update nickname
-      users.update({
-        googleId: {
-          $eq: googleId
-        }
-      }, {
-        $set: {
-          nickname: nickname
-        }
-      }).then(obj => {
-        //catch errors
-        if (obj.nModified == 1) {
-          res.send("Nickname saved!")
-        } else {
-          console.log(obj);
-          res.send("Error, goolgeId not found, nickname not saved.");
-        }
-      }).catch(error => console.log(error));
-
-    }
-  });
-});
-
-
 router.post("/register", upload.fields([]), (req, res) => {
   var users = req.db.get("users");
   var username = req.body.username;
   var password = req.body.password;
   var email = req.body.email;
 
+  //check if username or email is already existing
   users.findOne({
     $or: [{
       username: username
@@ -71,7 +29,7 @@ router.post("/register", upload.fields([]), (req, res) => {
         message: "Username or Email already taken, choose another one!"
       });
     } else {
-      //User erstellen
+      //Create user document and insert it to DB
       console.log("Creating new user " + username);
       users.insert({
           username: username,
@@ -97,13 +55,16 @@ router.post("/register", upload.fields([]), (req, res) => {
   });
 });
 
-
+/*
+  Request to log a user in. Checks the password and returns a JWT and the user's profile if successful.
+*/
 router.post("/login", upload.fields([]), (req, res) => {
   var users = req.db.get("users");
   var username = req.body.username;
   var password = req.body.password;
   var email = req.body.email;
 
+  //Checks if user is existing
   users.findOne({
     $or: [{
         username: username
@@ -118,11 +79,13 @@ router.post("/login", upload.fields([]), (req, res) => {
         message: "Username or Email not found."
       });
     } else {
+      //checks password
       var passwordIsValid = bcrypt.compareSync(
         req.body.password,
         user.password
       );
 
+      //error if password is incorrect
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
@@ -130,12 +93,14 @@ router.post("/login", upload.fields([]), (req, res) => {
         });
       }
 
+      //create JWT
       var token = jwt.sign({
-        userId: user._id //userid oder username?
+        userId: user._id
       }, config.secret, {
-        expiresIn: 86400 // 24 stunden
+        expiresIn: 86400 //24 hours
       });
       console.log(`User ${user.username} logged in`);
+      //return profile
       res.status(200).send({
         message: "Login successful!",
         username: user.username,
@@ -151,10 +116,14 @@ router.post("/login", upload.fields([]), (req, res) => {
   });
 });
 
+/*
+  Returns a user's profile. Authentication is required.
+*/
 router.get("/getprofile", verifyToken, (req, res) => {
   let userId = req.userId;
   let users = req.db.get("users");
   let memes = req.db.get("memes");
+  let templates = req.db.get("templates");
 
   users.findOne({
     _id: userId
@@ -175,25 +144,24 @@ router.get("/getprofile", verifyToken, (req, res) => {
           }
         }).then(userDownvotes => {
 
-          userTemplates = []; //TODO
+          templates.find({
+            userId: user._id
+          }).then(userTemplates => {
 
-          res.status(200).send({
-            username: user.username,
-            email: user.email,
-            memes: userMemes,
-            upvotes: userUpvotes,
-            downvotes: userDownvotes,
-            templates: userTemplates,
-            comments: user.comments
-          });
+            res.status(200).send({
+              username: user.username,
+              email: user.email,
+              memes: userMemes,
+              upvotes: userUpvotes,
+              downvotes: userDownvotes,
+              templates: userTemplates,
+              comments: user.comments
+            });
+          })
         });
       });
     });
   });
 });
 
-router.get("/testtoken", verifyToken, (req, res) => {
-
-  console.log("done");
-});
 module.exports = router;
