@@ -27,7 +27,7 @@ const password = "onlinemultimedia2020";
   Requests sample memes from the imgflip API.
   Returns an array of memes to the client.
 */
-router.get('/sampleMemes', function(req, res, next) {
+router.get('/sampleMemes', function (req, res, next) {
   const URL = "https://api.imgflip.com/get_memes";
   console.log("sample memes requested");
   axios.get(URL)
@@ -71,14 +71,14 @@ router.post('/generateMeme', upload.fields([]), (req, res, next) => {
     })
     .catch(error => {
       console.log(error);
-      res.status(400).send(error),
-    });
+      res.status(400).send(error)
+    })
 });
 
 /*
   Saves a meme to the DB. Must have either base64 or URL to the image. Authentication is required.
 */
-router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
+router.post('/publishmeme', verifyToken, upload.fields([]), function (req, res) {
   const memes = req.db.get('memes');
   const users = req.db.get('users');
   const templates = req.db.get('templates');

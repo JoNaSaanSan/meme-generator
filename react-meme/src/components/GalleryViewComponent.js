@@ -4,6 +4,18 @@ import share from '../pictures/share.png'
 import download from '../pictures/download.png'
 import Store from '../redux/store';
 import { b64toBlob } from '../utils/ImageUtils';
+/**
+ * react-share is a library which provides share buttons in addition to their respective icons of various platform. It allows us to
+ * share links and content
+ */
+import {
+    EmailShareButton,
+    FacebookShareButton,
+    TwitterShareButton,
+    FacebookIcon,
+    EmailIcon,
+    TwitterIcon,
+} from "react-share";
 const React = require('react');
 require('./GalleryViewComponent.css');
 
@@ -26,6 +38,7 @@ class GalleryViewComponent extends React.Component {
             //formatType: this.props.location.memesArray.memeTemplate.formatType,
         }
         this.selectFormat = this.selectFormat.bind(this)
+        this.download = this.download.bind(this)
     }
 
     /**
@@ -247,6 +260,55 @@ class GalleryViewComponent extends React.Component {
 
     }
 
+    /**
+ * 
+ * Download meme Image
+ * 
+ */
+    download() {
+
+        try {
+            if (this.state.currentMeme.memeTemplate.formatType === "video") {
+                const a = document.createElement("a");
+                a.download = this.state.title + '.mp4';
+                a.href = this.state.currentMeme.base64;
+                document.body.appendChild(a);
+                a.click();
+            } else if (this.state.currentMeme.memeTemplate.formatType === "gif") {
+                const a = document.createElement("a");
+                a.download = this.state.title + '.gif';
+                a.href = this.state.currentMeme.base64;
+                document.body.appendChild(a);
+                a.click();
+            } else if (this.state.currentMeme.memeTemplate.formatType === "image") {
+                const a = document.createElement("a");
+                a.download = this.state.title + '.png';
+                a.href = this.state.currentMeme.base64;
+                document.body.appendChild(a);
+                a.click();
+            }
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
+
+    /**
+     * Share Button
+     */
+    share() {
+        try {
+            const url = 'http://localhost:3006/meme/' + this.state.currentMeme._id;
+            //  const url = 'http://github.com'
+            console.log(url)
+            this.setState({
+                shareURL: url
+            })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     render() {
 
         return (
@@ -263,8 +325,8 @@ class GalleryViewComponent extends React.Component {
                                 <h1 className="g_image-titel">{this.state.currentMeme.title}</h1>
                                 <div className="g_options-top_container">
                                     <div className="g_share-download">
-                                        <button className="option-button"> <img src={download} className="icon" /> </button>
-                                        <button className="option-button"> <img src={share} className="icon" /> </button>
+                                        <button className="option-button" onClick={this.download}> <img src={download} className="icon" /> </button>
+                                        <a className="option-button" href="#share_g"> <img src={share} className="icon" /> </a>
                                     </div>
                                 </div>
                             </div>
@@ -305,6 +367,35 @@ class GalleryViewComponent extends React.Component {
                     </div>
                     <button className="myButton" onClick={() => this.goRight()}>&rsaquo;</button>
                 </div> : <div>Loading Gallery..</div>}
+
+
+                <div id="share_g" className="modal-window">
+                    <div>
+                        <a href="/#" title="Close" id="share-window-close" className="modal-close">Close</a>
+                        <FacebookShareButton
+                            url={this.state.shareURL}
+                            quote={this.state.currentMeme.title}
+                            className="share-button"
+                        >
+                            <FacebookIcon size={32} round />
+                        </FacebookShareButton>
+                        <EmailShareButton
+                            url={this.state.shareURL}
+                            body={"Share Now"}
+                            subject={this.state.currentMeme.title}
+                            className="share-button"
+                        >
+                            <EmailIcon size={32} round />
+                        </EmailShareButton>
+                        <TwitterShareButton
+                            url={this.state.shareURL}
+                            title={this.state.currentMeme.title}
+                            className="share-button"
+                        >
+                            <TwitterIcon size={32} round />
+                        </TwitterShareButton>
+                    </div>
+                </div>
             </div>
         );
     }
