@@ -113,3 +113,7 @@
     margin-left: 0.5rem;
 }
 
+#share_b{
+    display: flex;
+    justify-content: center;
+}

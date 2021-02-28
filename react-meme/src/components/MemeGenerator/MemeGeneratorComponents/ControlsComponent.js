@@ -3,7 +3,7 @@ import PreviewComponent from './PreviewComponent';
 import { connect } from 'react-redux';
 import { toggleSpeech } from '../../../redux/action';
 import Store from '../../../redux/store';
-import GraphComponent from '../../GraphComponent';
+import GraphComponent from './GraphComponent';
 import SpeechToText from '../../../utils/SpeechToText';
 import { textToSpeech } from '../../../utils/TextToSpeech'
 const React = require('react');

@@ -120,3 +120,8 @@
     color: white;
     height: 35px;
 }
+
+#share_g{
+    display: flex;
+    justify-content: center;
+}

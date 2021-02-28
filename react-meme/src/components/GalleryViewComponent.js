@@ -4,6 +4,7 @@ import share from '../pictures/share.png'
 import download from '../pictures/download.png'
 import Store from '../redux/store';
 import { b64toBlob } from '../utils/ImageUtils';
+import StatisticsComponent from './StatisticsComponent';
 /**
  * react-share is a library which provides share buttons in addition to their respective icons of various platform. It allows us to
  * share links and content
@@ -35,6 +36,7 @@ class GalleryViewComponent extends React.Component {
             orderedPlay: true,
             memesArray: this.props.location.memesArray,
             hasLoaded: false,
+            shareIconsVisibility: false,
             //formatType: this.props.location.memesArray.memeTemplate.formatType,
         }
         this.selectFormat = this.selectFormat.bind(this)
@@ -297,6 +299,7 @@ class GalleryViewComponent extends React.Component {
      * Share Button
      */
     share() {
+        this.setState(prevState => ({ shareIconsVisibility: !prevState.shareIconsVisibility }))
         try {
             const url = 'http://localhost:3006/meme/' + this.state.currentMeme._id;
             //  const url = 'http://github.com'
@@ -326,7 +329,32 @@ class GalleryViewComponent extends React.Component {
                                 <div className="g_options-top_container">
                                     <div className="g_share-download">
                                         <button className="option-button" onClick={this.download}> <img src={download} className="icon" /> </button>
-                                        <a className="option-button" href="#share_g"> <img src={share} className="icon" /> </a>
+                                        <button className="option-button" onClick={() => this.share()}> <img src={share} className="icon" /> </button>
+                                        {(this.state.shareIconsVisibility) ?
+                                            < div id="share_g">
+                                                <FacebookShareButton
+                                                    url={this.state.shareURL}
+                                                    quote={this.state.currentMeme.title}
+                                                    className="share-button"
+                                                >
+                                                    <FacebookIcon size={32} round />
+                                                </FacebookShareButton>
+                                                <EmailShareButton
+                                                    url={this.state.shareURL}
+                                                    body={"Share Now"}
+                                                    subject={this.state.currentMeme.title}
+                                                    className="share-button"
+                                                >
+                                                    <EmailIcon size={32} round />
+                                                </EmailShareButton>
+                                                <TwitterShareButton
+                                                    url={this.state.shareURL}
+                                                    title={this.state.currentMeme.title}
+                                                    className="share-button"
+                                                >
+                                                    <TwitterIcon size={32} round />
+                                                </TwitterShareButton>
+                                            </div> : <div></div>}
                                     </div>
                                 </div>
                             </div>
@@ -342,6 +370,7 @@ class GalleryViewComponent extends React.Component {
                                 <button className="option-button"><img src={upvote} className="icon" /></button>
                                 <button className="option-button"><img src={downvote} className="icon" /></button>
                             </div>
+                            <StatisticsComponent currentMeme={this.state.currentMeme} comments={this.numberOfComments()} />
                         </div>
 
                         <div className="right_container">
@@ -369,33 +398,6 @@ class GalleryViewComponent extends React.Component {
                 </div> : <div>Loading Gallery..</div>}
 
 
-                <div id="share_g" className="modal-window">
-                    <div>
-                        <a href="/#" title="Close" id="share-window-close" className="modal-close">Close</a>
-                        <FacebookShareButton
-                            url={this.state.shareURL}
-                            quote={this.state.currentMeme.title}
-                            className="share-button"
-                        >
-                            <FacebookIcon size={32} round />
-                        </FacebookShareButton>
-                        <EmailShareButton
-                            url={this.state.shareURL}
-                            body={"Share Now"}
-                            subject={this.state.currentMeme.title}
-                            className="share-button"
-                        >
-                            <EmailIcon size={32} round />
-                        </EmailShareButton>
-                        <TwitterShareButton
-                            url={this.state.shareURL}
-                            title={this.state.currentMeme.title}
-                            className="share-button"
-                        >
-                            <TwitterIcon size={32} round />
-                        </TwitterShareButton>
-                    </div>
-                </div>
             </div>
         );
     }
