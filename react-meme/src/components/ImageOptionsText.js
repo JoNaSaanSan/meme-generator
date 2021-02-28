@@ -18,8 +18,9 @@ class ImageOptionsText extends React.Component {
             accessToken: Store.getState().user.accessToken,
             isSignedIn: Store.getState().user.isSignedIn,
             upvotes: this.props.meme.upvotes,
-            //downvotes: null,
             downvotes: this.props.meme.downvotes,
+            hasUpvoted: false,
+            hasDownvoted: false,
             currentMeme: null,
             dateCreated: this.props.meme.dateCreated,
             title: this.props.meme.title,
@@ -27,13 +28,14 @@ class ImageOptionsText extends React.Component {
             formatType: this.props.meme.memeTemplate.formatType,
             index: this.props.index,
             memesArray: this.props.memesArray, //memesArray from Browse (filter option hot/fresh) to show in Gallery
+            
         };
     }
 
-  
-        
-    
-    componentDidUpdate(prevProps){
+
+
+
+    componentDidUpdate(prevProps) {
         /*
         //console.log("upvotes "+ this.state.upvotes)
         if(this.props.meme.upvotes !== prevProps.meme.upvotes || this.props.meme.base64 !== prevProps.meme.base64 || this.props.meme.memeTemplate.formatType !== prevProps.meme.memeTemplate.formatType)
@@ -43,12 +45,12 @@ class ImageOptionsText extends React.Component {
             base64: this.props.meme.base64,
             formatType: this.props.meme.memeTemplate.formatType,
         })*/
-        
-        console.log("upvotes state: "+ this.state.upvotes)
+
+        console.log("upvotes state: " + this.state.upvotes)
 
         //wenn z.B. in Browse andere filteroption gewählt wird
-        if(this.props.meme !== prevProps.meme){
-            if(this.props.meme !== undefined){
+        if (this.props.meme !== prevProps.meme) {
+            if (this.props.meme !== undefined) {
                 console.log(this.props.meme)
                 this.setState({
                     currentMeme: this.props.meme,
@@ -62,7 +64,7 @@ class ImageOptionsText extends React.Component {
             }
         }
 
-        if(this.props.memesArray !== prevProps.memesArray){
+        if (this.props.memesArray !== prevProps.memesArray) {
             this.setState({
                 memesArray: this.props.memesArray
             })
@@ -70,9 +72,8 @@ class ImageOptionsText extends React.Component {
     }
 
 
-    upvote() {
-        console.log("upvote");
-
+    upvote() { 
+        if(this.state.hasUpvoted === false){
         var token = this.state.accessToken;
         console.log("my token" + token)
         var memeId = this.props.meme._id;
@@ -86,15 +87,19 @@ class ImageOptionsText extends React.Component {
         fetch('http://localhost:3000/memes/upvote' + "?memeId=" + memeId, requestOptions)
             .then(async response => {
                 const data = await response.json()
-                console.log("upvotes data"+ JSON.stringify(data))
+                console.log("upvotes data" + JSON.stringify(data))
                 //return response.json();
-                this.setState({ upvotes: data.upvotes});
+                this.setState({ upvotes: data.upvotes });
             })
 
+        this.setState({hasUpvoted: true})
+        }
+
+       
     }
 
     downvote() {
-        console.log("downvote");
+        if(this.state.hasDownvoted === false){
         var token = this.state.accessToken;
         console.log("my token" + token)
         var memeId = this.props.meme._id;
@@ -112,11 +117,13 @@ class ImageOptionsText extends React.Component {
                 this.setState({ downvotes: data.downvotes });
             })
 
+        this.setState({hasDownvoted: true}) 
+        }      
     }
 
     numberOfComments() {
         if (this.props.meme !== undefined) {
-            if(this.props.meme.comments !== undefined){
+            if (this.props.meme.comments !== undefined) {
                 return this.props.meme.comments.length
             }
         }
@@ -126,18 +133,18 @@ class ImageOptionsText extends React.Component {
     }
 
 
-    selectFormat(){
-        if(this.state.formatType === "video"){
-            
+    selectFormat() {
+        if (this.state.formatType === "video") {
+
             var base64result = this.state.base64.split(',');
-            var base64blob = URL.createObjectURL(b64toBlob(base64result[1], base64result[0]))            
-            return(
-                <video src={base64blob} className="image" autoPlay= {true} loop= {true}/>
+            var base64blob = URL.createObjectURL(b64toBlob(base64result[1], base64result[0]))
+            return (
+                <video src={base64blob} className="image" autoPlay={true} loop={true} />
             )
         }
-        else{
-            return(
-                <img src={this.state.base64} className="image"/>
+        else {
+            return (
+                <img src={this.state.base64} className="image" />
             )
         }
     }
@@ -164,19 +171,19 @@ class ImageOptionsText extends React.Component {
                     </div>
                 </div>
                 <div className="image_container">
-                <Link to={{pathname: "/gallery", index: this.state.index, memesArray: this.state.memesArray}}>{this.selectFormat()}</Link>
+                    <Link to={{ pathname: "/gallery", index: this.state.index, memesArray: this.state.memesArray }}>{this.selectFormat()}</Link>
                 </div>
                 <div className="points-commits">
-                    <p className="voting-point">Points: {this.state.upvotes} </p>
+                    <p className="voting-point">Points: {this.state.upvotes - this.state.downvotes} </p>
                     <p className="voting-point">Comments: {this.numberOfComments()}</p>
                 </div>
                 <div className="option_container">
-                    <button className="option-button"><img src={upvote} className="icon" onClick={() => this.upvote()} /></button>
-                    <button className="option-button"><img src={downvote} className="icon" onClick={() => this.downvote()} /></button>
-                    <Link to={{pathname: "/gallery", index: this.state.index, memesArray: this.state.memesArray}}><button className="option-button"><img src={comments} className="icon" /></button></Link>
+                    <button className="option-button"><img src={upvote} className="icon" onClick={() => this.upvote()}/></button>
+                    <button className="option-button"><img src={downvote} className="icon" id="downvote" onClick={() => this.downvote()} /></button>
+                    <Link to={{ pathname: "/gallery", index: this.state.index, memesArray: this.state.memesArray }}><button className="option-button"><img src={comments} className="icon" /></button></Link>
                 </div>
+                
 
-                <div>{this.state.formatType}</div>
 
 
             </div>

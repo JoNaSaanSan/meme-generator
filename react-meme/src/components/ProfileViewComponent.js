@@ -122,7 +122,7 @@ class ProfileViewComponent extends React.Component {
    */
   showMemes() {
     try {
-      if (this.state.memes2display !== undefined && this.state.memes2display.length > 0 && this.state.memes2display.length > 0) {
+      if (this.state.memes2display !== undefined && this.state.memes2display.length > 0) {
         console.log("memes2display  " + JSON.stringify(this.state.memes2display))
         console.log("memes2display2 " + this.state.memes2display.length)
         return (
@@ -195,7 +195,7 @@ class ProfileViewComponent extends React.Component {
             <div className="tab" id="self-created" onClick={() => this.showCreatedMemes()}>Self Created</div>
             <div className="tab" id="favorite" onClick={() => this.showFavoriteMemes()}>Love</div>
             <div className="tab" id="commented" onClick={() => this.showCommentedMemes()}>Commented</div>
-            <div className="tab" id="draft" onClick={() => this.showDraftMemes()}>Drafts</div>
+            <div className="tab" id="drafts" onClick={() => this.showDraftMemes()}>Drafts</div>
           </div>
         </div>
         {/* <hr className="flex-line"/> */}
