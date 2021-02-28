@@ -17,15 +17,18 @@ class ImageOptionsText extends React.Component {
         this.state = {
             accessToken: Store.getState().user.accessToken,
             isSignedIn: Store.getState().user.isSignedIn,
+
             upvotes: this.props.meme.upvotes,
             downvotes: this.props.meme.downvotes,
-            hasUpvoted: false,
+            hasUpvoted: false,      //only 1 upvote and 1 downvote per image is possible
             hasDownvoted: false,
+
             currentMeme: null,
             dateCreated: this.props.meme.dateCreated,
             title: this.props.meme.title,
             base64: this.props.meme.base64,
             formatType: this.props.meme.memeTemplate.formatType,
+
             index: this.props.index,
             memesArray: this.props.memesArray, //memesArray from Browse (filter option hot/fresh) to show in Gallery
             
@@ -36,19 +39,9 @@ class ImageOptionsText extends React.Component {
 
 
     componentDidUpdate(prevProps) {
-        /*
-        //console.log("upvotes "+ this.state.upvotes)
-        if(this.props.meme.upvotes !== prevProps.meme.upvotes || this.props.meme.base64 !== prevProps.meme.base64 || this.props.meme.memeTemplate.formatType !== prevProps.meme.memeTemplate.formatType)
-        this.setState({
-            upvotes: this.props.meme.upvotes,
-            downvotes: this.props.meme.downvotes,
-            base64: this.props.meme.base64,
-            formatType: this.props.meme.memeTemplate.formatType,
-        })*/
-
         console.log("upvotes state: " + this.state.upvotes)
 
-        //wenn z.B. in Browse andere filteroption gewählt wird
+        //for example filteroption in browse has changed
         if (this.props.meme !== prevProps.meme) {
             if (this.props.meme !== undefined) {
                 console.log(this.props.meme)
@@ -121,6 +114,13 @@ class ImageOptionsText extends React.Component {
         }      
     }
 
+    download(){
+
+    }
+
+    /**
+     * returns number of comments of an image
+     */
     numberOfComments() {
         if (this.props.meme !== undefined) {
             if (this.props.meme.comments !== undefined) {
@@ -133,6 +133,9 @@ class ImageOptionsText extends React.Component {
     }
 
 
+    /**
+     * change format to display either video or image/gif
+     */
     selectFormat() {
         if (this.state.formatType === "video") {
 
@@ -165,7 +168,7 @@ class ImageOptionsText extends React.Component {
 
                     <div className="options-top_container">
                         <div className="share-download">
-                            <button className="option-button"> <img src={download} className="icon" /> </button>
+                            <button className="option-button" onClick={() => this.download()}> <img src={download} className="icon"/>  </button>
                             <button className="option-button"> <img src={share} className="icon" /> </button>
                         </div>
                     </div>
