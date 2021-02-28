@@ -1,0 +1,64 @@
+.browse_container{
+    width: 100%
+}
+
+
+
+.imageOptions{
+    width: 10%;
+    height: 10%;
+    margin-left: 10%;
+    margin-top: 10%;
+    position: fixed;
+    display: grid;
+    align-content: center;
+}
+
+.infiniteScroll_container{
+    width: 80%;
+    margin-left: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.option1-button {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    grid-column-start: 1;
+    background:transparent; 
+    border: none;
+    text-align:left;
+    background-color: #252525;
+    border-radius: 5px;
+}
+
+.option2-button{
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    grid-column-start: 1;
+    background:transparent; 
+    border: none;
+    text-align:left;
+    border-radius: 5px;
+}
+
+.option1-button:hover { 
+    background-color: #8FBC8F;
+    cursor: pointer;
+}
+
+.option2-button:hover { 
+    background-color: #8FBC8F;
+    cursor: pointer;
+}
+
+.file-type {
+    padding-left: 20%;
+}
+
+.filter {
+    cursor: pointer;
+}
