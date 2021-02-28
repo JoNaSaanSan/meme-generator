@@ -16,7 +16,6 @@ class GraphComponent extends React.Component {
   componentDidMount() {
     this.setState({
       data: [
-        { category: 'viewed', popularity: 0 },
         { category: 'used', popularity: 0 },
       ]
     })
@@ -30,7 +29,6 @@ class GraphComponent extends React.Component {
           var used = this.props.currentTemplate.statistics.used || 0
           this.setState({
             data: [
-              { category: 'viewed', popularity: 2 },
               { category: 'used', popularity: used },
             ]
           })
