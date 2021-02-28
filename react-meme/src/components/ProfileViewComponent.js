@@ -14,7 +14,12 @@ class ProfileViewComponent extends React.Component {
     this.state = {
       accessToken: Store.getState().user.accessToken,
       profileInfo: [],
+
       memes2display: [],
+      createdMemes: [],
+      favoriteMemes: [],
+
+
       items: Array.from({ length: 2 }), // initial load -> 2 Memes
       hasMoreToLoad: true
     }
@@ -74,10 +79,13 @@ class ProfileViewComponent extends React.Component {
       const data = await response.json()
       console.log("userInfo memes: "+ JSON.stringify(data.memes))
       //return response.json();
-      this.setState({ profileInfo: data, memes2display: data.memes});
+      this.setState({ profileInfo: data, memes2display: data.memes, createdMemes: data.memes, favoriteMemes: data.upvotes});
     })
   }
 
+  /**
+   * create memes based on memes2display array (createdMemes, favoriteMemes, commentedMemes)
+   */
   showMemes(){
     try{
     if(this.state.memes2display !== undefined && this.state.memes2display.length > 0){
@@ -102,15 +110,31 @@ class ProfileViewComponent extends React.Component {
 
   showCreatedMemes(){
     console.log("showcreatedMemes")
-    document.getElementById("drafts").setAttribute("style", "color: #757575;")
     document.getElementById("self-created").setAttribute("style", "color: #FFFFFF;")
+    document.getElementById("favorite").setAttribute("style", "color: #757575;")
+    document.getElementById("commented").setAttribute("style", "color: #757575;")
+    this.setState({memes2display: this.state.createdMemes})
+    
   }
 
   showDraftMemes(){
-    document.getElementById("self-created").setAttribute("style", "color: #757575;")
     document.getElementById("drafts").setAttribute("style", "color: #FFFFFF;")
+    document.getElementById("self-created").setAttribute("style", "color: #757575;")
+    
   }
 
+  showFavoriteMemes(){
+    document.getElementById("favorite").setAttribute("style", "color: #FFFFFF;")
+    document.getElementById("self-created").setAttribute("style", "color: #757575;")
+    document.getElementById("commented").setAttribute("style", "color: #757575;")
+    this.setState({memes2display: this.state.favoriteMemes})
+  }
+
+  showCommentedMemes(){
+    document.getElementById("commented").setAttribute("style", "color: #FFFFFF;")
+    document.getElementById("self-created").setAttribute("style", "color: #757575;")
+    document.getElementById("favorite").setAttribute("style", "color: #757575;")
+  }
 
   render() {
 
@@ -132,8 +156,8 @@ class ProfileViewComponent extends React.Component {
       <div className="container_second-field">
         <div className="tab_container">
           <div className="tab" id="self-created" onClick={()=> this.showCreatedMemes()}>Self Created</div>
-          <div className="tab">Love</div>
-          <div className="tab">Comments</div>
+          <div className="tab" id="favorite" onClick={()=> this.showFavoriteMemes()}>Love</div>
+          <div className="tab" id="commented" onClick={()=> this.showCommentedMemes()}>Comments</div>
         </div> 
       </div>
       {/* <hr className="flex-line"/> */}
