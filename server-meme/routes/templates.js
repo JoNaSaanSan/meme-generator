@@ -7,6 +7,9 @@ const {
   ObjectId
 } = require("mongodb");
 
+/*
+  Uploads a template to the DB. Authentication is required.
+*/
 router.post("/uploadtemplate", verifyToken, upload.fields([]), (req, res) => {
   let templates = req.db.get('templates');
   let users = req.db.get('users');
@@ -27,6 +30,7 @@ router.post("/uploadtemplate", verifyToken, upload.fields([]), (req, res) => {
   };
 
   templates.insert(template).then(obj => {
+    //add templadeId to the user profiles
     users.update({
       _id: userId
     }, {
@@ -47,7 +51,9 @@ router.post("/uploadtemplate", verifyToken, upload.fields([]), (req, res) => {
   });
 });
 
-
+/*
+  Returns all templates the logged in user. Authentication is required.
+*/
 router.get("/loadtemplates", verifyToken, (req, res) => {
   let templates = req.db.get('templates');
   let userId = req.userId;
@@ -67,7 +73,7 @@ router.get("/loadtemplates", verifyToken, (req, res) => {
 });
 
 /*
-  Captures a screnshot of a url to an png/jpg and sends it as base64 to the client
+  Captures a screnshot of a url to an png/jpg and sends it as base64 to the client.
 */
 router.get("/templatefromurl", (req, res) => {
   const url = req.query.url;
@@ -83,15 +89,14 @@ router.get("/templatefromurl", (req, res) => {
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
       await page.goto(url);
+      //screenshot website
       var scrsh = await page.screenshot({
         type: "png",
         encoding: "base64"
       });
-
       await browser.close();
       return scrsh;
     })().then(pic64 => {
-      //TODO bild direkt unter templates in der db speichern?
       res.status(200).send({
         base64: pic64
       });

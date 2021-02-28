@@ -18,7 +18,6 @@ const {
 const username = "SandraOMM";
 const password = "onlinemultimedia2020";
 
-var memes = [];
 /*
   memes document: _id, title, creatorId, imgstring, upvotes, downvotes, comments, private, dateCreated, visibility(0=unlisted, 1=private, 2=public) ,tags(?)
 */
@@ -42,8 +41,8 @@ router.get('/sampleMemes', function(req, res, next) {
 });
 
 /*
-  Requests to generate a meme at the imgflip api.
-  Returns the generated meme to the client.
+  Requests to generate a meme using the imgflip api.
+  Returns the generated meme to the client. Authentication is required.
 */
 router.post('/generateMeme', upload.fields([]), (req, res, next) => {
   const URL = "https://api.imgflip.com/caption_image";
@@ -59,7 +58,7 @@ router.post('/generateMeme', upload.fields([]), (req, res, next) => {
     password: password,
     boxes: boxes,
   };
-
+  //Request to the imgflip api, expects the meme as return
   axios.post(URL, qs.stringify(options))
     .then(response => {
       if (response.data.success !== true) {
@@ -72,11 +71,12 @@ router.post('/generateMeme', upload.fields([]), (req, res, next) => {
     })
     .catch(error => {
       console.log(error);
-    })
+      res.status(400).send(error),
+    });
 });
 
 /*
-  Saves a meme url with title, creator to the DB.
+  Saves a meme to the DB. Must have either base64 or URL to the image. Authentication is required.
 */
 router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
   const memes = req.db.get('memes');
@@ -90,12 +90,14 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
   let visibility = req.body.visibility;
   let memeTemplate = req.body.memeTemplate;
 
+  //catch empty url AND empty base64
   if (url == null && base64 == null) {
     res.status(400).send({
       message: "url and base64 is null"
     });
   }
 
+  //create meme document
   meme = {
     url: url,
     base64: base64,
@@ -108,12 +110,14 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
     memeTemplate
   }
 
+  //insert meme to DB
   memes.insert(meme).then(obj => {
     if (obj._id == null) {
       res.status(400).send({
         message: "Error inserting meme to database"
       });
     } else {
+      //Update user profile
       users.findOneAndUpdate({
         _id: userId
       }, {
@@ -121,7 +125,8 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
           memes: obj._id
         }
       }).then(user => {
-        memeTemplateId = memeTemplate.id.toString().length == 24 ? memeTemplate.id : "000000000000000000000000";
+        //if template is already existing, update. Else insert a new one
+        memeTemplateId = memeTemplate.id.toString().length == 24 ? memeTemplate.id : "000000000000000000000000"; //catches invalid id error by mongo, ids have to be 24 chars.
         templates.update({
           _id: memeTemplateId
         }, {
@@ -142,7 +147,7 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
               message: "Error updating user document"
             });
           }
-        }).catch(error => console.log(error));
+        });
       });
     }
   }).catch(error => {
@@ -155,7 +160,8 @@ router.post('/publishmeme', verifyToken, upload.fields([]), function(req, res) {
 
 /*
   Upvotes a meme existing in the DB. Adds the id of the upvoted meme to the user document,
-   and increases the upvote counter of the meme document by 1.
+   and increases the upvote counter of the meme document by 1. Each meme can only get upvoted once by the same user.
+   Authentication is required.
 */
 router.get('/upvote', verifyToken, upload.fields([]), (req, res, next) => {
   const memes = req.db.get('memes');
@@ -167,12 +173,13 @@ router.get('/upvote', verifyToken, upload.fields([]), (req, res, next) => {
   users.findOne({
     _id: userId
   }).then(existing => {
-    console.log(existing.upvotes);
+    //check if user already upvoted the meme.
     if (existing.upvotes.includes(memeId)) {
       res.status(400).send({
         message: "Already voted"
       })
     } else {
+      //if the user did not upvote the meme yet, update user profile
       users.findOneAndUpdate({
         _id: userId
       }, {
@@ -181,6 +188,7 @@ router.get('/upvote', verifyToken, upload.fields([]), (req, res, next) => {
         }
       }).then(() => {
         console.log("User upvotes updated!");
+        //increase meme upvote counter
         memes.findOneAndUpdate({
           _id: memeId
         }, {
@@ -207,7 +215,8 @@ router.get('/upvote', verifyToken, upload.fields([]), (req, res, next) => {
 
 /*
   Downvotes a meme existing in the DB. Adds the id of the downvoted meme to the user document,
-   and decreases the upvote counter of the meme document by 1.
+  and decreases the upvote counter of the meme document by 1. Each meme can only get downvoted once by the same user.
+  Authentication is required.
 */
 router.get('/downvote', verifyToken, (req, res, next) => {
   const memes = req.db.get('memes');
@@ -216,15 +225,17 @@ router.get('/downvote', verifyToken, (req, res, next) => {
 
   //update user upvotes
   const users = req.db.get('users');
+  //Update user
   users.findOne({
     _id: userId,
   }).then(existing => {
-    console.log(existing.downvotes);
+    //Check if user already voted the meme
     if (existing.downvotes.includes(memeId)) {
       res.status(400).send({
         message: "Already voted"
       })
     } else {
+      //update downvotes of user profile
       users.findOneAndUpdate({
         _id: userId
       }, {
@@ -233,6 +244,7 @@ router.get('/downvote', verifyToken, (req, res, next) => {
         }
       }).then(() => {
         console.log("User downvotes updated!");
+        //increase meme downvote counter
         memes.findOneAndUpdate({
           _id: memeId
         }, {
@@ -254,51 +266,24 @@ router.get('/downvote', verifyToken, (req, res, next) => {
       message: error
     });
   });
-  /*
-  users.findOneAndUpdate({
-    _id: userId
-  }, {
-    $push: {
-      downvotes: ObjectId(memeId)
-    }
-  }).then(() => {
-    console.log("User upvotes updated!");
-    memes.findOneAndUpdate({
-      _id: memeId
-    }, {
-      $inc: {
-        downvotes: 1
-      }
-    }).then(response => {
-      console.log("Meme " + memeId + " downvoted!");
-      res.status(200).send({
-        messsage: "Meme " + memeId + " downvoted!",
-        downvotes: response.downvotes
-      })
-    });
-  }).catch(error => {
-    console.log(error);
-    res.status(400).send({
-      message: error
-    });
-  });*/
 });
 
 /*
-  Requests an array of memes by dateCreated
+  Requests an array of memes by dateCreated.
 */
 router.get('/newmemes', (req, res, next) => {
   const memes = req.db.get('memes');
   memes.find({
     visibility: 2
   }).then(memes => {
+    //sort by date created
     memes.sort((b, a) => dateHelper.stringToDateObj(a["dateCreated"]) - dateHelper.stringToDateObj(b["dateCreated"]));
     res.send(memes);
   });
 });
 
 /*
-  Requests the most popular memes
+  Requests the most popular memes. Poularity is calculated by upvotes - downvotes.
 */
 router.get('/popularmemes', (req, res, next) => {
   const memes = req.db.get('memes');
@@ -309,6 +294,7 @@ router.get('/popularmemes', (req, res, next) => {
       upvotes: -1
     }
   }).then(docs => {
+    //sort by upvotes - downvotes
     memesSorted = docs.sort((a, b) => (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes));
     res.status(200).send(memesSorted);
   }).catch(error => {
@@ -322,10 +308,9 @@ router.get('/popularmemes', (req, res, next) => {
 /*
   Requests the memes by order given in the database aka sorted by creation date
 */
-
 router.get("/browsememes", (req, res) => {
   const memes = req.db.get('memes');
-  console.log("browsemems");
+
   memes.find({
     visibility: 2
   }).then(docs => {
@@ -338,7 +323,9 @@ router.get("/browsememes", (req, res) => {
   });
 });
 
-
+/*
+  Post a comment to a meme. Authentication is required.
+*/
 router.post("/comment", verifyToken, upload.fields([]), (req, res) => {
   let users = req.db.get("users");
   let memes = req.db.get("memes");
@@ -347,12 +334,14 @@ router.post("/comment", verifyToken, upload.fields([]), (req, res) => {
   let commentText = req.body.comment;
   let date = new Date().toLocaleString();
 
+  //create comment object
   comment = {
     userId: userId,
     text: commentText,
     date: date
   };
 
+  //add comment to meme's comment array
   memes.update({
     _id: memeId
   }, {
@@ -360,6 +349,7 @@ router.post("/comment", verifyToken, upload.fields([]), (req, res) => {
       comments: comment
     }
   }).then(() => {
+    //update the user profile and add comment tot he users comment array
     users.update({
       _id: userId
     }, {
@@ -388,7 +378,6 @@ router.post("/comment", verifyToken, upload.fields([]), (req, res) => {
 /*
   Requests a single meme by the _id of the database
 */
-
 router.get("/:id", (req, res) => {
   memes = req.db.get('memes');
   let id = req.params.id;

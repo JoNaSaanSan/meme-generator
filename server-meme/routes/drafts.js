@@ -6,12 +6,16 @@ const {
   ObjectId
 } = require("mongodb");
 
+/*
+  Saves a draft to the DB. Authentication is required.
+*/
 router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
   let drafts = req.db.get('drafts');
+  let users = req.db.get('users');
   let title = req.body.title;
-  let base64 = req.body.base64; //Template! ohne schrift etc
+  let base64 = req.body.base64; //base64 of the template
   let currentMeme = req.body.currentMeme;
-  let additionalImages = req.body.additionalImages; //eingefügte bilder
+  let additionalImages = req.body.additionalImages; //draft pictures
   let drawPaths = req.body.drawPaths;
   let inputBoxes = req.body.inputBoxes;
   let userId = req.userId;
@@ -26,6 +30,7 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
     visibility: 1
   };
 
+  //check if draft title already exists
   drafts.find({
     title: title
   }).then(found => {
@@ -35,6 +40,7 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
         message: "Title already existing, choose another one"
       });
     } else {
+      //insert draft document to DB
       drafts.insert(draft).then(draft => {
         if (draft._id == null) {
           console.log("Error saving draft");
@@ -42,12 +48,20 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
             message: "Error saving draft"
           });
         } else {
-          //User draft array updaten? Oder nciht?
-          console.log(`Saved draft with it ${draft._id}`);
-          res.status(200).send({
-            message: "Draft saved",
-            draftId: draft._id
-          });
+          //Update the user with the draft id
+          users.findOneAndUpdate({
+            _id: userId
+          }, {
+            $push: {
+              drafts: draft._id
+            }
+          }).then(() => {
+            console.log(`Saved draft with it ${draft._id}`);
+            res.status(200).send({
+              message: "Draft saved to user",
+              draftId: draft._id
+            });
+          })
         }
       });
     }
@@ -57,6 +71,9 @@ router.post("/savedraft", verifyToken, upload.fields([]), (req, res) => {
   });
 });
 
+/*
+  Returns an array of all drafts of a user. Authentication is required.
+*/
 router.get("/loaddrafts", verifyToken, (req, res) => {
   let drafts = req.db.get('drafts');
   let userId = req.userId;
