@@ -132,7 +132,7 @@ class ImageOptionsText extends React.Component {
             var base64result = this.state.base64.split(',');
             var base64blob = URL.createObjectURL(b64toBlob(base64result[1], base64result[0]))            
             return(
-                <video src={base64blob} className="image" autoPlay= "true" loop= "true"/>
+                <video src={base64blob} className="image" autoPlay= {true} loop= {true}/>
             )
         }
         else{
