@@ -385,7 +385,6 @@ router.get("/:id", (req, res) => {
   memes.findOne({
     _id: id
   }).then(meme => {
-    console.log(meme);
     res.status(200).send(meme);
   }).catch(error => {
     console.log(error);
