@@ -140,5 +140,84 @@ router.get("/multitext/:templateId/:textboxes", (req, res) => {
   });
 });
 
+/*
+  type: meme/template
+  tags: suhbegriffe
+  maxamount: anzahl an bildern
+  gibt eine zip file mit bildern, die der suche von tags entsprechen, zurück
+
+*/
+router.get("/imagesaszip/:type/:tags/:maxamount", (req, res) => {
+  let collection;
+
+  let type = req.params.type;
+  let tags = req.params.tags.replace(",", "");
+  let maxAmount = Number(req.params.maxamount);
+
+  if (type == "memes") {
+    collection = req.db.get("memes");
+  } else if (type == "templates") {
+    collection = req.db.get("templates");
+  } else {
+    res.status(400).send({
+      message: "No valid type, choose memes or templates"
+    });
+  }
+
+  collection.createIndex({
+    title: "text"
+  });
+
+  var zip = new JSZip();
+
+  collection.find({
+    $text: {
+      $search: tags
+    }
+  }).then(memes => {
+    let maxLength = maxAmount > memes.length ? memes.length : maxAmount;
+    let resultMemes = memes.splice(0, maxLength);
+    console.log(resultMemes.length);
+    resultMemes.map((rmeme, i) => {
+      var im = Buffer.from(rmeme.base64.split(';base64,').pop(), 'base64');
+      var dims = sizeOf(im);
+      //create canvas with templade size
+      const mycanvas = canvas.createCanvas(dims.width, dims.height);
+      var ctx = mycanvas.getContext('2d');
+
+      const img = new canvas.Image();
+      img.onload = () => ctx.drawImage(img, 0, 0);
+      img.onerror = err => {
+        throw err;
+      }
+      img.src = rmeme.base64;
+
+      //den anfang wegschneiden, sonst kapierts zip nicht
+      let dataURL = mycanvas.toDataURL().split('base64,')[1];
+      let fileType = mycanvas.toDataURL().split('base64,')[0].split("/")[1].slice(0, -1);
+
+      console.log("adding file to zip");
+      console.log(fileType);
+
+      zip.file(rmeme.title + "_" + i + "." + fileType, dataURL, {
+        base64: true
+      });
+    });
+    // header für die zip setzen
+    res.setHeader('Content-Disposition', 'attachment; filename="searchresults.zip"')
+
+    // zip senden
+    zip.generateNodeStream({
+        type: 'nodebuffer',
+        streamFiles: true
+      })
+      .pipe(res).on('finish', function() {
+        console.log("out.zip written.");
+      });
+  }).catch(error => {
+    console.log(error);
+    res.status(400).send(error);
+  });
+});
 
 module.exports = router;
