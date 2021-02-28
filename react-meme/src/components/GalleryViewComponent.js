@@ -88,16 +88,16 @@ class GalleryViewComponent extends React.Component {
      * browse sends an index to GalleryViewComponent -> if the user does not come from browse there is no index -> normal order
      */
     setInfo(){
-
+        /*if(this.state.currentMeme !== {}){
             if(this.state.index !== undefined){
                 this.setState({currentMeme: this.state.allMemes[this.state.index]})
             }
-            else{
+            else{*/
                 //this.setState({index: 0})
                 this.setState({index: 0, currentMeme: this.state.allMemes[0]})
-            }
+            //}
             console.log("setInfo currentMeme " + JSON.stringify(this.state.currentMeme))
-        
+        //}
     }
 
     
@@ -260,7 +260,6 @@ class GalleryViewComponent extends React.Component {
                     </div>
                     <div className="g_image_container">
                         <img src= {this.state.currentMeme.base64} className="image" />
-                        <div> Test {this.state.currentMeme} </div>
                     </div>
                     <div className="g_points-commits">
                         <p className= "voting-point">Points:  {this.state.currentMeme.upvotes - this.state.currentMeme.downvotes}</p>
