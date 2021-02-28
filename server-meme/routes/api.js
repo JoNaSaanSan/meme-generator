@@ -175,6 +175,14 @@ router.get("/imagesaszip/:type/:tags/:maxamount", (req, res) => {
 
   let maxAmount = Number(req.params.maxamount);
 
+  //catch missing parameters
+  if (type == undefined || searchparam == undefined || maxAmount == undefined) {
+    console.log("Missing parameters");
+    res.status(400).send({
+      message: "Missing parameters"
+    });
+  }
+
   //Select correct collection
   if (type == "memes") {
     collection = req.db.get("memes");
@@ -202,6 +210,7 @@ router.get("/imagesaszip/:type/:tags/:maxamount", (req, res) => {
       title: "text"
     });
   } else if (searchparam == "minsize") {
+    //extract width and height from the req
     let paramWidth = Number(req.params.tags.split(":")[1].split(",")[0]);
     let paramHeight = Number(req.params.tags.split(":")[1].split(",")[1]);
     query = {
@@ -214,6 +223,7 @@ router.get("/imagesaszip/:type/:tags/:maxamount", (req, res) => {
       "memeTemplate.formatType": "image"
     }
   } else if (searchparam == "maxsize") {
+    //extract width and height from the req
     let paramWidth = Number(req.params.tags.split(":")[1].split(",")[0]);
     let paramHeight = Number(req.params.tags.split(":")[1].split(",")[1]);
     query = {
