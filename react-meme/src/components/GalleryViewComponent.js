@@ -105,7 +105,6 @@ class GalleryViewComponent extends React.Component {
      * browse sends an index to GalleryViewComponent -> if the user does not come from browse there is no index -> normal order
      */
     setInfo() {
-        //if(this.state.currentMeme !== {}){
         if (this.state.index !== undefined) {
             this.setState({ currentMeme: this.state.allMemes[this.state.index] })
         }
@@ -113,7 +112,6 @@ class GalleryViewComponent extends React.Component {
             this.setState({ index: 0, currentMeme: this.state.allMemes[0] })
         }
         console.log("setInfo currentMeme " + JSON.stringify(this.state.currentMeme))
-        //}
     }
 
 
@@ -154,8 +152,7 @@ class GalleryViewComponent extends React.Component {
      */
     sendComment() {
         var comment2Publish = {};
-        comment2Publish.memeId = this.state.currentMeme._id;;
-        //comment2Publish.userId = 
+        comment2Publish.memeId = this.state.currentMeme._id;
         comment2Publish.comment = document.querySelector(".input-text").value;
 
         const requestOptions = {
@@ -170,13 +167,6 @@ class GalleryViewComponent extends React.Component {
             .then(async response => {
                 const data = await response.json();
                 this.getMemesByTime()
-                /*
-                const currentMeme = this.state.currentMeme
-                const comments = currentMeme.comments
-                comments.push({userId: , text: comment2Publish.comment})
-                Object.assign(currentMeme.comments, comments)
-                this.setState({currentMeme})
-                */
             })
             .catch(error => {
                 console.error('There was an error!', error);
