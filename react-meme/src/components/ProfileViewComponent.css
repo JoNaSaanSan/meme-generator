@@ -183,6 +183,11 @@ margin-top: 5%;
     float: left;
 }
 
+.loading_text{
+    display: flex;
+    justify-content: center;
+}
+
 
 /*gap: 10em;
     background-color: violet;

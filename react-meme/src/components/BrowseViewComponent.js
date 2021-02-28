@@ -64,6 +64,7 @@ class BrowseViewComponent extends React.Component {
   createMemes() {
     console.log("2display length" + this.state.memes2display.length)
     console.log("items length" + this.state.items.length)
+
     if (this.state.memes2display.length > 0 && this.state.items.length > 0) {
       
       return (
@@ -173,6 +174,8 @@ class BrowseViewComponent extends React.Component {
                   <b>Yay! You have seen it all</b>
                 </p>
               }>
+                {console.log("memes2display infinite" + this.state.memes2display)}
+              {console.log("items infinite" + this.state.items)}
               {this.createMemes()}
 
             </InfiniteScroll>
