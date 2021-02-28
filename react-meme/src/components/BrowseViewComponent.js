@@ -19,22 +19,25 @@ class BrowseViewComponent extends React.Component {
       allMemes: [],
       popularMemes: [],
       
-      items: Array.from({ length: 2 }), // initial load -> 1 Memes
+      items: Array.from({ length: 1 }), // initial load -> 1 Meme
+      numberOfMemesToLoad: 1, // number of loaded memes after scroll
+
       hasMoreToLoad: true,
       shownByTime: true,
-      memes2display: []
+      memes2display: [] //while componentDidMount filled with memes sorted by time (getMemesByTime->allMemes)
     }
   }
 
 
   fetchMoreData = () => {
+    console.log("fetchmoredata")
     // a fake async api call like which sends
     // 3 more records in 0.05 
-    if( this.state.items.length < this.state.allMemes.length-1){
-      
+    if( this.state.items.length < this.state.memes2display.length -1){
+      this.setState({hasMoreToLoad: true})
         setTimeout(() => {
           this.setState({
-            items: this.state.items.concat(Array.from({ length: 1 })) // 2 Memes are loaded
+            items: this.state.items.concat(Array.from({ length: this.state.numberOfMemesToLoad })) // 1 Meme is loaded
           });
         }, 50);
     }else{
@@ -50,34 +53,25 @@ class BrowseViewComponent extends React.Component {
 
   }
 
+
   /**
-   * create Memes in InfinityScroll based on if "hot"(popularMemes) or "fresh"(allMemes sorted by time) is clicked
-   * the initial state is that allMemes are shown sorted by time
+   * create Memes in InfinityScroll based on array (changes based on filter options)
+   * the initial state is that allMemes are shown sorted by time -> getMemesByTime()
    */
   createMemes(){
-    if(this.state.shownByTime === true){
-      if(this.state.allMemes.length > 0){
+    var memes2display = this.state.memes2display
+    console.log("create memes "+ memes2display)
+
+      if(memes2display.length > 0){
         
         return(
           this.state.items.map((i, index) => (
           <div key={index}>
-           {console.log("browse  popularMemes" + JSON.stringify(this.state.popularMemes[index]) + "index :"+ index)}
-            <div><ImageOptionsText meme={this.state.allMemes[index]} index = {index} memesArray = {this.state.allMemes}/></div>
+            <div><ImageOptionsText meme={memes2display[index]} index = {index} memesArray = {memes2display}/></div>
           </div>
         )))
-      }
-    }
-
-    if(this.state.shownByTime === false){
-      if(this.state.popularMemes.length > 0){
-
-        return(
-          this.state.items.map((i, index) => (
-          <div  key={index}>
-            <div><ImageOptionsText meme={this.state.popularMemes[index]} index = {index} memesArray = {this.state.popularMemes}/></div>
-          </div>
-        )))
-      }
+      
+    
     }
       
 
@@ -92,7 +86,8 @@ class BrowseViewComponent extends React.Component {
     })
     .then(data => {
       //console.log("browseMemes data: " + JSON.stringify(data))
-      this.setState({allMemes: data.reverse()})//, () => this.createMemes(this.state.allMemes))
+      var reversedData= data.reverse()
+      this.setState({allMemes: reversedData, memes2display: reversedData})//, () => this.createMemes(this.state.allMemes))
     }).catch(error => {
       console.log(error);
     });
@@ -106,7 +101,7 @@ class BrowseViewComponent extends React.Component {
       return response.json();
     })
     .then(data => {
-      console.log("data fromm popularmemes: " + JSON.stringify(data))
+      //console.log("data fromm popularmemes: " + JSON.stringify(data))
       this.setState({popularMemes: data})//, () => this.createMemes(this.state.popularMemes))
     }).catch(error => {
       console.log(error);
@@ -117,30 +112,41 @@ class BrowseViewComponent extends React.Component {
   * styling of tab bar if clicked
   */
   showMemesByTime(){
-    this.setState({shownByTime: true})
-    this.getMemesByTime()
+    
+    //this.getMemesByTime()
+    this.setState({memes2display: this.state.allMemes}) //, () => this.createMemes(this.state.allMemes))
     document.querySelector(".option1-button").setAttribute("style", "background-color: #252525;")
     document.querySelector(".option2-button").setAttribute("style", "background-color: #363636;") //background color
+    
   }
   showMemesByUpvotes(){
-    this.setState({shownByTime: false})
-    this.getMemesByUpvotes()
+    //this.getMemesByUpvotes()
+    this.setState({memes2display: this.state.popularMemes}) //, () => this.createMemes(this.state.popularMemes))
     document.querySelector(".option2-button").setAttribute("style", "background-color: #252525;")
     document.querySelector(".option1-button").setAttribute("style", "background-color: #363636;") //background color
+    
   }
 
   /**
-   * filterArray
+   * filterArray (image, gif, video)
    */
   showOnly(array, type){
-    if (array === this.props.allMemes){
-      this.setState({shownByTime: true})
-    }
-    else{
-      this.setState({shownByTime: false})
-    }
+    
     var filteredArray = array.filter(meme => meme.memeTemplate.formatType == type);
-    console.log("filterecArray "+ filteredArray)
+    this.setState({hasMoreToLoad: true, items: Array.from({ length: 1 }), memes2display: filteredArray})
+    console.log("moretoload"+ this.state.hasMoreToLoad)
+    console.log("filteredArray "+ filteredArray)
+    /*
+    if(filteredArray.length-1 > this.state.numberOfMemesToLoad){
+      this.setState({hasMoreToLoad: true})
+    }
+    
+    else{
+      this.setState({hasMoreToLoad: false})
+    }*/
+    console.log("showOnly")
+     //, () => this.createMemes(filteredArray))
+    //console.log("memes2display showOnly" + this.state.memes2display)
   }
 
 
@@ -152,12 +158,16 @@ class BrowseViewComponent extends React.Component {
  
             <div className="option1-button" onClick={() => this.showMemesByTime()}>FRESH</div>
             <div className="file-type">
-              <p>- all</p>
-              <p onClick={() => this.showOnly(true, "image")}>- images</p>
-              <p onClick={() => this.showOnly(this.state.allMemes, "gif")}>- gifs</p>
-              <p onClick={() => this.showOnly(this.state.allMemes, "video")}>- videos</p>
+              <p className="filter" onClick={() => this.showOnly(this.state.allMemes, "image")}>- images</p>
+              <p className="filter" onClick={() => this.showOnly(this.state.allMemes, "gif")}>- gifs</p>
+              <p className="filter" onClick={() => this.showOnly(this.state.allMemes, "video")}>- videos</p>
             </div>
             <div className="option2-button" onClick={() => this.showMemesByUpvotes()}>HOT</div>
+            <div className="file-type">
+              <p className="filter" onClick={() => this.showOnly(this.state.popularMemes, "image")}>- images</p>
+              <p className="filter" onClick={() => this.showOnly(this.state.popularMemes, "gif")}>- gifs</p>
+              <p className="filter" onClick={() => this.showOnly(this.state.popularMemes, "video")}>- videos</p>
+            </div>
             
           </div>
           <div className="infiniteScroll_container">

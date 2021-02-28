@@ -3,6 +3,7 @@ import downvote from '../pictures/downvote.png'
 import share from '../pictures/share.png'
 import download from '../pictures/download.png'
 import Store from '../redux/store';
+import { b64toBlob } from '../utils/ImageUtils';
 const React = require('react');
 require('./GalleryViewComponent.css');
 
@@ -21,6 +22,7 @@ class GalleryViewComponent extends React.Component {
             autoplay: false,
             orderedPlay: true,
             memesArray: this.props.location.memesArray,
+            //formatType: this.props.location.memesArray.memeTemplate.formatType,
         }
     }
 
@@ -220,6 +222,21 @@ class GalleryViewComponent extends React.Component {
     }
 
 
+    selectFormat(){
+        console.log("currentMeme: "+ JSON.stringify(this.state.currentMeme))
+        if(this.state.currentMeme.memeTemplate.formatType === "video"){
+            var base64result = this.state.currentMeme.base64.split(',');
+            var base64blob = URL.createObjectURL(b64toBlob(base64result[1], base64result[0]))            
+            return(
+                <video src={base64blob} className="image" autoplay= "true" loop= "true"/>
+            )
+        }
+        else{
+            return(
+                <img src={this.state.base64} className="image"/>
+            )
+        }
+    }
 
     render() {
         
@@ -243,6 +260,7 @@ class GalleryViewComponent extends React.Component {
                     </div>
                     <div className="g_image_container">
                         <img src= {this.state.currentMeme.base64} className="image" />
+                        <div> Test {this.state.currentMeme} </div>
                     </div>
                     <div className="g_points-commits">
                         <p className= "voting-point">Points:  {this.state.currentMeme.upvotes - this.state.currentMeme.downvotes}</p>

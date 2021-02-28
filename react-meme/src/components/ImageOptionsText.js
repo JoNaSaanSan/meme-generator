@@ -21,6 +21,8 @@ class ImageOptionsText extends React.Component {
             //downvotes: null,
             downvotes: this.props.meme.downvotes,
             currentMeme: null,
+            dateCreated: this.props.meme.dateCreated,
+            title: this.props.meme.title,
             base64: this.props.meme.base64,
             formatType: this.props.meme.memeTemplate.formatType,
             index: this.props.index,
@@ -43,15 +45,21 @@ class ImageOptionsText extends React.Component {
         })*/
         
         console.log("upvotes state: "+ this.state.upvotes)
+
         //wenn z.B. in Browse andere filteroption gewählt wird
         if(this.props.meme !== prevProps.meme){
-            this.setState({
-                currentMeme: this.props.meme,
-                base64: this.props.meme.base64,
-                formatType: this.props.meme.memeTemplate.formatType,
-                upvotes: this.props.meme.upvotes,
-                downvotes: this.props.meme.downvotes,
-            })
+            if(this.props.meme !== undefined){
+                console.log(this.props.meme)
+                this.setState({
+                    currentMeme: this.props.meme,
+                    base64: this.props.meme.base64,
+                    formatType: this.props.meme.memeTemplate.formatType,
+                    upvotes: this.props.meme.upvotes,
+                    downvotes: this.props.meme.downvotes,
+                    dateCreated: this.props.meme.dateCreated,
+                    title: this.props.meme.title
+                })
+            }
         }
 
         if(this.props.memesArray !== prevProps.memesArray){
@@ -59,7 +67,6 @@ class ImageOptionsText extends React.Component {
                 memesArray: this.props.memesArray
             })
         }
-        console.log("upvotes profile" + this.props.meme.upvotes)
     }
 
 
@@ -108,8 +115,10 @@ class ImageOptionsText extends React.Component {
     }
 
     numberOfComments() {
-        if (this.props.meme.comments != undefined) {
-            return this.props.meme.comments.length
+        if (this.props.meme !== undefined) {
+            if(this.props.meme.comments !== undefined){
+                return this.props.meme.comments.length
+            }
         }
         else {
             return 0
@@ -123,7 +132,7 @@ class ImageOptionsText extends React.Component {
             var base64result = this.state.base64.split(',');
             var base64blob = URL.createObjectURL(b64toBlob(base64result[1], base64result[0]))            
             return(
-                <video src={base64blob} className="image" autoplay= "true" loop= "true"/>
+                <video src={base64blob} className="image" autoPlay= "true" loop= "true"/>
             )
         }
         else{
@@ -141,11 +150,11 @@ class ImageOptionsText extends React.Component {
             <div className="container">
                 <div className="user-date_container">
                     <p className="username">Username</p>
-                    <p className="date">{this.props.meme.dateCreated}</p>
+                    <p className="date">{this.state.dateCreated}</p>
                 </div>
                 <div className="above-image_container">
 
-                    <h1 className="image-titel">{this.props.meme.title}</h1>
+                    <h1 className="image-titel">{this.state.title}</h1>
 
                     <div className="options-top_container">
                         <div className="share-download">
