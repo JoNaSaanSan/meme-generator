@@ -176,7 +176,7 @@ class BrowseViewComponent extends React.Component {
               {this.createMemes()}
 
             </InfiniteScroll>
-          </div> </div> : <div> </div>}
+          </div> </div> : <div>Loading Browse..</div>}
 
       </div>
     );
