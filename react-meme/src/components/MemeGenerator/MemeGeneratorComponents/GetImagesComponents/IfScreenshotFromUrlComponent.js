@@ -1,8 +1,7 @@
 import { getImageDimensions } from '../../../../utils/ImageUtils';
 const React = require('react');
 
-
-// This component fetches an array of images from the server
+// This component fetches an image from the server / receives a screenshot of an url
 class IfScreenshotFromUrlComponent extends React.Component {
     constructor(props) {
         super(props)
@@ -15,7 +14,12 @@ class IfScreenshotFromUrlComponent extends React.Component {
         this.updateUrl = this.updateUrl.bind(this);
     }
 
-    // Fetch all images from /samplememes and store them into a state array
+    /**
+     * 
+     * @param {*} url 
+     * Request an image from the server / server returns a screenshot of the site
+     * 
+     */
     fetchImageFromUrl(url) {
         this.setState({
             isFetching: true
@@ -94,7 +98,7 @@ class IfScreenshotFromUrlComponent extends React.Component {
     render() {
         return (
             <div>
-                <input type="text" id="image-url-input" value={this.state.inputValue} className="input-box" onChange={this.updateUrl} />
+                <input type="text" id="screenshot-url-input" value={this.state.inputValue} className="input-box" onChange={this.updateUrl} />
                 <button onClick={() => this.fetchImageFromUrl(this.props.URL)} id="fetch-button" className="button" > {this.props.getImagesButtonName} </button>
             </div>
         )

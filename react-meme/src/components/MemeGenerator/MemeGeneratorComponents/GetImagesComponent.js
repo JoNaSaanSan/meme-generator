@@ -31,6 +31,7 @@ const initializeText = {
     duration: 1,
 }
 
+// Component handles the ability to retrieve image templates. Parent component of the components in the GetImagesComponents folder
 class GetImagesComponents extends React.Component {
 
     /**
@@ -74,7 +75,6 @@ class GetImagesComponents extends React.Component {
                         tmpInputBoxes.push(data[i].inputBoxes[b])
                     }
                 }
-
 
                 if (data[i].drawPaths !== undefined) {
                     for (var p = 0; p < data[i].drawPaths.length; p++) {

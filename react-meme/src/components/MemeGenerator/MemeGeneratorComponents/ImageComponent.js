@@ -6,7 +6,7 @@ require('./ImageComponent.css');
 
 
 /**
- * This component displays the canvas and any additional UI which is required to save a generated meme
+ * This component displays the canvas component and any additional UI which is required to manipulate the canvas
  */
 class ImageComponent extends React.Component {
 

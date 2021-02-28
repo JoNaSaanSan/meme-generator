@@ -1,9 +1,9 @@
+// GIf Encoder Library to record gifs
 import GIFEncoder from 'gif-encoder-2'
-
-
 const React = require('react');
 require('./VideoHandlingComponent.css');
 
+// This component handles all video and gif related things - including UI and recording
 class VideoHandlingComponent extends React.Component {
     constructor(props) {
         super(props)
@@ -18,6 +18,11 @@ class VideoHandlingComponent extends React.Component {
 
     /**
      * Record Gif using an encorder
+     * 1. Combines all canvases to one canvas
+     * 2. Records everything that happens in the canvas
+     * 3. Creates blob of recorded gif
+     * Use of Interval and Timeouts to handle time events
+     * 
      */
     recordGif() {
         const canvas = document.createElement("canvas");
@@ -140,7 +145,7 @@ class VideoHandlingComponent extends React.Component {
             chunks.push(e.data);
         };
 
-
+        // When media recorder is finished
         mediaRecorder.onstop = (e) => {
             var blob = new Blob(chunks, { 'type': 'video/mp4' });
             this.props.setDynamicBlob(blob)
@@ -242,6 +247,9 @@ class VideoHandlingComponent extends React.Component {
         }
     }
 
+    /**
+     * Handles UI of the textboxes for videos and gifs
+     */
     textVideoUI() {
         if (this.props.inputBoxes !== null && this.props.inputBoxes !== undefined) {
 
@@ -309,10 +317,10 @@ class VideoHandlingComponent extends React.Component {
 
             {//(this.props.currentTemplate.formatType === 'video' || ) ?
                 <div id="video-container">
-                    <video id="video-input" controls="true" crossorigin="anonymous" autoPlay='true' />
+                    <video id="video-input" controls={true} crossOrigin="anonymous" autoPlay={true} />
                     <div>
                         <div> Video Output </div>
-                        <video id="video-output" controls="true" crossorigin="anonymous" />
+                        <video id="video-output" controls={true} crossOrigin="anonymous" />
                     </div>
                     <div>
                         <div> GIF Output </div>

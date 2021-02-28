@@ -1,6 +1,6 @@
 import { LOGIN_USER, TOGGLE_SPEECH } from './action';
 
-// Redux reducer to get state of signed in user
+// Redux reducer to get state of signed in user & handle whether speech is active
 const initialState = {
     user: { username: '', email: '', accessToken: '', isSignedIn: false },
     speech: {textToSpeechActive: false, speechToTextActive: false},

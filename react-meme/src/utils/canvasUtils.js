@@ -23,6 +23,16 @@ export const getTextWidth = (inputText, isBold, isItalic, fontSize, fontFamily) 
   return Math.ceil(textWidth)
 }
 
+/**
+ * 
+ * @param {*} canvasType whether background or all canvases are needed
+ * @param {*} width of image
+ * @param {*} height of image
+ * @param {*} maxSize maximum file size of the string
+ * @param {*} scale adjustable image scale
+ * compiles the canvases and returns a base 64 string 
+ * 
+ */
 export const retrieveImage = (canvasType, width, height, maxSize, scale) => {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement("canvas");

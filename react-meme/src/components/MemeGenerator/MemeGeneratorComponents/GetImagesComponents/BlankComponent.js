@@ -1,5 +1,5 @@
 const React = require('react')
-// This component enables the user to upload images from the local device
+// This component enables the user to use a blank image
 class BlankComponent extends React.Component {
     constructor(props) {
         super(props);
@@ -9,6 +9,10 @@ class BlankComponent extends React.Component {
 
         this.getBlankImage = this.getBlankImage.bind(this);
     }
+
+    /**
+     * Creates a new blank image via canvas
+     */
     getBlankImage() {
         const canvas = document.createElement("canvas");
         canvas.setAttribute("id", "canvas");

@@ -109,3 +109,33 @@ p {
 input[type="file"] {
     display: none;
 }
+
+.transcript {
+    overflow: scroll;
+    width: 90%;
+    height: 100px;
+    margin: 20px;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 20px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    box-shadow: 0 0 5px grey;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgb(230, 230, 230);
+    border-radius: 10px;
+  }
+
+#speech-to-text-container{
+    display: flex;
+    flex-flow: row;
+    flex-direction: column;
+    flex-wrap: initial;
+}

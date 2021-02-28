@@ -59,6 +59,7 @@ class MemeGenerator extends React.Component {
       dynamicBlob: null,
     }
 
+    this.moveInputBox = this.moveInputBox.bind(this)
     this.handleInputBoxesChange = this.handleInputBoxesChange.bind(this);
     this.handleCanvasChange = this.handleCanvasChange.bind(this);
     this.handleImageChange = this.handleImageChange.bind(this);
@@ -74,7 +75,7 @@ class MemeGenerator extends React.Component {
   }
 
   componentDidMount() {
-    let voices = window.speechSynthesis.getVoices();
+    window.speechSynthesis.getVoices();
     this.props.authenticateUser({ username: localStorage.getItem('username'), email: localStorage.getItem('email'), accessToken: localStorage.getItem('token'), isSignedIn: true })
 
   }
@@ -180,7 +181,7 @@ class MemeGenerator extends React.Component {
   }
 
   /**
-   *  Removes last added path
+   *  Removes last added drawn path
    */
   undoDrawing() {
     let drawPaths = [...this.state.drawPaths];
@@ -189,7 +190,7 @@ class MemeGenerator extends React.Component {
   }
 
   /**
-   * Removes all paths
+   * Removes all drawn paths
    */
   clearDrawing() {
     this.setState({
@@ -267,15 +268,31 @@ class MemeGenerator extends React.Component {
     }
 
     //Text To Speech
-    if(event.target.name === 'text'){
       var voices = window.speechSynthesis.getVoices();
       textToSpeech( event.target.value, voices[1], this.state.textToSpeechActive);
-    }
     this.setState({
       inputBoxes,
       tmpInputTextBoxesArray,
       inputBoxesUpdated: !this.state.inputBoxesUpdated,
     })
+  }
+
+  /**
+   * 
+   * @param {*} i 
+   * @param {*} direction 
+   * Gives the user to control the position of the text via voice
+   * 
+   */
+  moveInputBox(i, direction){
+    if(direction === 'up')
+    this.handleInputBoxesChange(i, {target: {name: 'textPosY', value: parseInt(this.state.inputBoxes[i].textPosY) - 50}})
+    if(direction === 'down')
+    this.handleInputBoxesChange(i, {target: {name: 'textPosY', value: parseInt(this.state.inputBoxes[i].textPosY) + 50}})
+    if(direction === 'right')
+    this.handleInputBoxesChange(i, {target: {name: 'textPosX', value: parseInt(this.state.inputBoxes[i].textPosX) + 50}})
+    if(direction === 'left')
+    this.handleInputBoxesChange(i, {target: {name: 'textPosX', value: parseInt(this.state.inputBoxes[i].textPosX) - 50}})
   }
 
   /**
@@ -317,6 +334,7 @@ class MemeGenerator extends React.Component {
           createMeme={this.createMeme}
           currentTemplate={this.state.currentTemplate}
           handleInputBoxesChange={this.handleInputBoxesChange}
+          moveInputBox={this.moveInputBox}
           canvasWidth={this.state.canvasWidth}
           canvasHeight={this.state.canvasHeight} />
         <ImageComponent

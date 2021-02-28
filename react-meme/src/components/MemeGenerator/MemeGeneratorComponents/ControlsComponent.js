@@ -3,19 +3,20 @@ import PreviewComponent from './PreviewComponent';
 import { connect } from 'react-redux';
 import { toggleSpeech } from '../../../redux/action';
 import Store from '../../../redux/store';
-import GraphComponent from './GraphComponent';
+import GraphComponent from '../../GraphComponent';
 import SpeechToText from '../../../utils/SpeechToText';
+import { textToSpeech } from '../../../utils/TextToSpeech'
 const React = require('react');
 require('./ControlsComponent.css');
 
-
+// Redux
 function mapDispatchToProps(dispatch) {
   return {
     toggleSpeech: speech => dispatch(toggleSpeech(speech))
   };
 }
 
-
+// This component handles the basic controls of the meme generator (Left side of the UI)
 class ControlsComponent extends React.Component {
 
   constructor(props) {
@@ -46,6 +47,10 @@ class ControlsComponent extends React.Component {
     this.toggleSpeech = this.toggleSpeech.bind(this);
     this.setCaption = this.setCaption.bind(this)
     this.selectCaption = this.selectCaption.bind(this)
+    this.setPosition = this.setPosition.bind(this);
+    this.setFontStyle = this.setFontStyle.bind(this);
+    this.setFontColour = this.setFontColour.bind(this);
+    this.setFontSize = this.setFontSize.bind(this);
   }
 
   /**
@@ -181,6 +186,12 @@ class ControlsComponent extends React.Component {
     }
   }
 
+  /**
+   * 
+   * @param {*} event 
+   * Handles speech activation
+   * 
+   */
   toggleSpeech(event) {
     if (event.target.name === 'textToSpeechOn') {
       this.props.toggleSpeech({ textToSpeechActive: true })
@@ -208,24 +219,90 @@ class ControlsComponent extends React.Component {
     }
   }
 
+  /**
+   * handle caption selection via voice  
+   */
   selectCaption(index) {
     console.log(index)
+    let voices = window.speechSynthesis.getVoices();
+    textToSpeech('Caption ' + index + ' selected.', voices[1], this.state.textToSpeechActive);
+
     this.setState({
       textBoxIndex: index
     })
   }
 
-  setCaption(text){
+  /**
+   * 
+   * @param {*} text 
+   * Handle Text Insertion from voice
+   */
+  setCaption(text) {
     console.log(text)
-    this.props.handleInputBoxesChange(this.state.textBoxIndex, {target: {name: 'text', value: text}})
+
+    this.props.handleInputBoxesChange(this.state.textBoxIndex, { target: { name: 'text', value: text } })
+  }
+
+  /**
+   * 
+   * @param {*} direction 
+   * Handle movement of text from voice
+   * 
+   */
+  setPosition(direction) {
+    let voices = window.speechSynthesis.getVoices();
+    textToSpeech('Moving text of caption ' + this.state.textBoxIndex + ' ' + direction, voices[1], this.state.textToSpeechActive);
+
+    this.props.moveInputBox(this.state.textBoxIndex, direction)
+  }
+
+  /**
+   * 
+   * @param {*} size 
+   * Handle font size from voice
+   * 
+   */
+  setFontSize(size) {
+    console.log(size)
+    this.props.handleInputBoxesChange(this.state.textBoxIndex, { target: { name: 'fontSize', value: size } })
+  }
+
+  /**
+   * 
+   * @param {*} colour 
+   * Handle font colour from voice
+   * 
+   */
+  setFontColour(colour) {
+    this.props.handleInputBoxesChange(this.state.textBoxIndex, { target: { name: 'fontColor', value: colour } })
+  }
+
+  /**
+   * 
+   * @param {*} style 
+   * Handle font style from voice
+   * 
+   */
+  setFontStyle(style) {
+    if (style === 'bold')
+      this.props.handleInputBoxesChange(this.state.textBoxIndex, { target: { name: 'isBold', value: true } })
+    if (style === 'italic')
+      this.props.handleInputBoxesChange(this.state.textBoxIndex, { target: { name: 'isItalic', value: true } })
+    if (style === 'hidden')
+      this.props.handleInputBoxesChange(this.state.textBoxIndex, { target: { name: 'isVisible', value: false } })
+    if (style === 'none') {
+      this.props.handleInputBoxesChange(this.state.textBoxIndex, { target: { name: 'isVisible', value: true } })
+      this.props.handleInputBoxesChange(this.state.textBoxIndex, { target: { name: 'isItalic', value: false } })
+      this.props.handleInputBoxesChange(this.state.textBoxIndex, { target: { name: 'isBold', value: false } })
+    }
   }
 
 
   render() {
-    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken }))
+    Store.subscribe(() => this.setState({ isSignedIn: Store.getState().user.isSignedIn, accessToken: Store.getState().user.accessToken, textToSpeechActive: Store.getState().speech.textToSpeechActive }))
     return (
       <div className="control-view">
-        <SpeechToText selectCaption={this.selectCaption} setCaption={this.setCaption} />
+        <SpeechToText selectCaption={this.selectCaption} setCaption={this.setCaption} setPosition={this.setPosition} setFontColour={this.setFontColour} setFontSize={this.setFontSize} setFontStyle={this.setFontStyle} />
         {(!this.state.textToSpeechActive) ? <button name="textToSpeechOn" onClick={this.toggleSpeech} id="speech-button" className="button">Turn text to speech on</button> :
           <button name="textToSpeechOff" onClick={this.toggleSpeech} id="speech-button" className="button">Turn  text to speech off</button>
         }

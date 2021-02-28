@@ -2,7 +2,7 @@ import Store from '../../../../redux/store';
 import { b64toBlob } from '../../../../utils/ImageUtils';
 const React = require('react');
 
-// This component fetches an array of images from the server
+// This component fetches an array of drafts from the server
 class IfDraftComponent extends React.Component {
     constructor(props) {
         super(props)
@@ -14,10 +14,11 @@ class IfDraftComponent extends React.Component {
         this.fetchImageFromUrl = this.fetchImageFromUrl.bind(this);
     }
 
-    // Fetch all images from /samplememes and store them into a state array
+    /**
+     * Fetches all drafts that the user previously stored
+     *  
+     */ 
     fetchImageFromUrl(url) {
-
-
         this.setState({
             isFetching: true
         });
@@ -38,8 +39,6 @@ class IfDraftComponent extends React.Component {
                         console.log(fetchedData)
 
                         let data = []
-
-
                         for (var i = 0; i < drafts.length; i++) {
                             var draft = drafts[i];
                             console.log(draft)
@@ -48,6 +47,7 @@ class IfDraftComponent extends React.Component {
                             if (base64result[1] === null || base64result[1] === '')
                                 continue;
 
+                            // Create new Object
                             data.push({
                                 id: 0,
                                 name: draft.name,

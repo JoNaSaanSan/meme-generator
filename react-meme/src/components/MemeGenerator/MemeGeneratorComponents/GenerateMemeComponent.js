@@ -15,6 +15,7 @@ import {
 } from "react-share";
 const React = require('react');
 
+// This Component handles the actual meme generation - share, publish, drafts, templates
 class GenerateMemeComponent extends React.Component {
     constructor(props) {
         super(props)
@@ -253,6 +254,7 @@ class GenerateMemeComponent extends React.Component {
             });
     }
 
+    // Only render share buttons
     render() {
         return <div>
             <div id="share" className="modal-window">

@@ -3,6 +3,7 @@ import GIFGroover from '../../../utils/GIFGroover'
 const React = require('react');
 require('./CanvasComponent.css');
 
+// Component which handles the canvas of the memegenerator
 class CanvasComponent extends React.Component {
 
   constructor(props) {

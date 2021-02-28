@@ -1,7 +1,7 @@
 const React = require('react');
 require('./TextUIComponent.css');
 
-
+// This component handles the UI to manipulate the text boxes (right side on the page)
 class TextUIComponent extends React.Component {
 
   constructor(props) {

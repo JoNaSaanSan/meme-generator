@@ -1,4 +1,13 @@
-//https://justmarkup.com/articles/2020-05-19-text-to-speech/
+
+/**
+ * 
+ * @param {*} message 
+ * @param {*} voice 
+ * @param {*} active 
+ * Makes the browser speak
+ * @see https://justmarkup.com/articles/2020-05-19-text-to-speech/
+ * 
+ */
 export const textToSpeech = (message, voice, active) => {
     if(!active)
     return;

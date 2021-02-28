@@ -15,7 +15,12 @@ class IfTemplateComponent extends React.Component {
         this.fetchImageFromUrl = this.fetchImageFromUrl.bind(this);
     }
 
-    // Fetch all images from /samplememes and store them into a state array
+   /**
+    * 
+    * @param {*} url 
+    * Fetches all templates that has been uploaded to the database 
+    * 
+    */
     fetchImageFromUrl(url) {
         this.setState({
             isFetching: true

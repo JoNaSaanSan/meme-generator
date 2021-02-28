@@ -1,6 +1,6 @@
 /**
  * A simple gif decoder written by blindman67
- * Github: https://github.com/blindman67/GIFGroover
+ * @see https://github.com/blindman67/GIFGroover
  * 
  */
 
